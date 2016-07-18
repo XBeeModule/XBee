@@ -1,0 +1,33 @@
+# XDBGEN converter version 211
+H optimize n staggered n
+$0 00001
+$1 00003
+$2 00004
+$3 00005
+$4 +6v
+$5 -6v
+$6 $NONE$
+0 0.002 -2.389764 -0.620472 T e e staggered 0 0 0
+0 0.002 -2.38189 0.448819 T e e staggered 0 0 0
+0 0.002 -2.389764 -0.620472 D e e staggered 0 0 0
+0 0.002 -2.38189 0.448819 D e e staggered 0 0 0
+1 0.002 -2.38189 -0.393701 T e e staggered 0 0 0
+1 0.002 -2.38189 0.173228 T e e staggered 0 0 0
+1 0.002 -2.38189 -0.393701 D e e staggered 0 0 0
+1 0.002 -2.38189 0.173228 D e e staggered 0 0 0
+2 0.002 -4.610236 -0.964567 T e e staggered 0 0 0
+2 0.002 -4.610236 -0.401575 T e e staggered 0 0 0
+2 0.002 -4.610236 -0.964567 D e e staggered 0 0 0
+2 0.002 -4.610236 -0.401575 D e e staggered 0 0 0
+3 0.002 -4.610236 0.169291 T e e staggered 0 0 0
+3 0.002 -4.610236 0.791339 T e e staggered 0 0 0
+3 0.002 -4.610236 0.169291 D e e staggered 0 0 0
+3 0.002 -4.610236 0.791339 D e e staggered 0 0 0
+4 0.002 -2.389764 -0.720472 T e e staggered 0 0 0
+4 0.002 -2.38189 -0.96063 T e e staggered 0 0 0
+4 0.002 -2.389764 -0.720472 D e e staggered 0 0 0
+4 0.002 -2.38189 -0.96063 D e e staggered 0 0 0
+5 0.002 -2.38189 0.548819 T e e staggered 0 0 0
+5 0.002 -2.377953 0.795276 T e e staggered 0 0 0
+5 0.002 -2.38189 0.548819 D e e staggered 0 0 0
+5 0.002 -2.377953 0.795276 D e e staggered 0 0 0
