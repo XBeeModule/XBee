@@ -6993,7 +6993,7 @@ void setup_regModbus()
 
 void setup()
 {
-  myGLCD.InitLCD();
+  myGLCD.InitLCD(1);
   myGLCD.clrScr();
   myGLCD.setFont(BigFont);
   myTouch.InitTouch();
