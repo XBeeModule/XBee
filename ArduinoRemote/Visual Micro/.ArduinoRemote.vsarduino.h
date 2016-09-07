@@ -83,6 +83,12 @@ extern "C" void __cxa_pure_virtual() {;}
 #define portInputRegister(P)
 #define portModeRegister(P)
 
+void dateTime(uint16_t* date, uint16_t* time);
+void serial_print_date();
+void clock_read();
+void set_time();
+void drawButtons();
+void setup_pin();
 //
 //
 
