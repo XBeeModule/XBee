@@ -385,6 +385,8 @@ while (true)
           }
           else
           {
+            myGLCD.setColor(0, 0, 0);
+            myGLCD.fillRect(0, 300, 239, 319);
             myGLCD.setColor(255, 0, 0);
 			strcpy_P(buffer, (char*)pgm_read_word(&(table_message[4])));
             myGLCD.print(buffer, CENTER, 300);                                  //"асттеп осярни!"
@@ -564,6 +566,8 @@ while (true)
           }
           else
           {
+            myGLCD.setColor(0, 0, 0);
+            myGLCD.fillRect(0, 300, 239, 319);
             myGLCD.setColor(255, 0, 0);
 			strcpy_P(buffer, (char*)pgm_read_word(&(table_message[4])));
             myGLCD.print(buffer, CENTER, 300);                                  //"асттеп осярни!"
@@ -603,15 +607,17 @@ void updateStr(int val)
     myGLCD.print(stCurrent, LEFT, 300);
   }
   else
-  { // бШБНД ЯРПНЙХ "оепеонкмемхе!"
+  {                                                             // бШБНД ЯРПНЙХ "оепеонкмемхе!"
+	myGLCD.setColor(0, 0, 0);
+	myGLCD.fillRect(0, 300, 239, 319);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[3])));
     myGLCD.setColor(255, 0, 0);
 	myGLCD.print("               ", CENTER, 300);
-    myGLCD.print(buffer, CENTER, 300);// оепеонкмемхе!
+    myGLCD.print(buffer, CENTER, 300);                         // оепеонкмемхе!
     delay(500);
     myGLCD.print("               ", CENTER, 300);
     delay(500);
-    myGLCD.print(buffer, CENTER, 300);// оепеонкмемхе!
+    myGLCD.print(buffer, CENTER, 300);                         // оепеонкмемхе!
     delay(500);
     myGLCD.print("               ", CENTER, 300);
     myGLCD.setColor(0, 255, 0);
