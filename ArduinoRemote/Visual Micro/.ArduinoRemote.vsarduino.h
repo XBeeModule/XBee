@@ -87,7 +87,8 @@ void dateTime(uint16_t* date, uint16_t* time);
 void serial_print_date();
 void clock_read();
 void set_time();
-void drawButtons();
+void drawButtons0_1();
+void drawButtonsTXT();
 void setup_pin();
 //
 //
