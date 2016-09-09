@@ -89,6 +89,11 @@ void clock_read();
 void set_time();
 void drawButtons0_1();
 void drawButtonsTXT();
+void drawButtonsABCDEF();
+void klav1();
+void klavABCDEF();
+void waitForIt(int x1, int y1, int x2, int y2);
+void updateStr(int val);
 void setup_pin();
 //
 //
