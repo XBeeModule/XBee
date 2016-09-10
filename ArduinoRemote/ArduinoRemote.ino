@@ -13,7 +13,17 @@
 #include <SdFatUtil.h>
 
 
-#define led_13 13   
+#define led_13 13  
+#define KN1 A3  
+#define KN2 A4  
+#define KN3 A5  
+#define KN4 A6  
+#define KN5 A7  
+#define KN6 A8  
+#define KN7 A9  
+#define KN8 A10  
+
+
 
 
 //********************* Настройка монитора ***********************************
@@ -243,6 +253,42 @@ void klav_Glav_Menu()
 {
 while (true)
   {
+
+	  	myGLCD.setColor(255, 255, 255);
+	if(digitalRead(KN1) == false)
+		{
+			myGLCD.printNumI(1, 200, 60);
+	    }
+	if(digitalRead(KN2) == LOW)
+		{
+			myGLCD.printNumI(2, 200, 60);
+	}
+	if(digitalRead(KN3) == LOW)
+		{
+			myGLCD.printNumI(3, 200, 60);
+	}
+	if(digitalRead(KN4) == LOW)
+		{
+			myGLCD.printNumI(4, 200, 60);
+	}
+	if(digitalRead(KN5) == false)
+		{
+			myGLCD.printNumI(5, 200, 60);
+	    }
+	if(digitalRead(KN6) == LOW)
+		{
+			myGLCD.printNumI(6, 200, 60);
+	}
+	if(digitalRead(KN7) == LOW)
+		{
+			myGLCD.printNumI(7, 200, 60);
+	}
+	if(digitalRead(KN8) == LOW)
+		{
+			myGLCD.printNumI(8, 200, 60);
+	}
+
+
 	int x,y;
     if (myTouch.dataAvailable())
     {
@@ -883,6 +929,24 @@ void setup()
 	//drawButtonsTXT();
 	//drawButtonsABCDEF();
 
+	pinMode(KN1, INPUT); 
+	pinMode(KN2, INPUT); 
+	pinMode(KN3, INPUT); 
+	pinMode(KN4, INPUT); 
+	pinMode(KN5, INPUT); 
+	pinMode(KN6, INPUT); 
+	pinMode(KN7, INPUT); 
+	pinMode(KN8, INPUT); 
+
+	digitalWrite(KN1, HIGH); 
+	digitalWrite(KN2, HIGH); 
+	digitalWrite(KN3, HIGH); 
+	digitalWrite(KN4, HIGH); 
+	digitalWrite(KN5, HIGH); 
+	digitalWrite(KN6, HIGH); 
+	digitalWrite(KN7, HIGH); 
+	digitalWrite(KN8, HIGH); 
+
 	drawGlavMenu();
 
 	Serial.println(" ");                                   //
@@ -895,6 +959,8 @@ void loop()
 {
 	test_power();
 	klav_Glav_Menu();
+
+
  //klav1();
 	//klavABCDEF();
  delay(100);
