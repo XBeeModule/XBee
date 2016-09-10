@@ -336,7 +336,7 @@ void test_power()
     myGLCD.setColor(0, 255, 0);
     int power = analogRead(A11);
     // Serial.println(power);
-    power60 = power * (5.0 / 1023.0 * 2);
+    power60 = power * (5.0 / 1024.0 * 2*0.965);
     //  Serial.println(power60);
     if (power60 > 5.8) myGLCD.print("\xB0", 221, 5);
     else if (power60 <= 5.8 && power60 > 5.6) myGLCD.print("\xB1", 212, 5);
@@ -350,11 +350,11 @@ void test_power()
     }
     myGLCD.printNumF(power60, 2, 200, 20);
     myGLCD.setColor(255, 255, 255);
-    power = analogRead(A10);
-    power50 = power * (5.0 / 1023.0 * 2);
+    power = analogRead(A1);
+    power50 = power * (5.0 / 1024.0*2*0.965);
     myGLCD.printNumF(power50, 2, 200, 30);
-    power = analogRead(A9);
-    power33 = power * (5.0 / 1023.0);
+    power = analogRead(A2);
+    power33 = power * (5.0 / 1024.0*0.965);
     myGLCD.printNumF(power33, 2, 200, 40);
     myGLCD.setFont(BigFont);
   }
