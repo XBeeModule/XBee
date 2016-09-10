@@ -52,6 +52,17 @@ int stCurrentLen1     = 0;                                        // Переменная 
 char stLast[20]       = "";                                       // Данные в введенной строке строке.
 //int ret               = 0;                                        // Признак прерывания операции
 //-------------------------------------------------------------------------------------------------
+float power60 = 0;                       // Измерение источника питания 6,0 вольт
+float power50 = 0;                       // Измерение источника питания 5,0 вольт
+float power33 = 0;                       // Измерение источника питания 3,3 вольт
+unsigned long currentTime;
+unsigned long loopTime;
+int time_power    = 1000;
+
+//---------------------------------------------------------------------------------
+
+
+
 
 
 
@@ -61,6 +72,11 @@ const char  txt_botton_vvod[]       PROGMEM  = "B\x97o\x99 ";                   
 const char  txt_botton_ret[]        PROGMEM  = "B""\xAB""x""o\x99" ;                                            // "Выход"
 const char  txt_perepolnenie[]      PROGMEM  = "\x89""EPE""\x89O\x88HEH\x86""E!" ;                              // "Переполнение"
 const char  txt_empty[]             PROGMEM  = "\x80\x8A\x8B\x8B""EP \x89\x8A""CTO\x87!";                       // "БУФФЕР ПУСТОЙ"
+const char  txt_menu1[]             PROGMEM  = "MEH""\x94"" 1";                                                 // "Переполнение"
+const char  txt_menu2[]             PROGMEM  = "MEH""\x94"" 2";                                                 // "БУФФЕР ПУСТОЙ"
+
+
+
 
 char buffer[30];
 const char* const table_message[] PROGMEM =
@@ -69,7 +85,15 @@ const char* const table_message[] PROGMEM =
  txt_botton_vvod,                 // 1 "B\x97o\x99 ";                                                           // "Ввод"
  txt_botton_ret,                  // 2  "B""\xAB""x";                                                           // "Вых"
  txt_perepolnenie,                // 3 "\x89""EPE""\x89O\x88HEH\x86""E!"                                        // "Переполнение"
- txt_empty                        // 4 "\x80\x8A\x8B\x8B""EP \x89\x8A""CTO\x87!"                                // "БУФФЕР ПУСТОЙ"
+ txt_empty,                       // 4 "\x80\x8A\x8B\x8B""EP \x89\x8A""CTO\x87!"                                // "БУФФЕР ПУСТОЙ"
+ txt_menu1,                       // 5 "MEH""\x94"" 1";                                                         // "МЕНЮ 1"
+ txt_menu2                        // 6 "MEH""\x94"" 2";                                                         // "МЕНЮ 2"
+
+
+
+
+
+
 };
 
 
@@ -144,6 +168,196 @@ void set_time()
   year   = now.year();
   DateTime set_time = DateTime(year, month, day, hour, minute, second); // Занести данные о времени в строку "set_time"
   RTC.adjust(set_time);
+}
+
+
+void drawGlavMenu()
+{
+	 myGLCD.setBackColor( 0, 0, 255);
+
+	myGLCD.setColor(0, 0, 255);                    //1
+	myGLCD.fillRoundRect (5, 5, 94, 90);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 5,94, 90);
+	myGLCD.printNumI(1, 10, 10);                   //"1"
+	
+	myGLCD.setColor(0, 0, 255);                    //2
+	myGLCD.fillRoundRect (97, 5, 186, 90);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (97, 5, 186, 90);
+	myGLCD.printNumI(2, 102, 10);                  //"2"
+
+	myGLCD.setColor(0, 0, 255);                    //3
+	myGLCD.fillRoundRect (5, 93, 94, 178);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 93,94, 178);
+	myGLCD.printNumI(3, 10, 98);                   //"3"
+	
+	myGLCD.setColor(0, 0, 255);                    //4
+	myGLCD.fillRoundRect (97, 93, 186, 178);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (97, 93, 186, 178);
+	myGLCD.printNumI(4, 102, 98);                   //"4"
+//------------------------------------------------------------------
+	myGLCD.setColor(0, 0, 255);                    //1
+	myGLCD.fillRoundRect (5, 183, 60, 243);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 183, 60, 243);
+	myGLCD.printNumI(1, 25, 205);                   //"1"
+	
+	myGLCD.setColor(0, 0, 255);                    //2
+	myGLCD.fillRoundRect (63, 183, 118, 243);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (63, 183, 118, 243);
+	myGLCD.printNumI(2, 83, 205);                   //"2"
+
+	myGLCD.setColor(0, 0, 255);                    //3
+	myGLCD.fillRoundRect (121, 183, 176, 243);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (121, 183, 176, 243);
+	myGLCD.printNumI(3, 141, 205);                  //"3"
+
+	myGLCD.setColor(0, 0, 255);                    //4
+	myGLCD.fillRoundRect (179, 183, 234, 243);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (179, 183, 234, 243);
+	myGLCD.printNumI(4, 199, 205);                  //"4"
+//----------------------------------------------------------
+	myGLCD.setColor(0, 0, 255);
+	myGLCD.fillRoundRect (5, 248, 118, 293);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 248, 118, 293);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[5])));
+	myGLCD.print(buffer, 16, 262);                                      // "МЕНЮ 1"
+
+	myGLCD.setColor(0, 0, 255);
+	myGLCD.fillRoundRect (121, 248, 234, 293);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (121, 248, 234, 293);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[6])));
+	myGLCD.print(buffer, 130, 262);                                     //"МЕНЮ 2"
+	myGLCD.setBackColor (0, 0, 0);
+}
+
+void klav_Glav_Menu()
+{
+while (true)
+  {
+	int x,y;
+    if (myTouch.dataAvailable())
+    {
+      myTouch.read();
+      x = myTouch.getX();
+      y = myTouch.getY();
+	  if ((y >= 5) && (y <= 90))                                    // Первый ряд
+      {
+       if ((x >= 5) && (x <= 94))                                   // Button: 1
+        {
+          waitForIt(5, 5, 94, 90);
+         // updateStr('1');
+        }
+        if ((x >= 97) && (x <= 186))                                // Button: 2
+        {
+          waitForIt(97, 5, 186, 90);
+        //  updateStr('2');
+        }
+	  }
+	 
+	  if ((y >= 93) && (y <= 178))                                    // Первый ряд
+      {
+       if ((x >= 5) && (x <= 94))                                   // Button: 1
+        {
+          waitForIt(5, 93, 94, 178);
+       //   updateStr('3');
+        }
+        if ((x >= 97) && (x <= 186))                                // Button: 2
+        {
+          waitForIt(97, 93, 186, 178);
+        //  updateStr('4');
+        }
+	  }
+	 
+	  if ((y >= 183) && (y <= 243))                                    // Nh ряд
+      {
+       if ((x >= 5) && (x <= 60))                                   // Button: 1
+        {
+          waitForIt(5, 183, 60, 243);
+        //  updateStr('1');
+        }
+        if ((x >= 63) && (x <= 118))                                // Button: 2
+        {
+          waitForIt(63, 183, 118, 243);
+        //  updateStr('2');
+        }
+        if ((x >= 121) && (x <= 176))                               // Button: 3
+        {
+          waitForIt(121, 183, 176, 243);
+        //  updateStr('3');
+        }
+        if ((x >= 179) && (x <= 234))                               // Button: 4
+        {
+          waitForIt(179, 183, 234, 243);
+         // updateStr('4');
+        }
+	  }
+
+	  if ((y >= 248) && (y <= 293))                                           // Четвертый ряд
+      {
+        if ((x >= 5) && (x <= 118))                                           // Button:
+        {
+          waitForIt(5, 248, 118, 293);
+  
+        }
+        if ((x >= 121) && (x <= 234)) // Button: 
+        {
+          waitForIt(121, 248, 234, 293);
+ 
+        }
+	  }
+
+
+
+
+
+	}
+  }
+
+
+
+}
+
+void test_power()
+{
+  currentTime = millis();                           // считываем время, прошедшее с момента запуска программы
+  if (currentTime >= (loopTime + time_power))
+  { // сравниваем текущий таймер с переменной loopTime + 1 секунда
+    loopTime = currentTime;                          // в loopTime записываем новое значение
+    myGLCD.setFont(SmallFont);
+    myGLCD.setColor(0, 255, 0);
+    int power = analogRead(A11);
+    // Serial.println(power);
+    power60 = power * (5.0 / 1023.0 * 2);
+    //  Serial.println(power60);
+    if (power60 > 5.8) myGLCD.print("\xB0", 221, 5);
+    else if (power60 <= 5.8 && power60 > 5.6) myGLCD.print("\xB1", 212, 5);
+    else if (power60 <= 5.6 && power60 > 5.4) myGLCD.print("\xB2", 212, 5);
+    else if (power60 <= 5.4 && power60 > 5.2) myGLCD.print("\xB3", 212, 5);
+
+    else if (power60 <= 5.2)
+    {
+      myGLCD.setColor(255, 0, 0);
+      myGLCD.print("\xB4", 212, 5);
+    }
+    myGLCD.printNumF(power60, 2, 200, 20);
+    myGLCD.setColor(255, 255, 255);
+    power = analogRead(A10);
+    power50 = power * (5.0 / 1023.0 * 2);
+    myGLCD.printNumF(power50, 2, 200, 30);
+    power = analogRead(A9);
+    power33 = power * (5.0 / 1023.0);
+    myGLCD.printNumF(power33, 2, 200, 40);
+    myGLCD.setFont(BigFont);
+  }
 }
 
 
@@ -298,7 +512,7 @@ void klav1()
 {
 while (true)
   {
-	  int x,y;
+	int x,y;
     if (myTouch.dataAvailable())
     {
       myTouch.read();
@@ -665,9 +879,12 @@ void setup()
 	setup_pin();
 	Serial.print(F("FreeRam: "));
 	Serial.println(FreeRam());
-	drawButtons0_1();
+	//drawButtons0_1();
 	//drawButtonsTXT();
-	drawButtonsABCDEF();
+	//drawButtonsABCDEF();
+
+	drawGlavMenu();
+
 	Serial.println(" ");                                   //
 	Serial.println("System initialization OK!.");          // Информация о завершении настройки
 
@@ -676,9 +893,10 @@ void setup()
 
 void loop()
 {
-
+	test_power();
+	klav_Glav_Menu();
  //klav1();
-	klavABCDEF();
+	//klavABCDEF();
  delay(100);
 
 }
