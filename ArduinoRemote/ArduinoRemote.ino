@@ -1,4 +1,40 @@
+/*
+Пульт должен передавать команды на исполнительное устройство,
+которое будет управлять блоком реле и переключателей, 
+а также возвращать подтверждение выполнения команд МК. 
+Также разработчик предусматривает соответствующие методы фильтрации, шифрование, модуляцию.
+Исполнение команд необходимо гарантированное, то есть пульт должен иметь индикацию выполнения (обмен данными двухсторонний). 
+Также желательна (если возможно) односторонняя передача rs232 - от ИУ к пульту на скорости 1200бод. 
+Драйвер реле и четыре реле. Возможна обратная связь подтверждения состояния реле. 
+(Уточнить нагрузку и количество необходимых контактов).
+Светодиодная индикация включения реле, подтверждения связи с пультом, индикация ошибки.
+3.Исполнительное устройство. Управление маломощными реле типа TQ2 5V, соленоидами 100мА, реле типа TQ2-l2-5V.
+Выходы:
+1)Выключатель. Индикация – команда получена(выполнена) – горит диод, команда не прошла – не горит. TQ2 5V
+2)Выключатель. Индикация – команда получена(выполнена) – горит диод, команда не прошла – не горит. TQ2 5V
+3) Импульс заданной продолжительности на соленоид. Индикация – команда получена(выполнена) – мигнул диод, команда не прошла – не мигнул. соленоид 100мА
+4) Импульс заданной продолжительности на соленоид. Индикация – команда получена(выполнена) – мигнул диод, команда не прошла – не мигнул. соленоид 100мА
+5) Переключатель. При включении устройства – опрос положения, загорается один из диодов.
+Индикация – команда на переключение получена(выполнена) – загорается соответствующий диод, противоположный гаснет. TQ2-l2-5V 
+Управление будет не соленоидами, а микродвигателем 5в,
 
+нужна возможность реверса, время вращения строго определенной продолжительности - 0,5 сек каждая команда. 
+Т.е. управление будет выглядеть так: 
+1. Управление реле - нажал иконку - вкл - нажал - выкл. Таких два выхода, иконки "канал 1"  и "канал 2".
+2.Управление микродвигателем - нажал "+" - на контаты микродвигателя поступил сигнал, продолжительностью 0,5 секунд, полярность (+-), 
+нажал "-" - на контаты микродвигателя поступил сигнал с реверсом, продолжительностью 0,5 секунд, полярность (-+). 
+3. Желательно счетчик нажатий, отображение на иконке со знаком "+" и "-" цифрами, например начальное положение "0",
+после двух нажатий иконки "+" - на счетчике "+2", следом жмем "-" пять раз - на счетчике "-3" и так далее, нумерация 99 знаков в каждую сторону.
+Возможно ли хранить состояние счетчика при выключении/включении любой части устройства?
+
+Импульс на микродвигатель возможно регулировать? Шаг 0,5 секунд, от 0,5 до 20. Индикация суммирует шаги, а не команды.
+Также можно вынести разъемы для возможности механического управления (дублирования команд кнопками) - может пригодиться.
+
+достаточно 2 на мотор (импульс +- и -+) и 2 на реле. Остальные можно не задействовать (выключить их меню в прошивке),
+но, думаю, используем по мере усложнения устройства позже. 
+
+
+*/
 
 
 #include <Wire.h>
@@ -14,7 +50,7 @@
 #include <XBee.h>
 
 #define led_13 13  
-#define KN1 A8  
+#define KN1 A8   
 #define KN2 A9  
 #define KN3 A7 
 #define KN4 A10  
@@ -317,10 +353,9 @@ void set_time()
   RTC.adjust(set_time);
 }
 
-
 void drawGlavMenu()
 {
-	 myGLCD.setBackColor( 0, 0, 255);
+	myGLCD.setBackColor( 0, 0, 255);
 
 	myGLCD.setColor(0, 0, 255);                    //1
 	myGLCD.fillRoundRect (5, 5, 94, 90);
@@ -542,9 +577,6 @@ void test_power()
     myGLCD.setFont(BigFont);
   }
 }
- 
-
-
 void drawButtons0_1() // Отображение цифровой клавиатуры
 {
 	 myGLCD.setBackColor( 0, 0, 255);
@@ -976,6 +1008,128 @@ while (true)
 	}
   }
 }
+void draw_menu1()
+{
+	myGLCD.setBackColor (0, 0, 255);
+
+	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.fillRoundRect (5, 5, 234, 60);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 5, 234, 60);
+
+	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.fillRoundRect (5, 63, 234, 118);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 63, 234, 118);	
+
+	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.fillRoundRect (5, 121, 234, 176);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 121, 234, 176);
+
+	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.fillRoundRect (5, 179, 234, 234);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 179, 234, 234);
+
+	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.fillRoundRect (5, 237, 234, 292);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 237, 234, 292);
+
+
+
+
+	//myGLCD.setColor(0, 0, 255);
+	//myGLCD.fillRoundRect (5, 237, 118, 292);
+	//myGLCD.setColor(255, 255, 255);
+	//myGLCD.drawRoundRect (5, 237, 118, 292);
+	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	//myGLCD.print(buffer, 24, 257);                                   // "Выход"
+	//
+	//myGLCD.setColor(0, 0, 255);
+	//myGLCD.fillRoundRect (121, 237, 234, 292);
+	//myGLCD.setColor(255, 255, 255);
+	//myGLCD.drawRoundRect (121, 237, 234, 292);
+	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[1])));
+	//myGLCD.print(buffer, 145, 257);                                 // "Ввод"
+ //	myGLCD.setBackColor (0, 0, 0);
+}
+
+void draw_menu2()
+{
+
+}
+
+void klav_menu1()
+{
+while (true)
+  {
+	int x,y;
+    if (myTouch.dataAvailable())
+    {
+      myTouch.read();
+      x = myTouch.getX();
+      y = myTouch.getY();
+	  if ((x >= 5) && (x <= 234))                                    // Первый ряд
+      {
+       if ((y >= 5) && (y <= 60))                                   // Button: 1
+        {
+          waitForIt(5, 5, 234, 60);
+  
+        }
+        if ((y >= 63) && (y <= 118))                                // Button: 2
+        {
+          waitForIt(5, 63, 234, 118);
+ 
+        }
+        if ((y >= 121) && (y <= 176))                               // Button: 3
+        {
+          waitForIt(5, 121, 234, 176);
+ 
+        }
+        if ((y >= 179) && (y <= 234))                               // Button: 4
+        {
+          waitForIt(5, 179, 234, 234);
+
+        }
+		if ((y >= 237) && (y <= 292))                               // Button: 5
+        {
+          waitForIt(5, 237, 234, 292);
+
+        }
+
+	  }
+
+
+
+	  //if ((y >= 179) && (y <= 234))                                           // Четвертый ряд
+   //   {
+   //     if ((x >= 5) && (x <= 118))                                           // Button: "Отмена"
+   //     {
+   //       waitForIt(5, 179, 118, 234);
+   //       stCurrent[0] = '\0';
+   //       stCurrentLen = 0;
+   //       myGLCD.setColor(0, 0, 0);
+   //       myGLCD.fillRect(0, 300, 239, 319);                                   // Очистить строку на дисплее
+   //     }
+   //     if ((x >= 121) && (x <= 234)) // Button: "Выход"
+   //     {
+   //       waitForIt(121, 179, 234, 234);
+   //      //myGLCD.clrScr();
+   //       //myGLCD.setBackColor(VGA_BLACK);
+   //       //ret = 1;
+   //       stCurrent[0] = '\0';
+   //       stCurrentLen = 0;
+   //       //break;
+   //     }
+	  //}
+	}
+  }
+
+}
+
+
 
 void waitForIt(int x1, int y1, int x2, int y2)
 {
@@ -1509,6 +1663,50 @@ void time_flag_start()
 	 timeF = millis();
 	 if (timeF>60000) flag_time = 1;
  }
+void ZigBee_Set_Network()
+{
+	/*
+	lenStr = 4;
+	
+	draw_klavaZigBee();
+	klava_swichZegBee();
+	if (ret == 1)
+	{
+		ret = 0;
+		return;
+	}
+	strcpy(temp_stLast,stLast);
+	if (ret == 1)
+		{ 
+			ret = 0;
+			return;
+		}
+							
+	long int li1 = strtol(temp_stLast, NULL, 16); // преобразовать первую часть строки в значение HEX	
+						
+	byte *m = (byte *)&li1; //Разложить данные младшего адреса координатора побайтно для записи в память
+	for (int i=0; i<2; i++)
+		{
+			i2c_eeprom_write_byte(deviceaddress, i+adr_zigbee_network, m[i]); // Записать в память данные младшего адреса координатора
+		}
+	commandValue[0]= i2c_eeprom_read_byte( deviceaddress, 1+adr_zigbee_network);
+	commandValue[1]= i2c_eeprom_read_byte( deviceaddress, 0+adr_zigbee_network);
+
+	myGLCD.print("                          ", CENTER, 224);
+	myGLCD.print(" OK !", RIGHT, 224);// ОК!
+	delay(1500);
+			  
+	if(strcmp(temp_stLast,stLast)!=0 ||stCurrentLen1 > 4 )
+		{
+			myGLCD.print("                         ", CENTER, 224);
+			myGLCD.print(txt_err_pass_user, CENTER, 224);// Ошибка ввода!
+			result_minus = 0;
+			delay(1500);
+			return;
+		}
+	test_arRequestMod();
+	*/
+ }
 void sendAtCommand() 
 {
 	int i10;
@@ -1923,7 +2121,8 @@ void setup()
 	//drawButtonsTXT();
 	//drawButtonsABCDEF();
 
-	drawGlavMenu();
+	//drawGlavMenu();
+		 draw_menu1();
 
 	Serial.println(" ");                                   //
 	Serial.println("System initialization OK!.");          // Информация о завершении настройки
@@ -1931,8 +2130,9 @@ void setup()
 
 void loop()
 {
-	test_power();
-	klav_Glav_Menu();
+	klav_menu1();
+	//test_power();
+	//klav_Glav_Menu();
 	//klav1();
 	//klavABCDEF();
 	delay(100);
