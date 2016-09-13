@@ -97,6 +97,22 @@ void klav1();
 void klavABCDEF();
 void waitForIt(int x1, int y1, int x2, int y2);
 void updateStr(int val);
+void ZigBeeRead();
+void sl_XBee();
+void ZigBeeWrite();
+void XBee_Setup();
+void ZigBee_status();
+void time_flag_start();
+void sendAtCommand();
+void sendAtCommand_ar();
+void sendRemoteAtCommand();
+void testRemoteAtCommand();
+void test_arRequestMod();
+void set_info_ZigBee();
+void ZigBee_alarm();
+byte i2c_eeprom_read_byte( int deviceaddress, unsigned int eeaddress );
+void i2c_eeprom_write_byte( int deviceaddress, unsigned int eeaddress, byte data );
+void format_memory();
 void setup_pin();
 //
 //
