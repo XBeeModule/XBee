@@ -107,9 +107,9 @@ unsigned long loopTime;
 int time_power    = 1000;
 
 //---------------------------------------------------------------------------------
-int adr_zigbee_coordinator_h = 204;       //Адрес координатора старший
-int adr_zigbee_coordinator_l = 208;       //Адрес координатора младший
-int adr_zigbee_network       = 212;       //Адрес сети
+int adr_xbee_coordinator_h   = 204;       //Адрес координатора старший
+int adr_xbee_coordinator_l   = 208;       //Адрес координатора младший
+int adr_xbee_network         = 212;       //Адрес сети
 int adr_variant_sys          = 241;       //
 int adr_n_user               = 140;                     // Адрес хранения № номера пользователя
 
@@ -129,19 +129,23 @@ const char  txt_perepolnenie[]                 PROGMEM  = "\x89""EPE""\x89O\x88H
 const char  txt_empty[]                        PROGMEM  = "\x80\x8A\x8B\x8B""EP \x89\x8A""CTO\x87!";                       // "БУФФЕР ПУСТОЙ"
 const char  txt_menu1[]                        PROGMEM  = "MEH""\x94"" 1";                                                 // "Переполнение"
 const char  txt_menu2[]                        PROGMEM  = "MEH""\x94"" 2";                                                 // "БУФФЕР ПУСТОЙ"
-const char  txt_info_ZigBee_ALL[]              PROGMEM = "\x86\xA2\xA5op\xA1""a""\xA6\x9D\xAF ZigBee";// Информация ZigBee
-const char  txt_info_ZigBee_USB[]              PROGMEM = "o\xA4\xA3p""a""\x97\xA0""e""\xA2""a"" USB port";//
-const char  txt_info_ZigBee_MY[]               PROGMEM = "Network Address MY";//
-const char  txt_info_ZigBee_CoordinatorAdr[]   PROGMEM = "Address Coordinator";//
-const char  txt_info_ZigBee_Serial[]           PROGMEM = "Serial Number SH,SL";//
-const char  txt_info_ZigBee_Network_Address[]  PROGMEM = "Network (MY) = ";//
-const char  txt_info_ZigBee_Operating_PAN_OP[] PROGMEM = "PAN ID (OP)  = ";//
-const char  txt_info_ZigBee_Operating_ID[]     PROGMEM = "ID (ID)      = ";//
-const char  txt_info_ZigBee_Chanel_CH[]        PROGMEM = "Chanel (CH)  = ";//
-const char  txt_info_ZigBee_Association[]      PROGMEM = "Association(AI)=";//
-const char  txt_info_ZigBee_Baud_Rate[]        PROGMEM = "Baud Rate(BD)=";//
-const char  txt_info_ZigBee_Voltage []         PROGMEM = "Voltage (%V) =";//
-const char  txt_return[]                       PROGMEM = "\x85""a\x97""ep\xA8\xA2\xA4\xAC \xA3poc\xA1o\xA4p";// Завершить просмотр
+const char  txt_info_XBee_ALL[]                PROGMEM = "\x86\xA2\xA5o XBee";                                             // Инфо XBee
+const char  txt_info_XBee_USB[]                PROGMEM = "o\xA4\xA3p""a""\x97\xA0""e""\xA2""a"" USB port";                 //
+const char  txt_info_XBee_MY[]                 PROGMEM = "Network Address MY";                                             //
+const char  txt_info_XBee_CoordinatorAdr[]     PROGMEM = "A\x99""pec ""\xA3""y""\xA0\xAC\xA4""a";                          // Адрес пульта
+const char  txt_info_XBee_Serial[]             PROGMEM = "A\x99""pec ""\x86\x8A N";                                        // Адрес ИУ
+const char  txt_info_XBee_Network_Address[]    PROGMEM = "Network(MY)";                                                    // Адрес сети 16 бит
+const char  txt_info_XBee_Operating_PAN_OP[]   PROGMEM = "PAN ID (OP)";                                                    // номер сети
+const char  txt_info_XBee_Operating_ID[]       PROGMEM = "ID (ID)";                                                        //
+const char  txt_info_XBee_Chanel_CH[]          PROGMEM = "Chanel (CH)";                                                    // Номер канала
+const char  txt_info_XBee_Association[]        PROGMEM = "Assoc (AI)";                                                     //
+const char  txt_info_XBee_Baud_Rate[]          PROGMEM = "Baud(BD)";                                                       //
+const char  txt_info_XBee_Voltage []           PROGMEM = "Volt(V) ";                                                       // Напряжение модуля XBee
+const char  txt_return[]                       PROGMEM = "B""\x91""XO""\x82";                                              // ВЫХОД
+const char  txt_XBee_Set[]                     PROGMEM = "Hac""\xA4""po""\x9E\x9F""a XBee";                                // Настройка XBee
+
+
+
 
 
 char buffer[30];
@@ -154,18 +158,21 @@ const char* const table_message[] PROGMEM =
  txt_empty,                        // 4 "\x80\x8A\x8B\x8B""EP \x89\x8A""CTO\x87!"                                // "БУФФЕР ПУСТОЙ"
  txt_menu1,                        // 5 "MEH""\x94"" 1";                                                         // "МЕНЮ 1"
  txt_menu2,                        // 6 "MEH""\x94"" 2";                                                         // "МЕНЮ 2"
- txt_info_ZigBee_ALL,              // 7 "\x86\xA2\xA5op\xA1""a""\xA6\x9D\xAF ZigBee";// Информация ZigBee
- txt_info_ZigBee_USB,              // 8 "o\xA4\xA3p""a""\x97\xA0""e""\xA2""a"" USB port";//
- txt_info_ZigBee_MY,               // 9 "Network Address MY";//
- txt_info_ZigBee_CoordinatorAdr,   // 10 "Address Coordinator";//
- txt_info_ZigBee_Serial,           // 11 "Serial Number SH,SL";//
- txt_info_ZigBee_Network_Address,  // 12 "Network (MY) = ";//
- txt_info_ZigBee_Operating_PAN_OP, // 13 "PAN ID (OP)  = ";//
- txt_info_ZigBee_Operating_ID,     // 14 "ID (ID)      = ";//
- txt_info_ZigBee_Chanel_CH,        // 15 "Chanel (CH)  = ";//
- txt_info_ZigBee_Association,      // 16 "Association(AI)=";//
- txt_info_ZigBee_Baud_Rate,        // 17 "Baud Rate(BD)=";//
- txt_info_ZigBee_Voltage,          // 18 "Voltage (%V) =";//
+ txt_info_XBee_ALL,                // 7 "\x86\xA2\xA5op\xA1""a""\xA6\x9D\xAF XBee";// Информация XBee
+ txt_info_XBee_USB,                // 8 "o\xA4\xA3p""a""\x97\xA0""e""\xA2""a"" USB port";//
+ txt_info_XBee_MY,                 // 9 "Network Address MY";//
+ txt_info_XBee_CoordinatorAdr,     // 10 "Addr Coordinat";//
+ txt_info_XBee_Serial,             // 11 "Number SH,SL"                                                          //
+ txt_info_XBee_Network_Address,    // 12 "Network (MY) = ";//
+ txt_info_XBee_Operating_PAN_OP,   // 13 "PAN ID (OP)  = ";//
+ txt_info_XBee_Operating_ID,       // 14 "ID (ID)      = ";//
+ txt_info_XBee_Chanel_CH,          // 15 "Chanel (CH)";//
+ txt_info_XBee_Association,        // 16 "Association(AI)";//
+ txt_info_XBee_Baud_Rate,          // 17 "Baud Rate(BD)";//
+ txt_info_XBee_Voltage,            // 18 "Voltage (%V) =";//
+ txt_return,                       // 19 "B""\x91""XO""\x82";                                                     // ВЫХОД
+ txt_XBee_Set                      // 20 "Hac""\xA4""po""\x9E\x9F""a XBee";                                       // Настройка XBee
+
 
 
 
@@ -201,10 +208,10 @@ int XBee_Addr16;// = 0xffff;
 
 int zki = 0;
 
-int Len_ZegBee = 0;
-unsigned char info_ZigBee_data[10];
-unsigned char info_ZigBee_data1[10];
-unsigned long ZigBee_data2;
+int Len_XBee = 0;
+unsigned char info_XBee_data[10];
+unsigned char info_XBee_data1[10];
+//unsigned long XBee_data2;
 char* simbol_ascii[2];
 char   cmd;
 char * pEnd;
@@ -230,6 +237,7 @@ uint8_t assocCmd[] = {'A','I'}; // Индикация присоединения
 uint8_t irCmd[]    = {'I','R'};
 uint8_t opCmd[]    = {'O','P'}; // Номер сети (PAN ID)
 uint8_t IDCmd[]    = {'I','D'}; // Номер сети (ID)
+uint8_t OICmd[]    = {'O','I'}; // Operating 16-bit PAN ID(OI)
 uint8_t MYCmd[]    = {'M','Y'}; // Номер сети (16-bit Network Adress
 uint8_t CHCmd[]    = {'C','H'}; // Номер Радиоканала
 uint8_t SCCmd[]    = {'S','C'}; // Scan Channel
@@ -237,7 +245,7 @@ uint8_t BDCmd[]    = {'B','D'}; // Скорость канала (Baud Rate )
 uint8_t VoltCmd[]  = {'%','V'}; // Напряжение питания Считывает напряжение на выводе Vcc. Для преобразования значения
 								// в мВ, поделите значение на 1023 и умножьте на 1200. Значение %V равное 0x8FE (или 2302 в
 								// десятичном виде) соответствует 2700мВ или 2.70В
-
+uint8_t TPCmd[]    = {'T','P'}; // Температура
 uint8_t dhCmd[]    = {'D','H'}; // Старший байт адреса
 uint8_t dlCmd[]    = {'D','L'}; // Младший байт адреса
 uint8_t d0Cmd[]    = {'D','0'}; //
@@ -355,6 +363,7 @@ void set_time()
 
 void drawGlavMenu()
 {
+	myGLCD.clrScr();
 	myGLCD.setBackColor( 0, 0, 255);
 
 	myGLCD.setColor(0, 0, 255);                    //1
@@ -423,10 +432,13 @@ void drawGlavMenu()
 
 void klav_Glav_Menu()
 {
-while (true)
-  {
+	int x,y;
+	drawGlavMenu();
+	while (true)
+	{
+	test_power();
+  	myGLCD.setColor(255, 255, 255);
 
-	  	myGLCD.setColor(255, 255, 255);
 	if(digitalRead(KN1) == false)
 		{
 			myGLCD.printNumI(1, 200, 60);
@@ -460,8 +472,6 @@ while (true)
 			myGLCD.printNumI(8, 200, 60);
 	}
 
-
-	int x,y;
     if (myTouch.dataAvailable())
     {
       myTouch.read();
@@ -519,29 +529,21 @@ while (true)
         }
 	  }
 
-	  if ((y >= 248) && (y <= 293))                                           // Четвертый ряд
+	  if ((y >= 248) && (y <= 293))                                // Четвертый ряд
       {
-        if ((x >= 5) && (x <= 118))                                           // Button:
+        if ((x >= 5) && (x <= 118))                                // Button: Меню 1
         {
           waitForIt(5, 248, 118, 293);
-  
+          klav_menu1();
         }
-        if ((x >= 121) && (x <= 234)) // Button: 
+        if ((x >= 121) && (x <= 234))                              // Button: Меню 1
         {
           waitForIt(121, 248, 234, 293);
- 
+          klav_menu2();
         }
 	  }
-
-
-
-
-
 	}
   }
-
-
-
 }
 
 void test_power()
@@ -1008,129 +1010,173 @@ while (true)
 	}
   }
 }
+
 void draw_menu1()
 {
+	myGLCD.clrScr();
 	myGLCD.setBackColor (0, 0, 255);
 
 	myGLCD.setColor(0, 0, 255);                    // 1
-	myGLCD.fillRoundRect (5, 5, 234, 60);
+	myGLCD.fillRoundRect (5, 28, 234, 83);
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.drawRoundRect (5, 5, 234, 60);
+	myGLCD.drawRoundRect (5, 28, 234, 83);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	myGLCD.print(buffer, CENTER, 48);  
 
 	myGLCD.setColor(0, 0, 255);                    // 1
-	myGLCD.fillRoundRect (5, 63, 234, 118);
+	myGLCD.fillRoundRect (5, 86, 234, 141);
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.drawRoundRect (5, 63, 234, 118);	
+	myGLCD.drawRoundRect (5, 86, 234, 141);	
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	myGLCD.print(buffer, CENTER, 106);  
 
 	myGLCD.setColor(0, 0, 255);                    // 1
-	myGLCD.fillRoundRect (5, 121, 234, 176);
+	myGLCD.fillRoundRect (5, 144, 234, 199);
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.drawRoundRect (5, 121, 234, 176);
+	myGLCD.drawRoundRect (5, 144, 234, 199);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	myGLCD.print(buffer, CENTER, 164);  
 
 	myGLCD.setColor(0, 0, 255);                    // 1
-	myGLCD.fillRoundRect (5, 179, 234, 234);
+	myGLCD.fillRoundRect (5, 202, 234, 257);
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.drawRoundRect (5, 179, 234, 234);
+	myGLCD.drawRoundRect (5, 202, 234, 257);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	myGLCD.print(buffer, CENTER, 222);  
 
 	myGLCD.setColor(0, 0, 255);                    // 1
-	myGLCD.fillRoundRect (5, 237, 234, 292);
+	myGLCD.fillRoundRect (5, 260, 234, 315);
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.drawRoundRect (5, 237, 234, 292);
-
-
-
-
-	//myGLCD.setColor(0, 0, 255);
-	//myGLCD.fillRoundRect (5, 237, 118, 292);
-	//myGLCD.setColor(255, 255, 255);
-	//myGLCD.drawRoundRect (5, 237, 118, 292);
-	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
-	//myGLCD.print(buffer, 24, 257);                                   // "Выход"
-	//
-	//myGLCD.setColor(0, 0, 255);
-	//myGLCD.fillRoundRect (121, 237, 234, 292);
-	//myGLCD.setColor(255, 255, 255);
-	//myGLCD.drawRoundRect (121, 237, 234, 292);
-	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[1])));
-	//myGLCD.print(buffer, 145, 257);                                 // "Ввод"
- //	myGLCD.setBackColor (0, 0, 0);
+	myGLCD.drawRoundRect (5, 260, 234, 315);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	myGLCD.print(buffer, CENTER, 280);                                   // "Выход"
 }
-
 void draw_menu2()
 {
+	myGLCD.clrScr();
+	myGLCD.setBackColor (0, 0, 255);
 
+	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.fillRoundRect (5, 28, 234, 83);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 28, 234, 83);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[7])));
+	myGLCD.print(buffer, CENTER, 48);  
+
+	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.fillRoundRect (5, 86, 234, 141);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 86, 234, 141);	
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[20])));
+	myGLCD.print(buffer, CENTER, 106);  
+
+	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.fillRoundRect (5, 144, 234, 199);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 144, 234, 199);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	myGLCD.print(buffer, CENTER, 164);  
+
+	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.fillRoundRect (5, 202, 234, 257);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 202, 234, 257);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	myGLCD.print(buffer, CENTER, 222);  
+
+	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.fillRoundRect (5, 260, 234, 315);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 260, 234, 315);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	myGLCD.print(buffer, CENTER, 280);         
 }
-
 void klav_menu1()
 {
-while (true)
-  {
 	int x,y;
-    if (myTouch.dataAvailable())
-    {
-      myTouch.read();
-      x = myTouch.getX();
-      y = myTouch.getY();
-	  if ((x >= 5) && (x <= 234))                                    // Первый ряд
-      {
-       if ((y >= 5) && (y <= 60))                                   // Button: 1
-        {
-          waitForIt(5, 5, 234, 60);
+	draw_menu1();
+	while (true)
+	{
+		if (myTouch.dataAvailable())
+		{
+			myTouch.read();
+			x = myTouch.getX();
+			y = myTouch.getY();
+			if ((x >= 5) && (x <= 234))                                  // Первый ряд
+			{
+				if ((y >= 28) && (y <= 83))                                   // Button: 1
+				{
+				waitForIt(5, 28, 234, 83);
   
-        }
-        if ((y >= 63) && (y <= 118))                                // Button: 2
-        {
-          waitForIt(5, 63, 234, 118);
+				}
+				if ((y >= 86) && (y <= 141))                                // Button: 2
+				{
+				waitForIt(5, 86, 234, 141);
  
-        }
-        if ((y >= 121) && (y <= 176))                               // Button: 3
-        {
-          waitForIt(5, 121, 234, 176);
+				}
+				if ((y >= 144) && (y <= 199))                               // Button: 3
+				{
+				waitForIt(5, 144, 234, 199);
  
-        }
-        if ((y >= 179) && (y <= 234))                               // Button: 4
-        {
-          waitForIt(5, 179, 234, 234);
+				}
+				if ((y >= 202) && (y <= 257))                               // Button: 4
+				{
+				waitForIt(5, 202, 234, 257);
 
-        }
-		if ((y >= 237) && (y <= 292))                               // Button: 5
-        {
-          waitForIt(5, 237, 234, 292);
-
-        }
-
-	  }
-
-
-
-	  //if ((y >= 179) && (y <= 234))                                           // Четвертый ряд
-   //   {
-   //     if ((x >= 5) && (x <= 118))                                           // Button: "Отмена"
-   //     {
-   //       waitForIt(5, 179, 118, 234);
-   //       stCurrent[0] = '\0';
-   //       stCurrentLen = 0;
-   //       myGLCD.setColor(0, 0, 0);
-   //       myGLCD.fillRect(0, 300, 239, 319);                                   // Очистить строку на дисплее
-   //     }
-   //     if ((x >= 121) && (x <= 234)) // Button: "Выход"
-   //     {
-   //       waitForIt(121, 179, 234, 234);
-   //      //myGLCD.clrScr();
-   //       //myGLCD.setBackColor(VGA_BLACK);
-   //       //ret = 1;
-   //       stCurrent[0] = '\0';
-   //       stCurrentLen = 0;
-   //       //break;
-   //     }
-	  //}
+				}
+				if ((y >= 260) && (y <= 315))                               // Button: 5
+				{
+				waitForIt(5, 260, 234, 315);
+				drawGlavMenu();
+				break;
+				}
+			}
+		}
 	}
-  }
-
 }
+void klav_menu2()
+{
+	int x,y;
+	draw_menu2();
+	while (true)
+	{
+		if (myTouch.dataAvailable())
+		{
+			myTouch.read();
+			x = myTouch.getX();
+			y = myTouch.getY();
+			if ((x >= 5) && (x <= 234))                                  // Первый ряд
+			{
+				if ((y >= 28) && (y <= 83))                                   // Button: 1
+				{
+				waitForIt(5, 28, 234, 83);
+                 XBee_status();                                             // Информация XBee 
+				}
+				if ((y >= 86) && (y <= 141))                                // Button: 2
+				{
+				waitForIt(5, 86, 234, 141);
+ 
+				}
+				if ((y >= 144) && (y <= 199))                               // Button: 3
+				{
+				waitForIt(5, 144, 234, 199);
+ 
+				}
+				if ((y >= 202) && (y <= 257))                               // Button: 4
+				{
+				waitForIt(5, 202, 234, 257);
 
-
-
+				}
+				if ((y >= 260) && (y <= 315))                               // Button: 5
+				{
+				waitForIt(5, 260, 234, 315);
+				drawGlavMenu();
+				break;
+				}
+			}
+		}
+	}
+}
 void waitForIt(int x1, int y1, int x2, int y2)
 {
   myGLCD.setColor(255, 0, 0);
@@ -1169,7 +1215,7 @@ void updateStr(int val)
   }
 }
 
-void ZigBeeRead()
+void XBeeRead()
 {
   xbee.readPacket();   // Получить пакет
 	
@@ -1302,9 +1348,9 @@ void sl_XBee()// формировать ответ Координатору
 		}
 //	Serial.println(field1, HEX);   
 //	Serial.println(field2, HEX);   
-	ZigBeeWrite();
+	XBeeWrite();
  }
-void ZigBeeWrite()
+void XBeeWrite()
  {
   // break down 10-bit reading into two bytes and place in payload
   //разложить 10-битный код  в два байта и поместить в полезной нагрузке
@@ -1325,7 +1371,7 @@ void ZigBeeWrite()
 
 	 //  После отправки запроса TX, мы ожидаем ответ статуса
 	 //  Ждать до половины секунды для реагирования состояния 
- ZigBeeRead();
+  XBeeRead();
   if (xbee.readPacket(500))
 	   // xbee.readPacket();
 	  {
@@ -1431,147 +1477,196 @@ void XBee_Setup()
 
 		  }	
  }
-void ZigBee_status()
+void XBee_status()
 {
 	time_flag_start();
-	int ZigBee_x, ZigBee_y, x, y;
-	myGLCD.clrScr();   // Очистить экран CENTER
+	int XBee_x, XBee_y, x, y;
+	unsigned long XBee_data2;
+	int yXBee = 32;                                                  // Стартовая точка смещения строк текста
+	int yDelta = 16;                                                 // Дельта смещения вниз
+
+	myGLCD.clrScr();                                                 // Очистить экран CENTER
 	myGLCD.setColor(0, 0, 255);
-	myGLCD.fillRoundRect (2, 2, 318, 25);
+	myGLCD.fillRoundRect (2, 2, 239, 25);                            // Нарисовать прямоугольник для текста
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.drawRoundRect (2, 2, 318, 25);
+	myGLCD.drawRoundRect (2, 2, 239, 25);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.setBackColor(0, 0, 255);
-	myGLCD.print(txt_info_ZigBee_ALL, CENTER, 5);
-
-	int yZigBee = 32;
-	int yDelta = 16;
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[7])));     // Информация XBee
+	myGLCD.print(buffer, CENTER, 5);
 							
 	myGLCD.setBackColor(0, 0, 0);
-	myGLCD.print(txt_info_ZigBee_CoordinatorAdr, CENTER, yZigBee);
-	yZigBee = yZigBee + yDelta; // Форматирование текста, смещение
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[11])));    // Номер "Number SH,SL"
+	myGLCD.print(buffer, CENTER, yXBee);
+	yXBee = yXBee + yDelta;                                          // Форматирование текста, смещение  вниз
 	myGLCD.setColor(0, 255, 255);
-	myGLCD.print(String(XBee_Addr64_MS,HEX), 35, yZigBee);
-	myGLCD.print(String(XBee_Addr64_LS,HEX), 165, yZigBee);
-	yZigBee = yZigBee + yDelta;// Форматирование текста, смещение
+	myGLCD.print("MS", LEFT, yXBee);
+	myGLCD.print(String(XBee_Addr64_MS,HEX), RIGHT, yXBee);          //
+	yXBee = yXBee + yDelta;                                          // Форматирование текста, смещение  вниз
+	myGLCD.print("LS", LEFT, yXBee);
+	myGLCD.print(String(XBee_Addr64_LS,HEX), RIGHT, yXBee);
+
+	yXBee = yXBee + yDelta;                                         // Форматирование текста, смещение
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.print(txt_info_ZigBee_Serial, CENTER, yZigBee);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[10])));   // "Addr Coordinat"
+	myGLCD.print(buffer, CENTER, yXBee);
 	myGLCD.setColor(0, 255, 255);
 	atRequest.setCommand(shCmd);  
 	sendAtCommand();
-	ZigBee_data2 = (unsigned long&)info_ZigBee_data1;
-	yZigBee = yZigBee + yDelta;// Форматирование текста, смещение
-	myGLCD.print(String(ZigBee_data2, HEX), 35, yZigBee);
-					
+	delay(100);
+	XBee_data2 = (unsigned long&)info_XBee_data1;
+	yXBee = yXBee + yDelta;                                        // Форматирование текста, смещение
+	myGLCD.print("SH", LEFT, yXBee);
+	myGLCD.print(String(XBee_data2, HEX), RIGHT, yXBee);
 	atRequest.setCommand(slCmd);  
 	sendAtCommand();
-	ZigBee_data2 = (unsigned long&)info_ZigBee_data1;
-	myGLCD.print(String(ZigBee_data2, HEX), 165, yZigBee);
+	delay(100);
+	XBee_data2 = (unsigned long&)info_XBee_data1;
+	yXBee = yXBee + yDelta;                                        // Форматирование текста, смещение
+	myGLCD.print("SL", LEFT, yXBee);
+	myGLCD.print(String(XBee_data2, HEX), RIGHT, yXBee);
 				  
 	myGLCD.setColor(255, 255, 255);
-	yZigBee = yZigBee + yDelta;// Форматирование текста, смещение
-	myGLCD.print(txt_info_ZigBee_Network_Address, LEFT, yZigBee);
+	yXBee = yXBee + yDelta;                                        // Форматирование текста, смещение
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[12])));  // "Network (MY) = "
+	myGLCD.print(buffer, LEFT, yXBee);
 	atRequest.setCommand(MYCmd);  
 	sendAtCommand();
-	ZigBee_data2 = (unsigned long&)info_ZigBee_data1;
-	//myGLCD.setColor(VGA_RED);
+    delay(100);
+	XBee_data2 = (unsigned long&)info_XBee_data1;
 	myGLCD.setColor(VGA_YELLOW);
-	myGLCD.print(String(ZigBee_data2, HEX), RIGHT, yZigBee);
+	myGLCD.print(String(XBee_data2, HEX), RIGHT, yXBee);
 
 	myGLCD.setColor(255, 255, 255);
-	yZigBee = yZigBee + yDelta;// Форматирование текста, смещение
-	myGLCD.print(txt_info_ZigBee_Operating_PAN_OP, LEFT, yZigBee);
+	yXBee = yXBee + yDelta;                                        // Форматирование текста, смещение
+//	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[12])));  // "Network (MY) = "
+	myGLCD.print("OI", LEFT, yXBee);
+	atRequest.setCommand(OICmd);  
+	sendAtCommand();
+    delay(100);
+	XBee_data2 = (unsigned long&)info_XBee_data1;
+	myGLCD.setColor(VGA_YELLOW);
+	myGLCD.print(String(XBee_data2, HEX), RIGHT, yXBee);
+
+
+
+	myGLCD.setColor(255, 255, 255);
+	yXBee = yXBee + yDelta;                                        // Форматирование текста, смещение
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[13])));  // "PAN ID (OP)  = "
+	myGLCD.print(buffer, LEFT, yXBee);
 	atRequest.setCommand(opCmd);  
 	sendAtCommand();
-	ZigBee_data2 = (unsigned long&)info_ZigBee_data1;
+	delay(100);
+	XBee_data2 = (unsigned long&)info_XBee_data1;
 	myGLCD.setColor(VGA_YELLOW);
-	myGLCD.print(String(ZigBee_data2, HEX), RIGHT, yZigBee);
-
+	myGLCD.print(String(XBee_data2, HEX), RIGHT, yXBee);
+	
 	myGLCD.setColor(255, 255, 255);
-	yZigBee = yZigBee + yDelta;// Форматирование текста, смещение
-	myGLCD.print(txt_info_ZigBee_Operating_ID, LEFT, yZigBee);
+	yXBee = yXBee + yDelta;                                        // Форматирование текста, смещение
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[14])));  // "ID (ID)      = "
+	myGLCD.print(buffer, LEFT, yXBee);
 	atRequest.setCommand(IDCmd);  
 	sendAtCommand();
-	ZigBee_data2 = (unsigned long&)info_ZigBee_data1;
+    delay(100);
+	XBee_data2 = (unsigned long&)info_XBee_data1;
 	myGLCD.setColor(VGA_YELLOW);
-	myGLCD.print(String(ZigBee_data2, HEX), RIGHT, yZigBee);
-
+	myGLCD.print(String(XBee_data2, HEX), RIGHT, yXBee);
 
 	myGLCD.setColor(255, 255, 255);
-	yZigBee = yZigBee + yDelta;// Форматирование текста, смещение
-	myGLCD.print(txt_info_ZigBee_Chanel_CH, LEFT, yZigBee);
+	yXBee = yXBee + yDelta;// Форматирование текста, смещение
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[15])));  // "Chanel (CH)  = "
+	myGLCD.print(buffer, LEFT, yXBee);
 	atRequest.setCommand(CHCmd);  
 	sendAtCommand();
-	ZigBee_data2 = (unsigned long&)info_ZigBee_data1;
+	XBee_data2 = (unsigned long&)info_XBee_data1;
 	myGLCD.setColor(VGA_YELLOW);
-	myGLCD.print("0x",258, yZigBee);
-	myGLCD.print(String(ZigBee_data2, HEX), RIGHT, yZigBee);
+	myGLCD.print("0x",193, yXBee);
+	myGLCD.print(String(XBee_data2, HEX), RIGHT, yXBee);
 
 	myGLCD.setColor(255, 255, 255);
-	yZigBee = yZigBee + yDelta;// Форматирование текста, смещение
-	myGLCD.print(txt_info_ZigBee_Association, LEFT, yZigBee);
+	yXBee = yXBee + yDelta;// Форматирование текста, смещение
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[16])));  
+	myGLCD.print(buffer, LEFT, yXBee);
 	atRequest.setCommand(assocCmd); 
 	sendAtCommand();
-	ZigBee_data2 = (unsigned long&)info_ZigBee_data1;
+	XBee_data2 = (unsigned long&)info_XBee_data1;
 	myGLCD.setColor(VGA_YELLOW);
-	myGLCD.print(String(ZigBee_data2, HEX), RIGHT, yZigBee);
+	myGLCD.print(String(XBee_data2, HEX), RIGHT, yXBee);
 
 
 	myGLCD.setColor(255, 255, 255);
-	yZigBee = yZigBee + yDelta;// Форматирование текста, смещение
-	myGLCD.print(txt_info_ZigBee_Baud_Rate, LEFT, yZigBee);
+	yXBee = yXBee + yDelta;// Форматирование текста, смещение
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[17])));  
+	myGLCD.print(buffer, LEFT, yXBee);
 	atRequest.setCommand(BDCmd); 
 	sendAtCommand();
-	ZigBee_data2 = (unsigned long&)info_ZigBee_data1;
+	XBee_data2 = (unsigned long&)info_XBee_data1;
 	myGLCD.setColor(VGA_YELLOW);
-	switch (ZigBee_data2)
+	switch (XBee_data2)
 		{
 		case 0:
-			ZigBee_data2 = 1200;
+			XBee_data2 = 1200;
 			break;
 		case 1:
-			ZigBee_data2 = 2400;
+			XBee_data2 = 2400;
 			break;
 		case 2:
-			ZigBee_data2 = 4800;
+			XBee_data2 = 4800;
 			break;
 		case 3:
-			ZigBee_data2 = 9600;
+			XBee_data2 = 9600;
 			break;
 		case 4:
-			ZigBee_data2 = 19200;
+			XBee_data2 = 19200;
 			break;
 		case 5:
-			ZigBee_data2 = 38400;
+			XBee_data2 = 38400;
 			break;
 		case 6:
-			ZigBee_data2 = 57600;
+			XBee_data2 = 57600;
 			break;
 		case 7:
-			ZigBee_data2 = 115200;
+			XBee_data2 = 115200;
 			break;
-						
+			default:
+           XBee_data2 = 000000;
 		}
-	myGLCD.print(String(ZigBee_data2), RIGHT, yZigBee);
+
+	myGLCD.print(String(XBee_data2), RIGHT, yXBee);
 
 	myGLCD.setColor(255, 255, 255);
-	yZigBee = yZigBee + yDelta;// Форматирование текста, смещение
-	myGLCD.print(txt_info_ZigBee_Voltage, LEFT, yZigBee);
+	yXBee = yXBee + yDelta;// Форматирование текста, смещение
+
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[18])));   // "Volt(V) ";
+	myGLCD.print(buffer, LEFT, yXBee);
 	atRequest.setCommand(VoltCmd);   
 	sendAtCommand();
-	ZigBee_data2 = (unsigned long&)info_ZigBee_data1;
+	XBee_data2 = (unsigned long&)info_XBee_data1;
 	myGLCD.setColor(VGA_YELLOW);
-
-	float ZigBee_data3 = ZigBee_data2;
-
-	myGLCD.printNumF(ZigBee_data3/1023*1200/1000,2, RIGHT, yZigBee,'.',2);
-	myGLCD.setColor(0, 0, 255);
-	myGLCD.fillRoundRect (2, 216, 318, 238);
+	float XBee_data3 = XBee_data2;
+	myGLCD.printNumF(XBee_data3/1023*1200/1000,2, RIGHT, yXBee,'.',2);
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.drawRoundRect (2, 216, 318, 238);
+	yXBee = yXBee + yDelta;                                        // Форматирование текста, смещение
+//	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[12])));  // "Network (MY) = "
+	myGLCD.print("TP", LEFT, yXBee);
+	atRequest.setCommand(TPCmd);  
+	sendAtCommand();
+    delay(100);
+	XBee_data2 = (unsigned long&)info_XBee_data1;
+	myGLCD.setColor(VGA_YELLOW);
+	myGLCD.print(String(XBee_data2, HEX), RIGHT, yXBee);
+
+	myGLCD.setColor(0, 0, 255);                                       // Нарисовать прямоугольник для текста
+	myGLCD.fillRoundRect (2, 296, 238, 318);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (2, 296, 238, 318);
 	myGLCD.setBackColor(0, 0, 255);
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.print(txt_return, CENTER, 218);// Завершить просмотр
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[19])));
+	myGLCD.print(buffer, CENTER, 299);                               // Завершить просмотр
+
+	while (myTouch.dataAvailable()) {}
+
 					
 		 while (true)
 			{
@@ -1580,76 +1675,14 @@ void ZigBee_status()
 					  myTouch.read();
 					  x=myTouch.getX();
 					  y=myTouch.getY();
-
-				// if ((y>=216) && (y<=240))  // Upper row   
-				if ((y>=2) && (y<=240))  // Upper row  
+				if ((y>=1) && (y<=319))  // Upper row  
 				  {
-					if ((x>=2) && (x<=319))  // Выход
+					if ((x>=1) && (x<=239))  // Выход
 					  {
-							waitForIt(10, 10, 60, 60);
+							waitForIt(1, 1, 239, 319);
 
-							/*Serial.println();	  
-							Serial.println("Info ZigBee");
-							Serial.println();	
-							Serial.print("Address Coordinator MS ");
-							Serial.println(XBee_Addr64_MS,HEX);	
-							Serial.print("Address Coordinator LS ");
-							Serial.println(XBee_Addr64_LS,HEX);
-							*/
+							draw_menu2();
 
-							//// get SH
-							//Serial.print("Serial Number (SH) ");
-							//sendAtCommand();
-							//                         
-							//// set command to SL
-							//Serial.print("Serial Number (SL) ");
-							//atRequest.setCommand(slCmd);  
-							//sendAtCommand();
-						
-							
-
-							//// set command to AI
-							//Serial.print("Association Indication (AI) ");
-							//atRequest.setCommand(assocCmd);  
-							//sendAtCommand();
-
-							//Serial.print("Operating PAN ID (OP) ");
-							//atRequest.setCommand(opCmd);  
-							//sendAtCommand();
-
-						/*	Serial.print("16-bit Network Address(MY) ");
-							atRequest.setCommand(MYCmd);   
-							sendAtCommand();
-*/
-					/*		Serial.print("Operating Chanel (CH) 0x");
-							atRequest.setCommand(CHCmd);  
-							sendAtCommand();
-							*/
-
-							//Serial.println("(0x0B-2405, 0x0C-2410, 0x0D-2415, 0x0E-2420, 0x0F-2425, 0x10-2430, 0x11-2435, 0x12-2440)");
-							
-							//Serial.println("0x13-2445, 0x14-2450, 0x15-2455, 0x16-2460, 0x17-2465, 0x18-2470, 0x19-2475, 0x1A-2480");//
-						/*
-							Serial.print("Scan Chanels (SC) ");
-							atRequest.setCommand(SCCmd);  
-							sendAtCommand();*/
-				/*
-							Serial.print("Baud Rate (BD) ");
-							atRequest.setCommand(BDCmd);  
-							sendAtCommand();
-							Serial.println("(0-1200, 1-2400, 2-4800, 3-9600, 4-19200, 5-38400, 6-57600, 7-115200)");
-*/
-							/*Serial.print("Supply Voltage (%V) ");
-							atRequest.setCommand(VoltCmd);  
-							sendAtCommand();*/
-						/*	  
-							Serial.print("Destination Address High (DH) ");
-							atRequest.setCommand(dhCmd);  
-							sendAtCommand();
-
-							Serial.print("Destination Address Low (DL) ");
-							atRequest.setCommand(dlCmd);  
-							sendAtCommand();*/
 						   return;
 					  }
 				   }
@@ -1663,7 +1696,7 @@ void time_flag_start()
 	 timeF = millis();
 	 if (timeF>60000) flag_time = 1;
  }
-void ZigBee_Set_Network()
+void XBee_Set_Network()
 {
 	/*
 	lenStr = 4;
@@ -1711,9 +1744,6 @@ void sendAtCommand()
 {
 	int i10;
 
- // Serial.println("Sending command to the XBee");
-
-  // send the command
   xbee.send(atRequest);
 
   // wait up to 5 seconds for the status response
@@ -1734,21 +1764,21 @@ void sendAtCommand()
 				 
 					if (atResponse.getValueLength() > 0) 
 						{
-							Len_ZegBee = atResponse.getValueLength();
+							Len_XBee = atResponse.getValueLength();
 						//  Serial.print("Command value length is ");
 						//  Serial.println(atResponse.getValueLength(), DEC);
 						//  Serial.print("Command value: ");
-							int i11=Len_ZegBee-1;
-							info_ZigBee_data1[0] = 0;
-							info_ZigBee_data1[1] = 0;
-							info_ZigBee_data1[2] = 0;
-							info_ZigBee_data1[3] = 0;
+							int i11=Len_XBee-1;
+							info_XBee_data1[0] = 0;
+							info_XBee_data1[1] = 0;
+							info_XBee_data1[2] = 0;
+							info_XBee_data1[3] = 0;
 
 						  for (i10 = 0; i10 < atResponse.getValueLength(); i10++) 
 							  {
-								info_ZigBee_data[i10] = atResponse.getValue()[i10];
+								info_XBee_data[i10] = atResponse.getValue()[i10];
 								//Serial.print(info_ZigBee_data[i10], HEX);
-								info_ZigBee_data1[i11] = info_ZigBee_data[i10];
+								info_XBee_data1[i11] = info_XBee_data[i10];
 								i11--;
 							  }
 				
@@ -1780,6 +1810,7 @@ void sendAtCommand()
 			  Serial.println("No response from radio1");  
 			}
 	  }
+  delay(100);
 }
 void sendAtCommand_ar() 
 {
@@ -1811,21 +1842,21 @@ void sendAtCommand_ar()
 				 
 					if (atResponse.getValueLength() > 0) 
 						{
-							Len_ZegBee = atResponse.getValueLength();
+							Len_XBee = atResponse.getValueLength();
 						//  Serial.print("Command value length is ");
 						//  Serial.println(atResponse.getValueLength(), DEC);
 						//  Serial.print("Command value: ");
-							int i11=Len_ZegBee-1;
-							info_ZigBee_data1[0] = 0;
-							info_ZigBee_data1[1] = 0;
-							info_ZigBee_data1[2] = 0;
-							info_ZigBee_data1[3] = 0;
+							int i11=Len_XBee-1;
+							info_XBee_data1[0] = 0;
+							info_XBee_data1[1] = 0;
+							info_XBee_data1[2] = 0;
+							info_XBee_data1[3] = 0;
 
 						  for (i10 = 0; i10 < atResponse.getValueLength(); i10++) 
 							  {
-								info_ZigBee_data[i10] = atResponse.getValue()[i10];
+								info_XBee_data[i10] = atResponse.getValue()[i10];
 								//Serial.print(info_ZigBee_data[i10], HEX);
-								info_ZigBee_data1[i11] = info_ZigBee_data[i10];
+								info_XBee_data1[i11] = info_XBee_data[i10];
 								i11--;
 							  }
 				
@@ -1843,7 +1874,7 @@ void sendAtCommand_ar()
 					myGLCD.drawRoundRect (278, 92, 318, 132);
 					myGLCD.setBackColor(0, 0, 0);
 					delay(200); 
-					ZigBee_alarm();
+					XBee_alarm();
 					delay(1000);
 					myGLCD.setColor(0, 0, 0);
 					myGLCD.fillRoundRect (278, 92, 318, 132);
@@ -1963,24 +1994,24 @@ arRequestMod.clearCommandValue();
 
 
  }
-void set_info_ZigBee()
+void set_info_XBee()
  {
 	 //Программа ввостановления данных ZigBee из памяти.
 		   byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
-				y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_zigbee_coordinator_h);
-				y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_zigbee_coordinator_h);
-				y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_zigbee_coordinator_h);
-				y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_zigbee_coordinator_h);
+				y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_xbee_coordinator_h);
+				y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_xbee_coordinator_h);
+				y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_coordinator_h);
+				y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_coordinator_h);
 				XBee_Addr64_MS = (unsigned long&) y;  // Сложить восстановленные текущие данные
 
 		//	   y[4];   ; //Чтение из памяти текущих данных младшего адреса координатора
-				y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_zigbee_coordinator_l);
-				y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_zigbee_coordinator_l);
-				y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_zigbee_coordinator_l);
-				y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_zigbee_coordinator_l);
+				y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_xbee_coordinator_l);
+				y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_xbee_coordinator_l);
+				y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_coordinator_l);
+				y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_coordinator_l);
 				XBee_Addr64_LS = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
 }
-void ZigBee_alarm()
+void XBee_alarm()
 {
 	 //word val;
 	 //word i = 0;
@@ -2059,9 +2090,6 @@ void format_memory()
 }
 
 
-
-
-
 void setup_pin()
 {
 	pinMode(led_13, OUTPUT);                             //
@@ -2090,7 +2118,8 @@ void setup()
 {
 	Serial.begin(9600);                                    // Подключение к USB ПК
 	Serial1.begin(115200);                                 // Подключение к
-	Serial2.begin(115200);                                 // Подключение к
+	Serial2.begin(9600);                                 // Подключение к
+	xbee.setSerial(Serial2);
 	Serial3.begin(115200);                                 // Подключение к
 	Serial.println(" ");
 	Serial.println(" ***** Start system  *****");
@@ -2116,25 +2145,19 @@ void setup()
 	Serial.print(F("FreeRam: "));
 	Serial.println(FreeRam());
 	format_memory();
-
+	set_info_XBee();
 	//drawButtons0_1();
 	//drawButtonsTXT();
 	//drawButtonsABCDEF();
 
 	//drawGlavMenu();
-		 draw_menu1();
-
 	Serial.println(" ");                                   //
 	Serial.println("System initialization OK!.");          // Информация о завершении настройки
 }
 
 void loop()
 {
-	klav_menu1();
-	//test_power();
-	//klav_Glav_Menu();
-	//klav1();
-	//klavABCDEF();
+	klav_Glav_Menu();
 	delay(100);
 
 }
