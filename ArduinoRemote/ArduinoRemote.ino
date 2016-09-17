@@ -2155,13 +2155,13 @@ void read_HL_mem_XBee(int )
 				y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_coordinator_l);
 				XBee_Addr64_LS = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
 }
-void view_adr_device()
+void draw_view_adr_device()
 {
 	int XBee_x, XBee_y, x, y;
 	int yXBee = 32;                                                  // Стартовая точка смещения строк текста
 	int yDelta = 16;                                                 // Дельта смещения вниз
 	int n_page = 1;
-	int adr_device = 0;
+	//int adr_device = 0;
 	myGLCD.clrScr();                                                 // Очистить экран CENTER
 	myGLCD.setColor(0, 0, 255);
 	myGLCD.fillRoundRect (2, 2, 239, 25);                            // Нарисовать прямоугольник для текста
@@ -2199,7 +2199,15 @@ void view_adr_device()
 	myGLCD.setColor(255, 255, 255);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[19])));
 	myGLCD.print(buffer, CENTER, 290);                                // Завершить просмотр
-	while (myTouch.dataAvailable()) {}
+}
+
+void view_adr_device()
+{
+	int x, y;
+	int n_page = 1;
+	int adr_device = 0;
+	draw_view_adr_device();
+ 	while (myTouch.dataAvailable()) {}
 	view_page(n_page);
 
 	while (true)
@@ -2221,6 +2229,8 @@ void view_adr_device()
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					Serial.println(adr_device);
+					draw_view_adr_device();
+					view_page(n_page);
 				}
 			 if ((y>=64) && (y<=96))                                  // Строка 2
 				{
@@ -2233,6 +2243,8 @@ void view_adr_device()
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					Serial.println(adr_device);
+					draw_view_adr_device();
+					view_page(n_page);
 				}
 			if ((y>=96) && (y<=128))                                  // Строка 3
 				{
@@ -2245,6 +2257,8 @@ void view_adr_device()
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					Serial.println(adr_device);
+					draw_view_adr_device();
+					view_page(n_page);
 				}
 			if ((y>=128) && (y<=160))                                  // Строка 4
 				{
@@ -2259,6 +2273,8 @@ void view_adr_device()
 					    adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 					    Serial.println(adr_device);
+						draw_view_adr_device();
+						view_page(n_page);
 					}
 				}
 			if ((y>=160) && (y<=192))                                  // Строка 5
@@ -2274,6 +2290,8 @@ void view_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 					    Serial.println(adr_device);
+						draw_view_adr_device();
+					    view_page(n_page);
 					}
 				}
 			if ((y>=192) && (y<=224))                                  // Строка 6

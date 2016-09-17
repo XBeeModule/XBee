@@ -117,6 +117,7 @@ void sendRemoteAtCommand();
 void testRemoteAtCommand();
 void test_arRequestMod();
 void read_HL_mem_XBee(int );
+void draw_view_adr_device();
 void view_adr_device();
 void view_page(int block_n);
 void read_adr_device(int N_device);
