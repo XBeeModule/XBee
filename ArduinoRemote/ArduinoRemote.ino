@@ -1205,7 +1205,7 @@ void klav_menu2()
 				if ((y >= 144) && (y <= 199))                               // Button: 3
 				{
 					waitForIt(5, 144, 234, 199);
-					XBee_SetL(); // если верно - выполнить пункт меню
+					
 					draw_menu2();
 				}
 				if ((y >= 202) && (y <= 257))                               // Button: 4
@@ -1775,7 +1775,7 @@ void updateStrXBee(int val) // Проверка длины строки при вводе адреса XBee
 }
 void XBee_SetH(int adr_xbee_h)
 {
-	lenStr = 8;
+	int _adr_xbee_h = adr_xbee_h;
 	klavXBee();
 	if (ret == 1)
 		{
@@ -1789,32 +1789,32 @@ void XBee_SetH(int adr_xbee_h)
 		byte *m = (byte *)&li1;                                                       //Разложить данные старшего адреса координатора побайтно для записи в память
 		for (int i=0; i<4; i++)
 			{
-				i2c_eeprom_write_byte(deviceaddress, i+adr_xbee_h+2, m[i]); // Записать в память данные старшего адреса координатора
+				i2c_eeprom_write_byte(deviceaddress, i+_adr_xbee_h+2, m[i]); // Записать в память данные старшего адреса координатора
 			}
 								
-	byte y[4];   ;                                                                    //Чтение из памяти текущих данных старшего адреса координатора
-		y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_xbee_h+2);
-		y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_xbee_h+2);
-		y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_h+2);
-		y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_h+2);
-		XBee_Addr64_MS = (unsigned long&) y;                                          // Сложить восстановленные текущие данные в 
-		myGLCD.print("                      ", CENTER, 300);
-		myGLCD.print(" OK !", RIGHT, 300);// ОК!
-		delay(1500);
+	//byte y[4];   ;                                                                    //Чтение из памяти текущих данных старшего адреса координатора
+	//	y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_xbee_h+2);
+	//	y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_xbee_h+2);
+	//	y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_h+2);
+	//	y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_h+2);
+	//	XBee_Addr64_MS = (unsigned long&) y;                                          // Сложить восстановленные текущие данные в 
+	//	myGLCD.print("                      ", CENTER, 300);
+	//	myGLCD.print(" OK !", RIGHT, 300);// ОК!
+	//	delay(1500);
 					  
-	if(strcmp(temp_stLast,stLast)!=0 ||stCurrentLen1 > 8 )
-		{
-			myGLCD.print("                         ", CENTER, 300);
-			strcpy_P(buffer, (char*)pgm_read_word(&(table_message[21])));
-			myGLCD.print(buffer, CENTER, 300);                    // Ошибка ввода!
-			result_minus = 0;
-			delay(1500);
-			return;
-		}
+	//if(strcmp(temp_stLast,stLast)!=0 ||stCurrentLen1 > 8 )
+	//	{
+	//		myGLCD.print("                         ", CENTER, 300);
+	//		strcpy_P(buffer, (char*)pgm_read_word(&(table_message[21])));
+	//		myGLCD.print(buffer, CENTER, 300);                    // Ошибка ввода!
+	//		result_minus = 0;
+	//		delay(1500);
+	//		return;
+	//	}
 }
-void XBee_SetL()
+void XBee_SetL(int adr_xbee_h)
 {
-	lenStr = 8;
+	int _adr_xbee_h = adr_xbee_h;
 	klavXBee();
 	if (ret == 1)
 		{
@@ -1829,28 +1829,28 @@ void XBee_SetL()
 			byte *m = (byte *)&li1; //Разложить данные младшего адреса координатора побайтно для записи в память
 			for (int i=0; i<4; i++)
 				{
-					i2c_eeprom_write_byte(deviceaddress, i+adr_xbee_coordinator_l, m[i]);   // Записать в память данные младшего адреса координатора
+					i2c_eeprom_write_byte(deviceaddress, i+_adr_xbee_h+6, m[i]);    // Записать в память данные младшего адреса координатора
 				}
-								
-		byte y[4];   ;                                                                      //Чтение из памяти текущих данных младшего адреса координатора
-			y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_xbee_coordinator_l);
-			y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_xbee_coordinator_l);
-			y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_coordinator_l);
-			y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_coordinator_l);
-			XBee_Addr64_LS = (unsigned long&) y;                                            // Сложить восстановленные текущие данные в 
-			myGLCD.print("                          ", CENTER, 300);
-			myGLCD.print(" OK !", RIGHT, 300);// ОК!
-			delay(1500);
+		//						
+		//byte y[4];   ;                                                                      //Чтение из памяти текущих данных младшего адреса координатора
+		//	y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_xbee_coordinator_l);
+		//	y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_xbee_coordinator_l);
+		//	y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_coordinator_l);
+		//	y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_coordinator_l);
+		//	XBee_Addr64_LS = (unsigned long&) y;                                            // Сложить восстановленные текущие данные в 
+		//	myGLCD.print("                          ", CENTER, 300);
+		//	myGLCD.print(" OK !", RIGHT, 300);// ОК!
+		//	delay(1500);
   
-	if(strcmp(temp_stLast,stLast)!=0 ||stCurrentLen1 > 8 )
-		{
-			myGLCD.print("                         ", CENTER, 300);
-			strcpy_P(buffer, (char*)pgm_read_word(&(table_message[21])));
-			myGLCD.print(buffer, CENTER, 300);                                          // Ошибка ввода!
-			result_minus = 0;
-			delay(1500);
-			return;
-		}
+	//if(strcmp(temp_stLast,stLast)!=0 ||stCurrentLen1 > 8 )
+	//	{
+	//		myGLCD.print("                         ", CENTER, 300);
+	//		strcpy_P(buffer, (char*)pgm_read_word(&(table_message[21])));
+	//		myGLCD.print(buffer, CENTER, 300);                                          // Ошибка ввода!
+	//		result_minus = 0;
+	//		delay(1500);
+	//		return;
+	//	}
  }
 void XBee_Set_Network()
 {
@@ -2228,6 +2228,7 @@ void view_adr_device()
                     myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
+					XBee_SetL(adr_device);
 					Serial.println(adr_device);
 					draw_view_adr_device();
 					view_page(n_page);
@@ -2242,6 +2243,7 @@ void view_adr_device()
                     myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
+					XBee_SetL(adr_device);
 					Serial.println(adr_device);
 					draw_view_adr_device();
 					view_page(n_page);
@@ -2256,6 +2258,7 @@ void view_adr_device()
                     myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
+					XBee_SetL(adr_device);
 					Serial.println(adr_device);
 					draw_view_adr_device();
 					view_page(n_page);
@@ -2272,6 +2275,7 @@ void view_adr_device()
 						myGLCD.setBackColor(0, 0, 0);
 					    adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
+						XBee_SetL(adr_device);
 					    Serial.println(adr_device);
 						draw_view_adr_device();
 						view_page(n_page);
@@ -2289,6 +2293,7 @@ void view_adr_device()
 						myGLCD.setBackColor(0, 0, 0);
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
+						XBee_SetL(adr_device);
 					    Serial.println(adr_device);
 						draw_view_adr_device();
 					    view_page(n_page);
@@ -2306,7 +2311,10 @@ void view_adr_device()
 						myGLCD.setBackColor(0, 0, 0);
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
+						XBee_SetL(adr_device);
 					    Serial.println(adr_device);
+						draw_view_adr_device();
+					    view_page(n_page);
 					}
 				}
 
@@ -2362,7 +2370,7 @@ void view_page(int block_n)
 	int yXBee = 32;                                                  // Стартовая точка смещения строк текста
 	int yDelta = 16;                                                 // Дельта смещения вниз
 	int n_bl_max = 6;
-	if(block_n == 43) n_bl_max = 3;
+	if(block_n == 43) n_bl_max = 4;
 	int adr_device = adr_start_baseHL + ((block_n-1) * 10*6) ;
 	myGLCD.setColor(0, 0, 0);
 	myGLCD.fillRoundRect (1, 26, 240, 232);                            // Нарисовать прямоугольник для текста
@@ -2371,6 +2379,7 @@ void view_page(int block_n)
 
 	for (int n_bl = 0; n_bl<n_bl_max; n_bl++)
 	{
+		Serial.println(adr_device);
 		read_adr_device(adr_device);
 		myGLCD.printNumI(((block_n-1) * 6)+n_bl+1, 2, yXBee+8);  
 		myGLCD.print("HS", 60, yXBee);
@@ -2378,7 +2387,8 @@ void view_page(int block_n)
 		yXBee = yXBee + yDelta;                                          // Форматирование текста, смещение  вниз
 		myGLCD.print("LS", 60, yXBee);
 		myGLCD.print(String(XBee_Addr64_LS_tmp,HEX), RIGHT, yXBee);
-		yXBee = yXBee + yDelta;   
+		yXBee = yXBee + yDelta; 
+		adr_device+=10;
 	}
 
 //	Serial.println(adr_device);
@@ -2401,6 +2411,7 @@ byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
 	y[1]= i2c_eeprom_read_byte( deviceaddress, 1+N_device+6);
 	y[0]= i2c_eeprom_read_byte( deviceaddress, 0+N_device+6);
 	XBee_Addr64_LS_tmp = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
+
 }
 
 
@@ -2492,45 +2503,42 @@ void format_memory()
 
 void format_memory1()
 {
-
-	for (int i = 1000; i < 1060; i++)
+	int a = 1000;
+	int xp = 0;
+	long int li1 = 0;   
+	int adr_xbee_h = 1000;
+	for (int ip = 0; ip < 256; ip++)
 		{
-			i2c_eeprom_write_byte(deviceaddress,i, 1);
-		}
+          li1 = ip;                                     // преобразовать первую часть строки в значение HEX	
+						
+		byte *m = (byte *)&li1;                                                       //Разложить данные старшего адреса координатора побайтно для записи в память
+		for (int i=0; i<4; i++)
+			{
+				i2c_eeprom_write_byte(deviceaddress, i+adr_xbee_h+2, m[i]); // Записать в память данные старшего адреса координатора
+				i2c_eeprom_write_byte(deviceaddress, i+adr_xbee_h+6, m[i]); // Записать в память данные старшего адреса координатора
+			}
 
-		for (int i = 1060; i < 1120; i++)
-		{
-			i2c_eeprom_write_byte(deviceaddress,i, 2);
+			//i2c_eeprom_write_byte(deviceaddress,a, i);
+				Serial.println(adr_xbee_h);
+				adr_xbee_h += 10;
 		}
-		for (int i = 1120; i < 1180; i++)
-		{
-			i2c_eeprom_write_byte(deviceaddress,i, 3);
-		}
-
-		for (int i = 1180; i < 1240; i++)
-		{
-			i2c_eeprom_write_byte(deviceaddress,i, 4);
-		}
-		for (int i = 1240; i < 1300; i++)
-		{
-			i2c_eeprom_write_byte(deviceaddress,i, 5);
-		}
-
-		for (int i = 1300; i < 1360; i++)
-		{
-			i2c_eeprom_write_byte(deviceaddress,i, 6);
-		}
-
-		for (int i = 1360; i < 1420; i++)
-		{
-			i2c_eeprom_write_byte(deviceaddress,i, 7);
-		}
-
-
-
 }
 
+void read_memory1()
+{
+	int a = 1000;
+	int xp = 0;
 
+	for (int i = 0; i < 256; i++)
+		{
+			Serial.print(a);
+			Serial.print("  ");
+			xp = i2c_eeprom_read_byte(deviceaddress,a);
+			Serial.println(xp);
+			a += 10;
+		}
+
+}
 
 
 
@@ -2589,6 +2597,7 @@ void setup()
 	Serial.print(F("FreeRam: "));
 	Serial.println(FreeRam());
 	//format_memory1();
+	//read_memory1();
 	//format_memory();
 	Serial.println(" ");                                   //
 	Serial.println("System initialization OK!.");          // Информация о завершении настройки

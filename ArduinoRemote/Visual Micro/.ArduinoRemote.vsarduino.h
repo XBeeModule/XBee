@@ -109,7 +109,7 @@ void XBee_status();
 void time_flag_start();
 void updateStrXBee(int val);
 void XBee_SetH(int adr_xbee_h);
-void XBee_SetL();
+void XBee_SetL(int adr_xbee_h);
 void XBee_Set_Network();
 void sendAtCommand();
 void sendAtCommand_ar();
@@ -127,6 +127,7 @@ byte i2c_eeprom_read_byte( int deviceaddress, unsigned int eeaddress );
 void i2c_eeprom_write_byte( int deviceaddress, unsigned int eeaddress, byte data );
 void format_memory();
 void format_memory1();
+void read_memory1();
 void setup_pin();
 //
 //
