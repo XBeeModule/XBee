@@ -112,15 +112,18 @@ unsigned long loopTime;
 int time_power    = 1000;
 
 //---------------------------------------------------------------------------------
-int adr_xbee_coordinator_h   = 104;       // Адрес координатора старший
-int adr_xbee_coordinator_l   = 108;       // Адрес координатора младший
+//int adr_xbee_coordinator_h   = 104;       // Адрес координатора старший
+//int adr_xbee_coordinator_l   = 108;       // Адрес координатора младший
 int adr_xbee_device_h        = 112;       // Адрес устройства старший
 int adr_xbee_device_l        = 116;       // Адрес устройства младший
 int adr_xbee_network         = 120;       // Адрес сети
+int adr_xbee_current_H       = 124;       // Адрес текущего устройства старший
+int adr_xbee_current_L       = 128;       // Адрес текущего устройства младший
+
 int adr_start_baseHL         = 1000;      // Стартовый адрес базы данных номеров исполнительных устройств
 byte number_device           = 0;         // Номер исполнительного устройства. 
 
-int result_minus = 0;
+//int result_minus = 0;
 
 
 
@@ -158,7 +161,8 @@ const char  txt_SetAddress[]                   PROGMEM = "Set Addrress";        
 const char  txt_temperature[]                  PROGMEM = "Te""\xA1\xA3""epa""\xA4"".C";                         // Температура С
 const char  txt_view_device1[]                 PROGMEM = "A\x99""peca";                                         // Адреса 
 const char  txt_view_device2[]                 PROGMEM = "yc""\xA4""po""\x9E""c""\xA4\x97";                     // устройств
-
+const char  txt_Set_device[]                   PROGMEM = "\x89""o""\x99\x9F\xA0\xAE\xA7\x9D\xA4\xAC"" ""\x86\x8A"; // Подключить ИУ
+const char  txt_null[]                         PROGMEM = "===========";                                         // "==============="
 
 
 
@@ -190,7 +194,7 @@ const char* const table_message[] PROGMEM =
  txt_info_XBee_Voltage,            // 18 "Voltage (%V) =";//
  txt_return,                       // 19 "B""\x91""XO""\x82";                                                     // ВЫХОД
  txt_XBee_Set,                     // 20 "Hac""\xA4""po""\x9E\x9F""a XBee";                                       // Настройка XBee
- txt_err_pass_user,                // 21 "O\xA8\x9D\x96ka \x97\x97o\x99""a" ;                                     //Ошибка ввода
+ txt_err_pass_user,                // 21 "O\xA8\x9D\x96ka \x97\x97o\x99""a" ;                                     // Ошибка ввода
  txt_menu2_1,                      // 22 "\x86H\x8BO XBee";                                                       // Инфо XBee
  txt_menu2_2,                      // 23 "Coord SH";                                                              //
  txt_menu2_3,                      // 24 "Coord SL";                                                              // 
@@ -198,7 +202,9 @@ const char* const table_message[] PROGMEM =
  txt_SetAddress,                   // 26 "Set Addrress";                                                          //
  txt_temperature,                  // 27 "Te""\xA1\xA3""epa""\xA4""ypa C";                                        // Температура С
  txt_view_device1,                 // 28 "A\x99""peca yc""\xA4""po""\x9E""c""\xA4\x97";                           // Адреса
- txt_view_device2                  // 29 "yc""\xA4""po""\x9E""c""\xA4\x97";                                       // устройств
+ txt_view_device2,                 // 29 "yc""\xA4""po""\x9E""c""\xA4\x97";                                       // устройств
+ txt_Set_device,                   // 30 "\x89""o""\x99\x9F\xA0\xAE\xA7\x9D\xA4\xAC"" ""\x86\x8A";                // Подключить ИУ
+ txt_null                          // 31 "===========";                                                           // "==============="
 
 
 
@@ -434,7 +440,7 @@ void drawGlavMenu()
 	myGLCD.drawRoundRect (121, 183, 176, 243);
 	myGLCD.printNumI(3, 141, 205);                  //"3"
 
-	myGLCD.setColor(0, 0, 255);                    //4
+	myGLCD.setColor(0, 0, 255);                      //4
 	myGLCD.fillRoundRect (179, 183, 234, 243);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (179, 183, 234, 243);
@@ -453,6 +459,13 @@ void drawGlavMenu()
 	myGLCD.drawRoundRect (121, 248, 234, 293);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[6])));
 	myGLCD.print(buffer, 130, 262);                                     //"МЕНЮ 2"
+
+
+
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (194, 70, 234, 110);
+
+
 	myGLCD.setBackColor (0, 0, 0);
 }
 
@@ -466,36 +479,37 @@ void klav_Glav_Menu()
   	myGLCD.setColor(255, 255, 255);
 
 	if(digitalRead(KN1) == false)
-		{
-			myGLCD.printNumI(1, 200, 60);
-	    }
+	{
+		myGLCD.printNumI(1, 208, 51);
+		XBee_alarm();
+	}
 	if(digitalRead(KN2) == LOW)
-		{
-			myGLCD.printNumI(2, 200, 60);
+	{
+		myGLCD.printNumI(1, 208, 51);
 	}
 	if(digitalRead(KN3) == LOW)
-		{
-			myGLCD.printNumI(3, 200, 60);
+	{
+		myGLCD.printNumI(1, 208, 51);
 	}
 	if(digitalRead(KN4) == LOW)
-		{
-			myGLCD.printNumI(4, 200, 60);
+	{
+		myGLCD.printNumI(1, 208, 51);
 	}
 	if(digitalRead(KN5) == false)
-		{
-			myGLCD.printNumI(5, 200, 60);
-	    }
+	{
+		myGLCD.printNumI(1, 208, 51);
+	}
 	if(digitalRead(KN6) == LOW)
-		{
-			myGLCD.printNumI(6, 200, 60);
+	{
+		myGLCD.printNumI(1, 208, 51);
 	}
 	if(digitalRead(KN7) == LOW)
-		{
-			myGLCD.printNumI(7, 200, 60);
+	{
+		myGLCD.printNumI(1, 208, 51);
 	}
 	if(digitalRead(KN8) == LOW)
-		{
-			myGLCD.printNumI(8, 200, 60);
+	{
+		myGLCD.printNumI(1, 208, 51);
 	}
 
     if (myTouch.dataAvailable())
@@ -1054,28 +1068,28 @@ void draw_menu1()
 	myGLCD.fillRoundRect (5, 28, 234, 83);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 28, 234, 83);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[30])));
 	myGLCD.print(buffer, CENTER, 48);  
 
 	myGLCD.setColor(0, 0, 255);                    // 1
 	myGLCD.fillRoundRect (5, 86, 234, 141);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 86, 234, 141);	
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[31])));
 	myGLCD.print(buffer, CENTER, 106);  
 
 	myGLCD.setColor(0, 0, 255);                    // 1
 	myGLCD.fillRoundRect (5, 144, 234, 199);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 144, 234, 199);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[31])));
 	myGLCD.print(buffer, CENTER, 164);  
 
 	myGLCD.setColor(0, 0, 255);                    // 1
 	myGLCD.fillRoundRect (5, 202, 234, 257);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 202, 234, 257);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[31])));
 	myGLCD.print(buffer, CENTER, 222);  
 
 	myGLCD.setColor(0, 0, 255);                    // 1
@@ -1090,14 +1104,14 @@ void draw_menu2()
 	myGLCD.clrScr();
 	myGLCD.setBackColor (0, 0, 255);
 	   
-	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.setColor(0, 0, 255);                    // 1  ИНФО XBee
 	myGLCD.fillRoundRect (5, 28, 234, 83);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 28, 234, 83);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[22]))); 
 	myGLCD.print(buffer, CENTER, 48);  
 
-	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.setColor(0, 0, 255);                    // 2  Адреса устройств
 	myGLCD.fillRoundRect (5, 86, 234, 141);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 86, 234, 141);	
@@ -1106,25 +1120,25 @@ void draw_menu2()
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[29])));
 	myGLCD.print(buffer, CENTER, 116);  
 
-	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.setColor(0, 0, 255);                    // 3
 	myGLCD.fillRoundRect (5, 144, 234, 199);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 144, 234, 199);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[26])));
 	myGLCD.print(buffer, CENTER, 154);  
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[24])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[25])));
 	myGLCD.print(buffer, CENTER, 174);  
 
-	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.setColor(0, 0, 255);                    // 4
 	myGLCD.fillRoundRect (5, 202, 234, 257);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 202, 234, 257);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[26])));
-	myGLCD.print(buffer, CENTER, 212);  
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[25])));
-	myGLCD.print(buffer, CENTER, 232);  
+	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[26])));
+	//myGLCD.print(buffer, CENTER, 212);  
+	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[25])));
+	//myGLCD.print(buffer, CENTER, 232);  
 
-	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.setColor(0, 0, 255);                    // 5   Выход         
 	myGLCD.fillRoundRect (5, 260, 234, 315);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 260, 234, 315);
@@ -1148,7 +1162,7 @@ void klav_menu1()
 				{
 				 waitForIt(5, 28, 234, 83);
                	 myGLCD.clrScr();
-				 klav1();
+ 				 set_adr_device();
 				 draw_menu1();
 				}
 				if ((y >= 86) && (y <= 141))                                // Button: 2
@@ -1205,13 +1219,13 @@ void klav_menu2()
 				if ((y >= 144) && (y <= 199))                               // Button: 3
 				{
 					waitForIt(5, 144, 234, 199);
-					
+					XBee_Set_Network();
 					draw_menu2();
 				}
 				if ((y >= 202) && (y <= 257))                               // Button: 4
 				{
 					waitForIt(5, 202, 234, 257);
-					XBee_Set_Network();
+		/*			XBee_Set_Network();*/
 					draw_menu2();
 				}
 				if ((y >= 260) && (y <= 315))                               // Button:Выход
@@ -1415,7 +1429,7 @@ void XBeeWrite()
 		 }
 	  payload[0] = zki;*/
 
-  xbee.send(zbTx);
+  xbee.send(zbTx); 
 
 	 //  После отправки запроса TX, мы ожидаем ответ статуса
 	 //  Ждать до половины секунды для реагирования состояния 
@@ -1423,7 +1437,6 @@ void XBeeWrite()
   if (xbee.readPacket(500))
 	   // xbee.readPacket();
 	  {
-	  
 		// получил ответ! 
 		// Должен быть znet tx status            	
 		if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) 
@@ -1432,25 +1445,22 @@ void XBeeWrite()
 			   // Получить статус доставки, пятый байт
 			  if (txStatus.getDeliveryStatus() == SUCCESS)
 				  {
-					  // Успешно, можно радоваться.
-					  // Serial.println("Success.  time to celebrate!");  
-					  // flashLed(statusLed, 5, 50);
+					
+					   Serial.println("Success.  time to celebrate!");   // Успешно, можно радоваться.
 						myGLCD.setColor(VGA_LIME);
-						myGLCD.fillRoundRect (278, 92, 318, 132);
+						myGLCD.fillRoundRect (194, 70, 234, 110);
 						myGLCD.setColor(255, 255, 255);
-						myGLCD.drawRoundRect (278, 92, 318, 132);
+						myGLCD.drawRoundRect (194, 70, 234, 110);
 						myGLCD.setBackColor(0, 0, 0);
 						delay(400); 
 						myGLCD.setColor(0, 0, 0);
-						myGLCD.fillRoundRect (278, 92, 318, 132);
+						myGLCD.fillRoundRect (194, 70, 234, 110);
 						myGLCD.setColor(0, 0, 0);
-						myGLCD.drawRoundRect (278, 92, 318, 132);
+						myGLCD.drawRoundRect (194, 70, 234, 110);
 				  }
 			  else 
 				  {
-					// the remote XBee did not receive our packet. is it powered on?
 					// Управляемый XBee не ответил. Он включен?
-					// flashLed(errorLed, 3, 500);
 					  Serial.println("The remote XBee did not receive our packet. is it powered on?");  
 				  }
 			}
@@ -1464,15 +1474,15 @@ void XBeeWrite()
 	  {
 		// local XBee did not provide a timely TX Status Response -- should not happen
 		myGLCD.setColor(255 , 0, 0);
-		myGLCD.fillRoundRect (278, 92, 318, 132);
+		myGLCD.fillRoundRect (194, 70, 234, 110);
 		myGLCD.setColor(255, 255, 255);
-		myGLCD.drawRoundRect (278, 92, 318, 132);
+		myGLCD.drawRoundRect (194, 70, 234, 110);
 		myGLCD.setBackColor(0, 0, 0);
 		delay(400); 
 		myGLCD.setColor(0, 0, 0);
-		myGLCD.fillRoundRect (278, 92, 318, 132);
+		myGLCD.fillRoundRect (194, 70, 234, 110);
 		myGLCD.setColor(0, 0, 0);
-		myGLCD.drawRoundRect (278, 92, 318, 132);
+		myGLCD.drawRoundRect (194, 70, 234, 110);
 	  }
 
   delay(1000);
@@ -1775,6 +1785,7 @@ void updateStrXBee(int val) // Проверка длины строки при вводе адреса XBee
 }
 void XBee_SetH(int adr_xbee_h)
 {
+	lenStr = 8;
 	int _adr_xbee_h = adr_xbee_h;
 	klavXBee();
 	if (ret == 1)
@@ -1782,38 +1793,17 @@ void XBee_SetH(int adr_xbee_h)
 			ret = 0;
 			return;
 		}
-
 	strcpy(temp_stLast,stLast);
 	long int li1 = strtol(temp_stLast, NULL, 16);                                     // преобразовать первую часть строки в значение HEX	
-						
-		byte *m = (byte *)&li1;                                                       //Разложить данные старшего адреса координатора побайтно для записи в память
-		for (int i=0; i<4; i++)
-			{
-				i2c_eeprom_write_byte(deviceaddress, i+_adr_xbee_h+2, m[i]); // Записать в память данные старшего адреса координатора
-			}
-								
-	//byte y[4];   ;                                                                    //Чтение из памяти текущих данных старшего адреса координатора
-	//	y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_xbee_h+2);
-	//	y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_xbee_h+2);
-	//	y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_h+2);
-	//	y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_h+2);
-	//	XBee_Addr64_MS = (unsigned long&) y;                                          // Сложить восстановленные текущие данные в 
-	//	myGLCD.print("                      ", CENTER, 300);
-	//	myGLCD.print(" OK !", RIGHT, 300);// ОК!
-	//	delay(1500);
-					  
-	//if(strcmp(temp_stLast,stLast)!=0 ||stCurrentLen1 > 8 )
-	//	{
-	//		myGLCD.print("                         ", CENTER, 300);
-	//		strcpy_P(buffer, (char*)pgm_read_word(&(table_message[21])));
-	//		myGLCD.print(buffer, CENTER, 300);                    // Ошибка ввода!
-	//		result_minus = 0;
-	//		delay(1500);
-	//		return;
-	//	}
+	byte *m = (byte *)&li1;                                                       //Разложить данные старшего адреса координатора побайтно для записи в память
+	for (int i=0; i<4; i++)
+		{
+			i2c_eeprom_write_byte(deviceaddress, i+_adr_xbee_h+2, m[i]); // Записать в память данные старшего адреса координатора
+		}
 }
 void XBee_SetL(int adr_xbee_h)
-{
+{ 
+	lenStr = 8;
 	int _adr_xbee_h = adr_xbee_h;
 	klavXBee();
 	if (ret == 1)
@@ -1821,36 +1811,13 @@ void XBee_SetL(int adr_xbee_h)
 			ret = 0;
 			return;
 		}
-
 	strcpy(temp_stLast,stLast);
-					
-		long int li1 = strtol(temp_stLast, NULL, 16); // преобразовать первую часть строки в значение HEX	
-						
-			byte *m = (byte *)&li1; //Разложить данные младшего адреса координатора побайтно для записи в память
-			for (int i=0; i<4; i++)
-				{
-					i2c_eeprom_write_byte(deviceaddress, i+_adr_xbee_h+6, m[i]);    // Записать в память данные младшего адреса координатора
-				}
-		//						
-		//byte y[4];   ;                                                                      //Чтение из памяти текущих данных младшего адреса координатора
-		//	y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_xbee_coordinator_l);
-		//	y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_xbee_coordinator_l);
-		//	y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_coordinator_l);
-		//	y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_coordinator_l);
-		//	XBee_Addr64_LS = (unsigned long&) y;                                            // Сложить восстановленные текущие данные в 
-		//	myGLCD.print("                          ", CENTER, 300);
-		//	myGLCD.print(" OK !", RIGHT, 300);// ОК!
-		//	delay(1500);
-  
-	//if(strcmp(temp_stLast,stLast)!=0 ||stCurrentLen1 > 8 )
-	//	{
-	//		myGLCD.print("                         ", CENTER, 300);
-	//		strcpy_P(buffer, (char*)pgm_read_word(&(table_message[21])));
-	//		myGLCD.print(buffer, CENTER, 300);                                          // Ошибка ввода!
-	//		result_minus = 0;
-	//		delay(1500);
-	//		return;
-	//	}
+	long int li1 = strtol(temp_stLast, NULL, 16); // преобразовать первую часть строки в значение HEX	
+	byte *m = (byte *)&li1; //Разложить данные младшего адреса координатора побайтно для записи в память
+	for (int i=0; i<4; i++)
+		{
+			i2c_eeprom_write_byte(deviceaddress, i+_adr_xbee_h+6, m[i]);    // Записать в память данные младшего адреса координатора
+		}
  }
 void XBee_Set_Network()
 {
@@ -1875,16 +1842,16 @@ void XBee_Set_Network()
 	myGLCD.print("                          ", CENTER, 300);
 	myGLCD.print(" OK !", RIGHT, 300);// ОК!
 	delay(1500);
-			  
-	if(strcmp(temp_stLast,stLast)!=0 ||stCurrentLen1 > 4 )
-		{
-			myGLCD.print("                         ", CENTER, 300);
-			myGLCD.print(txt_err_pass_user, CENTER, 300);// Ошибка ввода!
-			result_minus = 0;
-			delay(1500);
-			return;
-		}
-	test_arRequestMod();
+	//		  
+	//if(strcmp(temp_stLast,stLast)!=0 ||stCurrentLen1 > 4 )
+	//	{
+	//		myGLCD.print("                         ", CENTER, 300);
+	//		myGLCD.print(txt_err_pass_user, CENTER, 300);// Ошибка ввода!
+	//	//	result_minus = 0;
+	//		delay(1500);
+	//		return;
+	//	}
+	test_arRequestMod();              // Записать данные в XBee
 }
 
 void sendAtCommand() 
@@ -2138,22 +2105,30 @@ atRequest.setCommand(assocCmd);
 sendAtCommand();
 arRequestMod.clearCommandValue();
 }
-void read_HL_mem_XBee(int )
+void read_HL_mem_XBee(int N_device )
  {
-	 //Программа ввостановления данных ZigBee из памяти.
-		   byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
-				y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_xbee_coordinator_h);
-				y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_xbee_coordinator_h);
-				y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_coordinator_h);
-				y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_coordinator_h);
-				XBee_Addr64_MS = (unsigned long&) y;  // Сложить восстановленные текущие данные
+    //Программа ввостановления данных ZigBee из памяти.
+ 	byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
+		y[3]= i2c_eeprom_read_byte( deviceaddress, 3+N_device+2);
+        i2c_eeprom_write_byte(deviceaddress, 3+adr_xbee_current_H, y[3]);    // Записать в память данные 
+		y[2]= i2c_eeprom_read_byte( deviceaddress, 2+N_device+2);
+		i2c_eeprom_write_byte(deviceaddress, 2+adr_xbee_current_H, y[2]);    // Записать в память данные 
+		y[1]= i2c_eeprom_read_byte( deviceaddress, 1+N_device+2);
+		i2c_eeprom_write_byte(deviceaddress, 1+adr_xbee_current_H, y[1]);    // Записать в память данные 
+		y[0]= i2c_eeprom_read_byte( deviceaddress, 0+N_device+2);
+		i2c_eeprom_write_byte(deviceaddress, adr_xbee_current_H, y[0]);      // Записать в память данные 
+		XBee_Addr64_MS = (unsigned long&) y;  // Сложить восстановленные текущие данные
 
-		//	   y[4];   ; //Чтение из памяти текущих данных младшего адреса координатора
-				y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_xbee_coordinator_l);
-				y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_xbee_coordinator_l);
-				y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_coordinator_l);
-				y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_coordinator_l);
-				XBee_Addr64_LS = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
+	    //Чтение из памяти текущих данных младшего адреса координатора
+		y[3]= i2c_eeprom_read_byte( deviceaddress, 3+N_device+6);
+	    i2c_eeprom_write_byte(deviceaddress, 3+adr_xbee_current_L, y[3]);    // Записать в память данные 
+		y[2]= i2c_eeprom_read_byte( deviceaddress, 2+N_device+6);
+	    i2c_eeprom_write_byte(deviceaddress, 2+adr_xbee_current_L, y[2]);    // Записать в память данные 
+		y[1]= i2c_eeprom_read_byte( deviceaddress, 1+N_device+6);
+		i2c_eeprom_write_byte(deviceaddress, 1+adr_xbee_current_L, y[1]);    // Записать в память данные 
+		y[0]= i2c_eeprom_read_byte( deviceaddress, 0+N_device+6);
+		i2c_eeprom_write_byte(deviceaddress, adr_xbee_current_L, y[0]);    // Записать в память данные 
+		XBee_Addr64_LS = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
 }
 void draw_view_adr_device()
 {
@@ -2390,13 +2365,25 @@ void view_page(int block_n)
 		yXBee = yXBee + yDelta; 
 		adr_device+=10;
 	}
-
-//	Serial.println(adr_device);
 }
+void restore_default_device()
+{
+byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
+	y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_xbee_current_H);
+	y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_xbee_current_H);
+	y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_current_H);
+	y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_current_H);
+	XBee_Addr64_MS = (unsigned long&) y;  // Сложить восстановленные текущие данные
 
+    //Чтение из памяти текущих данных младшего адреса координатора
+	y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_xbee_current_L);
+	y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_xbee_current_L);
+	y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_current_L);
+	y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_current_L);
+	XBee_Addr64_LS = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
+}
 void read_adr_device(int N_device)
 {
-
 //Программа ввостановления данных XBee из памяти.
 byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
 	y[3]= i2c_eeprom_read_byte( deviceaddress, 3+N_device+2);
@@ -2413,25 +2400,174 @@ byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
 	XBee_Addr64_LS_tmp = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
 
 }
-
-
-void save_adr_device(int N_device)
+void set_adr_device()
 {
+	int x, y;
+	int n_page = 1;
+	int adr_device = 0;
+	draw_view_adr_device();
+ 	while (myTouch.dataAvailable()) {}
+	view_page(n_page);
 
+	while (true)
+	{
+		if (myTouch.dataAvailable())
+		{
+				myTouch.read();
+				x=myTouch.getX();
+				y=myTouch.getY();
 
+			 if ((y>=32) && (y<=64))                                  // Строка 1
+				{
+					waitForIt(1, 32, 239, 64);
+					number_device = ((n_page-1) * 6)+1;
+					myGLCD.setBackColor(0, 0, 255);
+					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+					myGLCD.printNumI(number_device, CENTER, 245);     // 
+                    myGLCD.setBackColor(0, 0, 0);
+					adr_device = adr_start_baseHL + ((number_device-1) * 10);
+					read_HL_mem_XBee(adr_device);
+					Serial.println(adr_device);
+					draw_view_adr_device();
+					view_page(n_page);
+				}
+			 if ((y>=64) && (y<=96))                                  // Строка 2
+				{
+					waitForIt(1, 64, 239, 96);
+					number_device = ((n_page-1) * 6)+2;
+					myGLCD.setBackColor(0, 0, 255);
+					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+					myGLCD.printNumI(number_device, CENTER, 245);     // 
+                    myGLCD.setBackColor(0, 0, 0);
+					adr_device = adr_start_baseHL + ((number_device-1) * 10);
+					read_HL_mem_XBee(adr_device);
+					Serial.println(adr_device);
+					draw_view_adr_device();
+					view_page(n_page);
+				}
+			if ((y>=96) && (y<=128))                                  // Строка 3
+				{
+					waitForIt(1, 96, 239, 128);
+					number_device = ((n_page-1) * 6)+3;
+					myGLCD.setBackColor(0, 0, 255);
+					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+					myGLCD.printNumI(number_device, CENTER, 245);     // 
+                    myGLCD.setBackColor(0, 0, 0);
+					adr_device = adr_start_baseHL + ((number_device-1) * 10);
+					read_HL_mem_XBee(adr_device);
+					Serial.println(adr_device);
+					draw_view_adr_device();
+					view_page(n_page);
+				}
+			if ((y>=128) && (y<=160))                                  // Строка 4
+				{
+					if(n_page-1 < 42)
+					{
+                        number_device = ((n_page-1) * 6)+4;
+						waitForIt(1, 128, 239, 160);
+						myGLCD.setBackColor(0, 0, 255);
+						myGLCD.print("   ", CENTER, 245);                 //  Очистить
+						myGLCD.printNumI(number_device, CENTER, 245);     // 
+						myGLCD.setBackColor(0, 0, 0);
+					    adr_device = adr_start_baseHL + ((number_device-1) * 10);
+						read_HL_mem_XBee(adr_device);
+					    Serial.println(adr_device);
+						draw_view_adr_device();
+						view_page(n_page);
+					}
+				}
+			if ((y>=160) && (y<=192))                                  // Строка 5
+				{
+					if(n_page-1 < 42)
+					{
+						number_device = ((n_page-1) * 6)+5;
+						waitForIt(1, 160, 239, 192);
+						myGLCD.setBackColor(0, 0, 255);
+						myGLCD.print("   ", CENTER, 245);                 //  Очистить
+						myGLCD.printNumI(number_device, CENTER, 245);     // 
+						myGLCD.setBackColor(0, 0, 0);
+						adr_device = adr_start_baseHL + ((number_device-1) * 10);
+						read_HL_mem_XBee(adr_device);
+					    Serial.println(adr_device);
+						draw_view_adr_device();
+					    view_page(n_page);
+					}
+				}
+			if ((y>=192) && (y<=224))                                  // Строка 6
+				{
+					if(n_page-1 < 42)
+					{
+						number_device = ((n_page-1) * 6)+6;
+						waitForIt(1, 192, 239, 224);
+						myGLCD.setBackColor(0, 0, 255);
+						myGLCD.print("   ", CENTER, 245);                 //  Очистить
+						myGLCD.printNumI(number_device, CENTER, 245);     // 
+						myGLCD.setBackColor(0, 0, 0);
+						adr_device = adr_start_baseHL + ((number_device-1) * 10);
+						read_HL_mem_XBee(adr_device);
+					    Serial.println(adr_device);
+						draw_view_adr_device();
+					    view_page(n_page);
+					}
+				}
 
+		if ((y>=233) && (y<=273))                                     // Upper row  
+			{
+			  if ((x>=2) && (x<=82))                                  // Выход
+				{
+					waitForIt(2, 233, 82, 273);
+					n_page--;
+					if(n_page <1) n_page = 1;
+					myGLCD.setBackColor(0, 0, 255);
+					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+                    myGLCD.setBackColor(0, 0, 0);
+	                view_page(n_page);
+				}
+			  if ((x>=87) && (x<=153))                                  // Выход
+				{
+					waitForIt(87, 233, 153, 273);
+					n_page = 1;
+					myGLCD.setBackColor(0, 0, 255);
+					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+                    myGLCD.setBackColor(0, 0, 0);
+	                view_page(n_page);
+				}
+			  if ((x>=158) && (x<=238))                               // Выход
+				{
+					waitForIt(158, 233, 238, 273);
+                	n_page++;
+					if(n_page > 43) n_page = 43;
+					myGLCD.setBackColor(0, 0, 255);
+					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+	                myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+					myGLCD.setBackColor(0, 0, 0);
+					view_page(n_page);
+				}
+			}
+		if ((y>=278) && (y<=318))                                    // Upper row  
+			{
+			if ((x>=2) && (x<=238))                                  // Выход
+				{
+					waitForIt(2, 278, 238, 318);
+					return;
+				}
+			}
+		}
+	}			
 }
 
 
 void XBee_alarm()
 {
-	 //word val;
-	 //word i = 0;
-	 //funcType = 9;
-	 //clock_read();
-	 //payload[0] = funcType;
-	 //payload[1] = 0;//i2c_eeprom_read_byte( deviceaddress,adr_level_war_gaz_max+1);
-	 //payload[2] = 0;//i2c_eeprom_read_byte( deviceaddress,adr_level_war_gaz_max);
+	 word val;
+	 word i = 0;
+	 funcType = 9;
+	 clock_read();
+	 payload[0] = funcType;
+	 payload[1] = 0;//i2c_eeprom_read_byte( deviceaddress,adr_level_war_gaz_max+1);
+	 payload[2] = 0;//i2c_eeprom_read_byte( deviceaddress,adr_level_war_gaz_max);
 
 	 //for (int i_xbee = 0;i_xbee<20;i_xbee++)
 	 //{
@@ -2451,7 +2587,7 @@ void XBee_alarm()
 		//		{
 		//			payload[29+z] = i2c_eeprom_read_byte( deviceaddress,adr_n_telef+z);
 		//		} 
-	 //ZigBeeWrite();
+	 XBeeWrite();
 
 }
 
@@ -2596,6 +2732,7 @@ void setup()
 	setup_pin();
 	Serial.print(F("FreeRam: "));
 	Serial.println(FreeRam());
+	restore_default_device();
 	//format_memory1();
 	//read_memory1();
 	//format_memory();
