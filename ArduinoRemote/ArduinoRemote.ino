@@ -324,19 +324,6 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 void dateTime(uint16_t* date, uint16_t* time)                                    // Программа записи времени и даты файла
 {
   DateTime now = RTC.now();
