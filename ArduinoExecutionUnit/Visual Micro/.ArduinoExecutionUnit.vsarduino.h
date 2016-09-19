@@ -87,7 +87,6 @@ extern "C" void __cxa_pure_virtual() {;}
 void ZigBeeRead();
 void sl_XBee();
 void ZigBeeWrite();
-void XBee_Setup();
 void sendAtCommand();
 void sendAtCommand_ar();
 void sendRemoteAtCommand();

@@ -139,7 +139,7 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 				} 
 			else 
 				{
-				   Serial.println("packet not acknowledged");
+				   //Serial.println("packet not acknowledged");
 				}
 		
 					 //Serial.print("checksum is ");
@@ -219,32 +219,32 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 // #define READ_WAR_GAZ	         0x05  // чтение из памяти и передача XBee
 // #define READ_WAR_TEMPERATURA  0x06  // чтение из памяти и передача XBee
 
-		case READ_ELECTRO:
-			// Serial.println("READ_ELECTRO:");
-			get_READ_ELECTRO_StatusXBee(funcType, field1, field2);
-			break;
-		case READ_GAZ:
-			//Serial.println("READ_GAZ:");
-			get_READ_GAZ_StatusXBee(funcType, field1, field2);
-			break;
-		case READ_COLWATER:
-			//Serial.println("READ_COLWATER:");
-			get_READ_COLWATER_StatusXBee(funcType, field1, field2);
-			break;
-		case READ_HOTWATER:
-			//Serial.println("READ_HOTWATER:");
-			get_READ_HOTWATER_StatusXBee(funcType, field1, field2);
-			break;
-		case READ_WAR_GAZ:
-			//Serial.println("WRITE_DO:");
-			get_READ_WAR_GAZ_StatusXBee(funcType, field1, field2);
-			break;
-		case READ_WAR_TEMPERATURA:
-			//Serial.println("WRITE_AO:");
-			get_READ_WAR_TEMPERATURA_StatusXBee(funcType, field1, field2);
-			break;
+		//case READ_ELECTRO:
+		//	// Serial.println("READ_ELECTRO:");
+		//	get_READ_ELECTRO_StatusXBee(funcType, field1, field2);
+		//	break;
+		//case READ_GAZ:
+		//	//Serial.println("READ_GAZ:");
+		//	get_READ_GAZ_StatusXBee(funcType, field1, field2);
+		//	break;
+		//case READ_COLWATER:
+		//	//Serial.println("READ_COLWATER:");
+		//	get_READ_COLWATER_StatusXBee(funcType, field1, field2);
+		//	break;
+		//case READ_HOTWATER:
+		//	//Serial.println("READ_HOTWATER:");
+		//	get_READ_HOTWATER_StatusXBee(funcType, field1, field2);
+		//	break;
+		//case READ_WAR_GAZ:
+		//	//Serial.println("WRITE_DO:");
+		//	get_READ_WAR_GAZ_StatusXBee(funcType, field1, field2);
+		//	break;
+		//case READ_WAR_TEMPERATURA:
+		//	//Serial.println("WRITE_AO:");
+		//	get_READ_WAR_TEMPERATURA_StatusXBee(funcType, field1, field2);
+		//	break;
 		default:
-			return;
+			//return;
 			break;
 		}
 //	Serial.println(field1, HEX);   
@@ -288,7 +288,7 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 					  // Успешно, можно радоваться.
 					  // Serial.println("Success.  time to celebrate!");  
 					  // flashLed(statusLed, 5, 50);
-						myGLCD.setColor(VGA_LIME);
+/*						myGLCD.setColor(VGA_LIME);
 						myGLCD.fillRoundRect (278, 92, 318, 132);
 						myGLCD.setColor(255, 255, 255);
 						myGLCD.drawRoundRect (278, 92, 318, 132);
@@ -298,7 +298,7 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 						myGLCD.fillRoundRect (278, 92, 318, 132);
 						myGLCD.setColor(0, 0, 0);
 						myGLCD.drawRoundRect (278, 92, 318, 132);
-						mcp_Out1.digitalWrite(Beep, LOW);                    // 
+						mcp_Out1.digitalWrite(Beep, LOW);     */               // 
 						//delay(300);
 
 				  }
@@ -307,19 +307,19 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 					// the remote XBee did not receive our packet. is it powered on?
 					// Управляемый XBee не ответил. Он включен?
 					// flashLed(errorLed, 3, 500);
-					  Serial.println("The remote XBee did not receive our packet. is it powered on?");  
+					  //Serial.println("The remote XBee did not receive our packet. is it powered on?");  
 				  }
 			}
 	  }
   else if (xbee.getResponse().isError())
 	  {
-		Serial.print("Error reading packet.  Error code: ");  
-		Serial.println(xbee.getResponse().getErrorCode());
+		//Serial.print("Error reading packet.  Error code: ");  
+		//Serial.println(xbee.getResponse().getErrorCode());
 	  } 
   else 
 	  {
 		// local XBee did not provide a timely TX Status Response -- should not happen
-		   myGLCD.setColor(255 , 0, 0);
+/*		   myGLCD.setColor(255 , 0, 0);
 					myGLCD.fillRoundRect (278, 92, 318, 132);
 					myGLCD.setColor(255, 255, 255);
 					myGLCD.drawRoundRect (278, 92, 318, 132);
@@ -329,7 +329,7 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 					myGLCD.fillRoundRect (278, 92, 318, 132);
 					myGLCD.setColor(0, 0, 0);
 					myGLCD.drawRoundRect (278, 92, 318, 132);
-					mcp_Out1.digitalWrite(Beep, LOW);                    // 
+					mcp_Out1.digitalWrite(Beep, LOW);     */               // 
 					//delay(200);
 
 	  }
@@ -338,59 +338,7 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 																   
  
 }
- void XBee_Setup()
- {
-
-	                myGLCD.clrScr();   // Очистить экран CENTER
-					myGLCD.setColor(0, 0, 255);
-					myGLCD.fillRoundRect (2, 2, 318, 25);
-					myGLCD.setColor(255, 255, 255);
-					myGLCD.drawRoundRect (2, 2, 318, 25);
-					myGLCD.setColor(255, 255, 255);
-					myGLCD.setBackColor(0, 0, 255);
-					myGLCD.print("Setup XBee", CENTER, 5);
-					myGLCD.print(txt_return, CENTER, 218);// Завершить просмотр 
-		while (true)
-			{
-				
-			//	all_alarm();
-
-
-				if (Serial2.available()) 
-					{
-						int inByte = Serial2.read();
-						Serial.write(inByte);
-					}
-				
-				// read from port 0, send to port 2:
-			  if (Serial.available())
-				    {
-						int inByte = Serial.read();
-						Serial2.write(inByte);
-					}
-
-
-				   
-			  if (myTouch.dataAvailable())
-					 {
-						  myTouch.read();
-						  x=myTouch.getX();
-						  y=myTouch.getY();
-
-					 if ((y>=2) && (y<=240))  // Upper row
-					  {
-						if ((x>=2) && (x<=319))  // Выход
-						  {
-
-							  waitForIt(10, 10, 60, 60);
-							 return;
-						  }
-					   }
-					}
-
-		  }	
- }
-
+ 
  void sendAtCommand() 
 {
 	int i10;
@@ -441,14 +389,14 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 			  } 
 		  else 
 			  {
-				Serial.print("Command return error code: ");
-				Serial.println(atResponse.getStatus(), HEX);
+	/*			Serial.print("Command return error code: ");
+				Serial.println(atResponse.getStatus(), HEX);*/
 			  }
 		} 
 		else 
 			{
-			  Serial.print("Expected AT response but got ");
-			  Serial.println(xbee.getResponse().getApiId(), HEX);
+		/*	  Serial.print("Expected AT response but got ");
+			  Serial.println(xbee.getResponse().getApiId(), HEX);*/
 			}   
 	  }
   else 
@@ -456,12 +404,12 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 		// at command failed
 		if (xbee.getResponse().isError()) 
 			{
-			  Serial.print("Error reading packet.  Error code: ");  
-			  Serial.println(xbee.getResponse().getErrorCode());
+			/*  Serial.print("Error reading packet.  Error code: ");  
+			  Serial.println(xbee.getResponse().getErrorCode());*/
 			} 
 		else 
 			{
-			  Serial.println("No response from radio1");  
+			  //Serial.println("No response from radio1");  
 			}
 	  }
 }
@@ -519,29 +467,29 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 			  } 
 		  else 
 			  {
-				    Serial.print("Command return error code: ");
-				    Serial.println(atResponse.getStatus(), HEX);
+				 //   Serial.print("Command return error code: ");
+				 //   Serial.println(atResponse.getStatus(), HEX);
 
-					myGLCD.setColor(255 , 0, 0);
-					myGLCD.fillRoundRect (278, 92, 318, 132);
-					myGLCD.setColor(255, 255, 255);
-					myGLCD.drawRoundRect (278, 92, 318, 132);
-					myGLCD.setBackColor(0, 0, 0);
-					delay(200); 
-					ZigBee_alarm();
-					delay(1000);
-					myGLCD.setColor(0, 0, 0);
-					myGLCD.fillRoundRect (278, 92, 318, 132);
-					myGLCD.setColor(0, 0, 0);
-					myGLCD.drawRoundRect (278, 92, 318, 132);
-					mcp_Out1.digitalWrite(Beep, LOW);                    // 
-					delay(300);
+					//myGLCD.setColor(255 , 0, 0);
+					//myGLCD.fillRoundRect (278, 92, 318, 132);
+					//myGLCD.setColor(255, 255, 255);
+					//myGLCD.drawRoundRect (278, 92, 318, 132);
+					//myGLCD.setBackColor(0, 0, 0);
+					//delay(200); 
+					//ZigBee_alarm();
+					//delay(1000);
+					//myGLCD.setColor(0, 0, 0);
+					//myGLCD.fillRoundRect (278, 92, 318, 132);
+					//myGLCD.setColor(0, 0, 0);
+					//myGLCD.drawRoundRect (278, 92, 318, 132);
+					//mcp_Out1.digitalWrite(Beep, LOW);                    // 
+					//delay(300);
 			  }
 		} 
 		else 
 			{
-			  Serial.print("Expected AT response but got ");
-			  Serial.println(xbee.getResponse().getApiId(), HEX);
+		/*	  Serial.print("Expected AT response but got ");
+			  Serial.println(xbee.getResponse().getApiId(), HEX);*/
 			}   
 	  }
   else 
@@ -549,17 +497,12 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 		// at command failed
 		if (xbee.getResponse().isError()) 
 			{
-			  Serial.print("Error reading packet.  Error code: ");  
-			  Serial.println(xbee.getResponse().getErrorCode());
+		/*	  Serial.print("Error reading packet.  Error code: ");  
+			  Serial.println(xbee.getResponse().getErrorCode());*/
 			} 
 		else 
 			{
-			  Serial.println("No response from radio2");  
-
-
-
-
-
+			  //Serial.println("No response from radio2");  
 			}
 	  }
 }
@@ -575,59 +518,70 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 	// got a response!
 
 	// should be an AT command response
-	if (xbee.getResponse().getApiId() == REMOTE_AT_COMMAND_RESPONSE) {
+	if (xbee.getResponse().getApiId() == REMOTE_AT_COMMAND_RESPONSE) 
+	{
 	  xbee.getResponse().getRemoteAtCommandResponse(remoteAtResponse);
 
-	  if (remoteAtResponse.isOk()) {
-		Serial.print("Command [");
-		Serial.print(remoteAtResponse.getCommand()[0]);
-		Serial.print(remoteAtResponse.getCommand()[1]);
-		Serial.println("] was successful!");
+	  if (remoteAtResponse.isOk()) 
+	  {
+		//Serial.print("Command [");
+		//Serial.print(remoteAtResponse.getCommand()[0]);
+		//Serial.print(remoteAtResponse.getCommand()[1]);
+		//Serial.println("] was successful!");
 
-		if (remoteAtResponse.getValueLength() > 0) {
-		  Serial.print("Command value length is ");
-		  Serial.println(remoteAtResponse.getValueLength(), DEC);
-
-		  Serial.print("Command value: ");
+		if (remoteAtResponse.getValueLength() > 0) 
+		{
+		  //Serial.print("Command value length is ");
+		  //Serial.println(remoteAtResponse.getValueLength(), DEC);
+		 // Serial.print("Command value: ");
 		  
-		  for (int i = 0; i < remoteAtResponse.getValueLength(); i++) {
-			Serial.print(remoteAtResponse.getValue()[i], HEX);
-			Serial.print(" ");
+		  for (int i = 0; i < remoteAtResponse.getValueLength(); i++) 
+		  {
+			//Serial.print(remoteAtResponse.getValue()[i], HEX);
+			//Serial.print(" ");
 		  }
 
-		  Serial.println("");
+		  //Serial.println("");
 		}
-	  } else {
-		Serial.print("Command returned error code: ");
-		Serial.println(remoteAtResponse.getStatus(), HEX);
 	  }
-	} else {
-	  Serial.print("Expected Remote AT response but got ");
-	  Serial.print(xbee.getResponse().getApiId(), HEX);
+	  else 
+	  {
+		//Serial.print("Command returned error code: ");
+		//Serial.println(remoteAtResponse.getStatus(), HEX);
+	  }
+	}
+	else 
+	{
+	  //Serial.print("Expected Remote AT response but got ");
+	  //Serial.print(xbee.getResponse().getApiId(), HEX);
 	}    
-  } else if (xbee.getResponse().isError()) {
-	Serial.print("Error reading packet.  Error code: ");  
-	Serial.println(xbee.getResponse().getErrorCode());
-  } else {
-	Serial.print("No response from radio3");  
+  }
+  else if (xbee.getResponse().isError()) 
+  {
+	//Serial.print("Error reading packet.  Error code: ");  
+	//Serial.println(xbee.getResponse().getErrorCode());
+  }
+  else 
+  {
+	//Serial.print("No response from radio3");  
   }
 }
  void set_info_ZigBee()
  {
-	 //Программа ввостановления данных ZigBee из памяти.
-		   byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
-				y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_zigbee_coordinator_h);
-				y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_zigbee_coordinator_h);
-				y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_zigbee_coordinator_h);
-				y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_zigbee_coordinator_h);
-				XBee_Addr64_MS = (unsigned long&) y;  // Сложить восстановленные текущие данные
+	 ////Программа ввостановления данных ZigBee из памяти.
+		//   byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
+		//		y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_zigbee_coordinator_h);
+		//		y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_zigbee_coordinator_h);
+		//		y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_zigbee_coordinator_h);
+		//		y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_zigbee_coordinator_h);
+		//		XBee_Addr64_MS = (unsigned long&) y;  // Сложить восстановленные текущие данные
 
-		//	   y[4];   ; //Чтение из памяти текущих данных младшего адреса координатора
-				y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_zigbee_coordinator_l);
-				y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_zigbee_coordinator_l);
-				y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_zigbee_coordinator_l);
-				y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_zigbee_coordinator_l);
-				XBee_Addr64_LS = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
+		////	   y[4];   ; //Чтение из памяти текущих данных младшего адреса координатора
+		//		y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_zigbee_coordinator_l);
+		//		y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_zigbee_coordinator_l);
+		//		y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_zigbee_coordinator_l);
+		//		y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_zigbee_coordinator_l);
+		//		XBee_Addr64_LS = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
 }
 
 
@@ -636,7 +590,7 @@ void setup()
 {
 	  Serial.begin(9600);
 	  xbee.setSerial(Serial);
- set_info_ZigBee();
+     //set_info_ZigBee();
 }
 
 void loop()
