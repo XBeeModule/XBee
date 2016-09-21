@@ -84,13 +84,13 @@ extern "C" void __cxa_pure_virtual() {;}
 #define portInputRegister(P)
 #define portModeRegister(P)
 
-void ZigBeeRead();
+void XBeeRead();
 void sl_XBee();
-void ZigBeeWrite();
+void XBeeWrite();
 void sendAtCommand();
 void sendAtCommand_ar();
 void sendRemoteAtCommand();
-void set_info_ZigBee();
+void set_info_XBee();
 //
 //
 

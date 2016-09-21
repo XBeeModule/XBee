@@ -43,10 +43,10 @@ int XBee_Addr16;// = 0xffff;
 
 int zki = 0;
 
-int Len_ZegBee = 0;
-unsigned char info_ZigBee_data[10];
-unsigned char info_ZigBee_data1[10];
-unsigned long ZigBee_data2;
+int Len_XBee = 0;
+unsigned char info_XBee_data[10];
+unsigned char info_XBee_data1[10];
+unsigned long XBee_data2;
 char* simbol_ascii[2];
 char   cmd;
 char * pEnd;
@@ -126,7 +126,7 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 
 
 
- void ZigBeeRead()
+ void XBeeRead()
 {
   xbee.readPacket();   // Получить пакет
 	
@@ -254,9 +254,9 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 		default:
 			break;
 		}
-	ZigBeeWrite();
+	XBeeWrite();
  }
- void ZigBeeWrite()
+ void XBeeWrite()
  {
   // break down 10-bit reading into two bytes and place in payload
   //разложить 10-битный код  в два байта и поместить в полезной нагрузке
@@ -277,7 +277,7 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 
 	 //  После отправки запроса TX, мы ожидаем ответ статуса
 	 //  Ждать до половины секунды для реагирования состояния 
- ZigBeeRead();
+ XBeeRead();
   if (xbee.readPacket(500))
 	   // xbee.readPacket();
 	  {
@@ -343,7 +343,6 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 																   
  
 }
- 
  void sendAtCommand() 
 {
 	int i10;
@@ -371,21 +370,21 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 				 
 					if (atResponse.getValueLength() > 0) 
 						{
-							Len_ZegBee = atResponse.getValueLength();
+							Len_XBee = atResponse.getValueLength();
 						//  Serial.print("Command value length is ");
 						//  Serial.println(atResponse.getValueLength(), DEC);
 						//  Serial.print("Command value: ");
-							int i11=Len_ZegBee-1;
-							info_ZigBee_data1[0] = 0;
-							info_ZigBee_data1[1] = 0;
-							info_ZigBee_data1[2] = 0;
-							info_ZigBee_data1[3] = 0;
+							int i11=Len_XBee-1;
+							info_XBee_data1[0] = 0;
+							info_XBee_data1[1] = 0;
+							info_XBee_data1[2] = 0;
+							info_XBee_data1[3] = 0;
 
 						  for (i10 = 0; i10 < atResponse.getValueLength(); i10++) 
 							  {
-								info_ZigBee_data[i10] = atResponse.getValue()[i10];
+								info_XBee_data[i10] = atResponse.getValue()[i10];
 								//Serial.print(info_ZigBee_data[i10], HEX);
-								info_ZigBee_data1[i11] = info_ZigBee_data[i10];
+								info_XBee_data1[i11] = info_XBee_data[i10];
 								i11--;
 							  }
 				
@@ -418,57 +417,35 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 			}
 	  }
 }
-
  void sendAtCommand_ar() 
 {
 	int i10;
+	xbee.send(arRequestMod);
 
- // Serial.println("Sending command to the XBee");
-
-  // send the command
-  xbee.send(arRequestMod);
-
-  // wait up to 5 seconds for the status response
-  if (xbee.readPacket(5000)) 
-  { 
-
-	// should be an AT command response
-	if (xbee.getResponse().getApiId() == AT_COMMAND_RESPONSE) 
+	if (xbee.readPacket(5000))  // wait up to 5 seconds for the status response
+	{ 
+		if (xbee.getResponse().getApiId() == AT_COMMAND_RESPONSE) 
 		{
 		  xbee.getResponse().getAtCommandResponse(atResponse);
 
 		  if (atResponse.isOk()) 
 			  {
+				if (atResponse.getValueLength() > 0) 
+					{
+						Len_XBee = atResponse.getValueLength();
+						int i11=Len_XBee-1;
+						info_XBee_data1[0] = 0;
+						info_XBee_data1[1] = 0;
+						info_XBee_data1[2] = 0;
+						info_XBee_data1[3] = 0;
 
-					//myGLCD.setColor(255 , 0, 0);
-					
-				//	Serial.print("Command [");
-				//	Serial.print(atResponse.getCommand()[0]);
-				//	Serial.print(atResponse.getCommand()[1]);
-				//	Serial.println("] was successful!");
-				 
-					if (atResponse.getValueLength() > 0) 
-						{
-							Len_ZegBee = atResponse.getValueLength();
-						//  Serial.print("Command value length is ");
-						//  Serial.println(atResponse.getValueLength(), DEC);
-						//  Serial.print("Command value: ");
-							int i11=Len_ZegBee-1;
-							info_ZigBee_data1[0] = 0;
-							info_ZigBee_data1[1] = 0;
-							info_ZigBee_data1[2] = 0;
-							info_ZigBee_data1[3] = 0;
-
-						  for (i10 = 0; i10 < atResponse.getValueLength(); i10++) 
-							  {
-								info_ZigBee_data[i10] = atResponse.getValue()[i10];
-								//Serial.print(info_ZigBee_data[i10], HEX);
-								info_ZigBee_data1[i11] = info_ZigBee_data[i10];
+						for (i10 = 0; i10 < atResponse.getValueLength(); i10++) 
+							{
+								info_XBee_data[i10] = atResponse.getValue()[i10];
+								info_XBee_data1[i11] = info_XBee_data[i10];
 								i11--;
-							  }
-				
-						 // Serial.println("");
-						}
+							}
+					}
 			  } 
 		  else 
 			  {
@@ -492,15 +469,14 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 			  }
 		} 
 		else 
-			{
-		/*	  Serial.print("Expected AT response but got ");
-			  Serial.println(xbee.getResponse().getApiId(), HEX);*/
-			}   
+		{
+	/*	  Serial.print("Expected AT response but got ");
+			Serial.println(xbee.getResponse().getApiId(), HEX);*/
+		}   
 	  }
   else 
 	  {
-		// at command failed
-		if (xbee.getResponse().isError()) 
+		if (xbee.getResponse().isError()) // at command failed
 			{
 		/*	  Serial.print("Error reading packet.  Error code: ");  
 			  Serial.println(xbee.getResponse().getErrorCode());*/
@@ -513,16 +489,9 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 }
  void sendRemoteAtCommand()
 {
-  Serial.println("Sending command to the XBee");
-
-  // send the command
-  xbee.send(remoteAtRequest);
-
-  // wait up to 5 seconds for the status response
-  if (xbee.readPacket(5000)) {
-	// got a response!
-
-	// should be an AT command response
+	xbee.send(remoteAtRequest);
+	if (xbee.readPacket(5000))   // wait up to 5 seconds for the status response
+	{
 	if (xbee.getResponse().getApiId() == REMOTE_AT_COMMAND_RESPONSE) 
 	{
 	  xbee.getResponse().getRemoteAtCommandResponse(remoteAtResponse);
@@ -571,7 +540,7 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 	//Serial.print("No response from radio3");  
   }
 }
- void set_info_ZigBee()
+ void set_info_XBee()
  {
 	 ////Программа ввостановления данных ZigBee из памяти.
 		//   byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
@@ -601,7 +570,58 @@ void setup()
 
 void loop()
 {
-
-  /* add main program code here */
-
+	xbee.readPacket();
+    
+	if (xbee.getResponse().isAvailable()) 
+	{
+		if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) 
+		{
+			// got a zb rx packet
+        
+			// now fill our zb rx class
+			xbee.getResponse().getZBRxResponse(rx);
+            
+			if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED) 
+			{
+				// the sender got an ACK
+				flashLed(statusLed, 10, 10);
+			}
+			else 
+			{
+				// we got it (obviously) but sender didn't get an ACK
+				flashLed(errorLed, 2, 20);
+			}
+			// set dataLed PWM to value of the first byte in the data
+			analogWrite(dataLed, rx.getData(0));   // set dataLed PWM to value of the first byte in the data
+		}
+		else if (xbee.getResponse().getApiId() == MODEM_STATUS_RESPONSE) 
+		{
+			xbee.getResponse().getModemStatusResponse(msr);   // the local XBee sends this response on certain events, like association/dissociation
+			if (msr.getStatus() == ASSOCIATED) 
+			{
+				// yay this is great.  flash led
+				flashLed(statusLed, 10, 10);
+			}
+			else if (msr.getStatus() == DISASSOCIATED) 
+			{
+				// this is awful.. flash led to show our discontent
+				flashLed(errorLed, 10, 10);
+			}
+			else 
+			{
+				// another status
+				flashLed(statusLed, 5, 10);
+			}
+		}
+		else 
+		{
+			// not something we were expecting
+			flashLed(errorLed, 1, 25);    
+		}
+	}
+	else if (xbee.getResponse().isError()) 
+	{
+		//nss.print("Error reading packet.  Error code: ");  
+		//nss.println(xbee.getResponse().getErrorCode());
+	}
 }
