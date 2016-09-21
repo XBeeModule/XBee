@@ -1,5 +1,46 @@
-#include <XBee.h>
+/*
+Пульт должен передавать команды на исполнительное устройство,
+которое будет управлять блоком реле и переключателей, 
+а также возвращать подтверждение выполнения команд МК. 
+Также разработчик предусматривает соответствующие методы фильтрации, шифрование, модуляцию.
+Исполнение команд необходимо гарантированное, то есть пульт должен иметь индикацию выполнения (обмен данными двухсторонний). 
+Также желательна (если возможно) односторонняя передача rs232 - от ИУ к пульту на скорости 1200бод. 
+Драйвер реле и четыре реле. Возможна обратная связь подтверждения состояния реле. 
+(Уточнить нагрузку и количество необходимых контактов).
+Светодиодная индикация включения реле, подтверждения связи с пультом, индикация ошибки.
+3.Исполнительное устройство. Управление маломощными реле типа TQ2 5V, соленоидами 100мА, реле типа TQ2-l2-5V.
+Выходы:
+1)Выключатель. Индикация – команда получена(выполнена) – горит диод, команда не прошла – не горит. TQ2 5V
+2)Выключатель. Индикация – команда получена(выполнена) – горит диод, команда не прошла – не горит. TQ2 5V
+3) Импульс заданной продолжительности на соленоид. Индикация – команда получена(выполнена) – мигнул диод, команда не прошла – не мигнул. соленоид 100мА
+4) Импульс заданной продолжительности на соленоид. Индикация – команда получена(выполнена) – мигнул диод, команда не прошла – не мигнул. соленоид 100мА
+5) Переключатель. При включении устройства – опрос положения, загорается один из диодов.
+Индикация – команда на переключение получена(выполнена) – загорается соответствующий диод, противоположный гаснет. TQ2-l2-5V 
+Управление будет не соленоидами, а микродвигателем 5в,
 
+нужна возможность реверса, время вращения строго определенной продолжительности - 0,5 сек каждая команда. 
+Т.е. управление будет выглядеть так: 
+1. Управление реле - нажал иконку - вкл - нажал - выкл. Таких два выхода, иконки "канал 1"  и "канал 2".
+2.Управление микродвигателем - нажал "+" - на контаты микродвигателя поступил сигнал, продолжительностью 0,5 секунд, полярность (+-), 
+нажал "-" - на контаты микродвигателя поступил сигнал с реверсом, продолжительностью 0,5 секунд, полярность (-+). 
+3. Желательно счетчик нажатий, отображение на иконке со знаком "+" и "-" цифрами, например начальное положение "0",
+после двух нажатий иконки "+" - на счетчике "+2", следом жмем "-" пять раз - на счетчике "-3" и так далее, нумерация 99 знаков в каждую сторону.
+Возможно ли хранить состояние счетчика при выключении/включении любой части устройства?
+
+Импульс на микродвигатель возможно регулировать? Шаг 0,5 секунд, от 0,5 до 20. Индикация суммирует шаги, а не команды.
+Также можно вынести разъемы для возможности механического управления (дублирования команд кнопками) - может пригодиться.
+
+достаточно 2 на мотор (импульс +- и -+) и 2 на реле. Остальные можно не задействовать (выключить их меню в прошивке),
+но, думаю, используем по мере усложнения устройства позже. 
+
+
+*/
+
+
+
+
+
+#include <XBee.h>
 
 #define led_13 13  
 #define KN1 1   
@@ -10,7 +51,9 @@
 #define KN6 6  
 #define KN7 7  
 #define KN8 8  
-
+#define set_time1 9  
+#define set_time2 10  
+#define set_time3 11  
 
 
 
@@ -50,6 +93,9 @@ unsigned long XBee_data2;
 char* simbol_ascii[2];
 char   cmd;
 char * pEnd;
+
+
+
 
 // serial high
 uint8_t shCmd[] = {'S','H'}; // Старший байт адреса
@@ -124,35 +170,45 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 
 //-----------------------------------------------------------------------------------------------
 
+int statusLed = 13;
+int errorLed = 13;
+int dataLed = 13;
 
-
- void XBeeRead()
+void flashLed(int pin, int times, int wait) 
+{
+    
+    for (int i = 0; i < times; i++) 
+	{
+      digitalWrite(pin, HIGH);
+      delay(wait);
+      digitalWrite(pin, LOW);
+      
+      if (i + 1 < times) 
+	  {
+        delay(wait);
+      }
+    }
+}
+void XBeeRead()
 {
   xbee.readPacket();   // Получить пакет
-	
 	if (xbee.getResponse().isAvailable())  //Проверить наличие данных
 	  {
 		// есть что-то
-		 //   Serial.println("Got an rx packet8888!");
 	  if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) 
 		  {
-			// получен zb rx packet
-		
 			// Теперь заполнить наш класс ZB гх
-			xbee.getResponse().getZBRxResponse(rx); // пакет rx заполнен
-	  
+			xbee.getResponse().getZBRxResponse(rx); // пакет rx заполнен, получен zb rx packet
 			// Serial.println("Got an rx packet!");
-			
 			if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED) 
 				{
 					// отправитель получил  ответ ACK
 					// Serial.println("packet acknowledged");
-				} 
+				}  
 			else 
 				{
 				   //Serial.println("packet not acknowledged");
 				}
-		
 					 //Serial.print("checksum is ");
 					 //Serial.println(rx.getChecksum(), HEX);    // Контрольная сумма
 
@@ -160,7 +216,6 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 					 //Serial.println(rx.getPacketLength(), DEC); // Длина пакета общего пакета
 					 //Serial.print("Data packet length is ");
 					 //Serial.println(rx.getDataLength(), DEC); // Длина пакета пакета данных
-
 				for (int i = 0; i < rx.getDataLength(); i++)    // Считать информацию длина пакета  в rx.getDataLength()
 				 {
 				   //Serial.print("payload [");                   //
@@ -168,7 +223,6 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 				   //Serial.print("] is ");                       //
 				   //Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
 				  }
-		
 				for (int i = 0; i < xbee.getResponse().getFrameDataLength(); i++) // Длина пакета в xbee.getResponse().getFrameDataLength()
 				   {
 					 //Serial.print("frame data [");                                //  frame data с 0 по 7 находится адрес отправителя
@@ -195,68 +249,67 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 					/*Serial.print("Addr16: ");
 					Serial.println(XBee_Addr16,HEX);
 */
-
-
-
+				//	flashLed(dataLed, 10, 500);
 		   }
 	  sl_XBee();
 	  } 
-
 	 else if (xbee.getResponse().isError()) //  Ошибка приема
 		{
 		  // Serial.print("error code:");
 		  // Serial.println(xbee.getResponse().getErrorCode());            // Код ошибки xbee.getResponse().getErrorCode()
 		}
 }
-
- void sl_XBee()// формировать ответ Координатору 
+void sl_XBee()// формировать ответ Координатору 
  {
  //copy the function type from the incoming query
 	funcType = (rx.getData()[0]);
 	field1	= (rx.getData()[1] << 8) | rx.getData()[2];
 	field2  = (rx.getData()[3] << 8) | rx.getData()[4];
-	
+	Serial.println(funcType);
+	Serial.println(field1);
+	Serial.println(field2);
 	//generate query response based on function type
 	switch(funcType)   // Выполнить действие и сформировать ответ
 		{
 		case KN1:
-			// Serial.println("READ_ELECTRO:");
-		//	get_READ_ELECTRO_StatusXBee(funcType, field1, field2);
+			run_KN1_StatusXBee(funcType, field1, field2);
 			break;
 		case KN2:
-			//Serial.println("READ_GAZ:");
-			//get_READ_GAZ_StatusXBee(funcType, field1, field2);
+			run_KN1_StatusXBee(funcType, field1, field2);
 			break;
 		case KN3:
-			//Serial.println("READ_COLWATER:");
-			//get_READ_COLWATER_StatusXBee(funcType, field1, field2);
+			run_KN1_StatusXBee(funcType, field1, field2);
 			break;
 		case KN4:
-			//Serial.println("READ_HOTWATER:");
-			//get_READ_HOTWATER_StatusXBee(funcType, field1, field2);
+			run_KN1_StatusXBee(funcType, field1, field2);
 			break;
 		case KN5:
-			//Serial.println("WRITE_DO:");
-			//get_READ_WAR_GAZ_StatusXBee(funcType, field1, field2);
+			run_KN1_StatusXBee(funcType, field1, field2);
 			break;
 		case KN6:
-			//Serial.println("WRITE_AO:");
-			//get_READ_WAR_TEMPERATURA_StatusXBee(funcType, field1, field2);
+            run_KN1_StatusXBee(funcType, field1, field2);
 			break;
 		case KN7:
-			//Serial.println("WRITE_DO:");
-			//get_READ_WAR_GAZ_StatusXBee(funcType, field1, field2);
+            run_KN1_StatusXBee(funcType, field1, field2);
 			break;
 		case KN8:
-			//Serial.println("WRITE_AO:");
-			//get_READ_WAR_TEMPERATURA_StatusXBee(funcType, field1, field2);
+            run_KN1_StatusXBee(funcType, field1, field2); 
+			break;
+		case set_time1:
+            run_set_time1_StatusXBee(funcType, field1, field2);
+			break;
+		case set_time2:
+            run_set_time1_StatusXBee(funcType, field1, field2);
+			break;
+		case set_time3:
+            run_set_time1_StatusXBee(funcType, field1, field2); 
 			break;
 		default:
 			break;
 		}
 	XBeeWrite();
  }
- void XBeeWrite()
+void XBeeWrite()
  {
   // break down 10-bit reading into two bytes and place in payload
   //разложить 10-битный код  в два байта и поместить в полезной нагрузке
@@ -272,16 +325,13 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 			 zki = 0;
 		 }
 	  payload[0] = zki;*/
-
   xbee.send(zbTx);
-
 	 //  После отправки запроса TX, мы ожидаем ответ статуса
 	 //  Ждать до половины секунды для реагирования состояния 
  XBeeRead();
   if (xbee.readPacket(500))
 	   // xbee.readPacket();
 	  {
-	  
 		// получил ответ! 
 		// Должен быть znet tx status            	
 		if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) 
@@ -305,7 +355,6 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 						myGLCD.drawRoundRect (278, 92, 318, 132);
 						mcp_Out1.digitalWrite(Beep, LOW);     */               // 
 						//delay(300);
-
 				  }
 			  else 
 				  {
@@ -324,26 +373,22 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
   else 
 	  {
 		// local XBee did not provide a timely TX Status Response -- should not happen
-/*		   myGLCD.setColor(255 , 0, 0);
-					myGLCD.fillRoundRect (278, 92, 318, 132);
-					myGLCD.setColor(255, 255, 255);
-					myGLCD.drawRoundRect (278, 92, 318, 132);
-					myGLCD.setBackColor(0, 0, 0);
-					delay(400); 
-					myGLCD.setColor(0, 0, 0);
-					myGLCD.fillRoundRect (278, 92, 318, 132);
-					myGLCD.setColor(0, 0, 0);
-					myGLCD.drawRoundRect (278, 92, 318, 132);
-					mcp_Out1.digitalWrite(Beep, LOW);     */               // 
-					//delay(200);
-
+		/*		   myGLCD.setColor(255 , 0, 0);
+		myGLCD.fillRoundRect (278, 92, 318, 132);
+		myGLCD.setColor(255, 255, 255);
+		myGLCD.drawRoundRect (278, 92, 318, 132);
+		myGLCD.setBackColor(0, 0, 0);
+		delay(400); 
+		myGLCD.setColor(0, 0, 0);
+		myGLCD.fillRoundRect (278, 92, 318, 132);
+		myGLCD.setColor(0, 0, 0);
+		myGLCD.drawRoundRect (278, 92, 318, 132);
+		mcp_Out1.digitalWrite(Beep, LOW);     */               // 
+		//delay(200);
 	  }
-
   delay(1000);
-																   
- 
 }
- void sendAtCommand() 
+void sendAtCommand() 
 {
 	int i10;
 
@@ -417,7 +462,7 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 			}
 	  }
 }
- void sendAtCommand_ar() 
+void sendAtCommand_ar() 
 {
 	int i10;
 	xbee.send(arRequestMod);
@@ -487,7 +532,7 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 			}
 	  }
 }
- void sendRemoteAtCommand()
+void sendRemoteAtCommand()
 {
 	xbee.send(remoteAtRequest);
 	if (xbee.readPacket(5000))   // wait up to 5 seconds for the status response
@@ -540,7 +585,7 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 	//Serial.print("No response from radio3");  
   }
 }
- void set_info_XBee()
+void set_info_XBee()
  {
 	 ////Программа ввостановления данных ZigBee из памяти.
 		//   byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
@@ -558,70 +603,180 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
 		//		XBee_Addr64_LS = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
 }
 
+void run_KN1_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
+ {
+	word val;
+	word i = 0;
 
+	payload[0] = funcType;
+
+	flashLed(dataLed, startreg, numregs);
+
+
+	//payload[1] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro);
+	//payload[2] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro+1);
+	//for (int i_xbee = 0;i_xbee<20;i_xbee++)
+	//{
+		//payload[3+i_xbee] = i2c_eeprom_read_byte( deviceaddress,adr_n_user+i_xbee);
+	//}
+	//payload[23] = i2c_eeprom_read_byte( deviceaddress,adr_elektro_day);
+	//payload[24] = i2c_eeprom_read_byte( deviceaddress,adr_elektro_mon);
+	//payload[25] = i2c_eeprom_read_byte( deviceaddress,adr_elektro_year+1);
+	//payload[26] = i2c_eeprom_read_byte( deviceaddress,adr_elektro_year);
+	//payload[27] = i2c_eeprom_read_byte( deviceaddress,adr_elektro_hour);
+	//payload[28] = i2c_eeprom_read_byte( deviceaddress,adr_elektro_min);
+	//payload[29] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_old+3);
+	//payload[30] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_old+2);
+	//payload[31] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_old+1);
+	//payload[32] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_old);
+	//payload[33] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_ok+3);
+	//payload[34] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_ok+2);
+	//payload[35] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_ok+1);
+	//payload[36] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_ok);
+	//payload[37] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_result+3);
+	//payload[38] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_result+2);
+	//payload[39] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_result+1);
+	//payload[40] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_result);
+ }
+void run_KN2_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
+ {
+	 word val;
+	 word i = 0;
+
+	 payload[0] = funcType;
+	flashLed(dataLed, startreg, numregs);
+	 //payload[1] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro);
+	 //payload[2] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro+1);
+
+ }
+void run_KN3_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
+ {
+	 word val;
+	 word i = 0;
+	flashLed(dataLed, startreg, numregs);
+	 payload[0] = funcType;
+	 //payload[1] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro);
+	 //payload[2] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro+1);
+
+ }
+void run_KN4_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
+ {
+	 word val;
+	 word i = 0;
+	flashLed(dataLed, startreg, numregs);
+	 payload[0] = funcType;
+	 //payload[1] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro);
+	 //payload[2] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro+1);
+
+ }
+void run_KN5_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
+ {
+	 word val;
+	 word i = 0;
+	flashLed(dataLed, startreg, numregs);
+	 payload[0] = funcType;
+	 //payload[1] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro);
+	 //payload[2] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro+1);
+
+ }
+void run_KN6_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
+ {
+	 word val;
+	 word i = 0;
+	flashLed(dataLed, startreg, numregs);
+	 payload[0] = funcType;
+	 //payload[1] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro);
+	 //payload[2] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro+1);
+
+ }
+void run_KN7_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
+ {
+	 word val;
+	 word i = 0;
+	 flashLed(dataLed, startreg, numregs);
+	 payload[0] = funcType;
+	 //payload[1] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro);
+	 //payload[2] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro+1);
+
+ }
+void run_KN8_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
+ {
+	 word val;
+	 word i = 0;
+	 flashLed(dataLed, startreg, numregs);
+	 payload[0] = funcType;
+	 //payload[1] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro);
+	 //payload[2] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro+1);
+
+ }
+void run_set_time1_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
+ {
+	 word val;
+	 word i = 0;
+	 flashLed(dataLed, startreg, numregs);
+	 payload[0] = funcType;
+	 //payload[1] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro);
+	 //payload[2] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro+1);
+
+ }
+void run_set_time2_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
+{
+	word val;
+	word i = 0;
+	flashLed(dataLed, startreg, numregs);
+	payload[0] = funcType;
+	//payload[1] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro);
+	//payload[2] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro+1);
+
+}
+void run_set_time3_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
+{
+	word val;
+	word i = 0;
+	flashLed(dataLed, startreg, numregs);
+	payload[0] = funcType;
+	//payload[1] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro);
+	//payload[2] = i2c_eeprom_read_byte( deviceaddress,adr_n_str_electro+1);
+
+}
+
+
+
+
+void set_pin()
+{
+	pinMode(led_13, OUTPUT);                             //
+	digitalWrite(led_13, HIGH);                          //
+
+
+	//pinMode(KN1, INPUT); 
+	//pinMode(KN2, INPUT); 
+	//pinMode(KN3, INPUT); 
+	//pinMode(KN4, INPUT); 
+	//pinMode(KN5, INPUT); 
+	//pinMode(KN6, INPUT); 
+	//pinMode(KN7, INPUT); 
+	//pinMode(KN8, INPUT); 
+
+	//digitalWrite(KN1, HIGH); 
+	//digitalWrite(KN2, HIGH); 
+	//digitalWrite(KN3, HIGH); 
+	//digitalWrite(KN4, HIGH); 
+	//digitalWrite(KN5, HIGH); 
+	//digitalWrite(KN6, HIGH); 
+	//digitalWrite(KN7, HIGH); 
+	//digitalWrite(KN8, HIGH); 
+}
 
 void setup()
 {
 	  Serial.begin(9600);
 	  xbee.setSerial(Serial);
-	  pinMode(led_13, OUTPUT);                             //
-	  digitalWrite(led_13, HIGH);                          //
+	  set_pin();
+      flashLed(statusLed, 3, 50);
 }
 
 void loop()
 {
-	xbee.readPacket();
-    
-	if (xbee.getResponse().isAvailable()) 
-	{
-		if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) 
-		{
-			// got a zb rx packet
-        
-			// now fill our zb rx class
-			xbee.getResponse().getZBRxResponse(rx);
-            
-			if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED) 
-			{
-				// the sender got an ACK
-				flashLed(statusLed, 10, 10);
-			}
-			else 
-			{
-				// we got it (obviously) but sender didn't get an ACK
-				flashLed(errorLed, 2, 20);
-			}
-			// set dataLed PWM to value of the first byte in the data
-			analogWrite(dataLed, rx.getData(0));   // set dataLed PWM to value of the first byte in the data
-		}
-		else if (xbee.getResponse().getApiId() == MODEM_STATUS_RESPONSE) 
-		{
-			xbee.getResponse().getModemStatusResponse(msr);   // the local XBee sends this response on certain events, like association/dissociation
-			if (msr.getStatus() == ASSOCIATED) 
-			{
-				// yay this is great.  flash led
-				flashLed(statusLed, 10, 10);
-			}
-			else if (msr.getStatus() == DISASSOCIATED) 
-			{
-				// this is awful.. flash led to show our discontent
-				flashLed(errorLed, 10, 10);
-			}
-			else 
-			{
-				// another status
-				flashLed(statusLed, 5, 10);
-			}
-		}
-		else 
-		{
-			// not something we were expecting
-			flashLed(errorLed, 1, 25);    
-		}
-	}
-	else if (xbee.getResponse().isError()) 
-	{
-		//nss.print("Error reading packet.  Error code: ");  
-		//nss.println(xbee.getResponse().getErrorCode());
-	}
+	XBeeRead();
 }

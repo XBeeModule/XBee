@@ -84,6 +84,7 @@ extern "C" void __cxa_pure_virtual() {;}
 #define portInputRegister(P)
 #define portModeRegister(P)
 
+void flashLed(int pin, int times, int wait);
 void XBeeRead();
 void sl_XBee();
 void XBeeWrite();
@@ -91,6 +92,18 @@ void sendAtCommand();
 void sendAtCommand_ar();
 void sendRemoteAtCommand();
 void set_info_XBee();
+void run_KN1_StatusXBee(byte funcType, word startreg, word numregs);
+void run_KN2_StatusXBee(byte funcType, word startreg, word numregs);
+void run_KN3_StatusXBee(byte funcType, word startreg, word numregs);
+void run_KN4_StatusXBee(byte funcType, word startreg, word numregs);
+void run_KN5_StatusXBee(byte funcType, word startreg, word numregs);
+void run_KN6_StatusXBee(byte funcType, word startreg, word numregs);
+void run_KN7_StatusXBee(byte funcType, word startreg, word numregs);
+void run_KN8_StatusXBee(byte funcType, word startreg, word numregs);
+void run_set_time1_StatusXBee(byte funcType, word startreg, word numregs);
+void run_set_time2_StatusXBee(byte funcType, word startreg, word numregs);
+void run_set_time3_StatusXBee(byte funcType, word startreg, word numregs);
+void set_pin();
 //
 //
 
