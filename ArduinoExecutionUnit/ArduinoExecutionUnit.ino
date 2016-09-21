@@ -1,10 +1,21 @@
 #include <XBee.h>
 
 
+#define led_13 13  
+#define KN1 1   
+#define KN2 2  
+#define KN3 3 
+#define KN4 4 
+#define KN5 5  
+#define KN6 6  
+#define KN7 7  
+#define KN8 8  
 
-//int adr_zigbee_coordinator_h = 204;       //јдрес координатора старший
-//int adr_zigbee_coordinator_l = 208;       //јдрес координатора младший
-//int adr_zigbee_network       = 212;       //јдрес сети
+
+
+
+
+
 
 
 // ************ ZigBee******************
@@ -202,53 +213,47 @@ RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
  {
  //copy the function type from the incoming query
 	funcType = (rx.getData()[0]);
-
-	//copy field 1 from the incoming query
 	field1	= (rx.getData()[1] << 8) | rx.getData()[2];
-
-	//copy field 2 from the incoming query
 	field2  = (rx.getData()[3] << 8) | rx.getData()[4];
 	
 	//generate query response based on function type
-	switch(funcType)
+	switch(funcType)   // ¬ыполнить действие и сформировать ответ
 		{
-// #define READ_ELECTRO          0x01  // чтение из пам€ти и передача XBee
-// #define READ_GAZ		         0x02  // чтение из пам€ти и передача XBee
-// #define READ_COLWATER 	     0x03  // чтение из пам€ти и передача XBee
-// #define READ_HOTWATER	     0x04  // чтение из пам€ти и передача XBee
-// #define READ_WAR_GAZ	         0x05  // чтение из пам€ти и передача XBee
-// #define READ_WAR_TEMPERATURA  0x06  // чтение из пам€ти и передача XBee
-
-		//case READ_ELECTRO:
-		//	// Serial.println("READ_ELECTRO:");
+		case KN1:
+			// Serial.println("READ_ELECTRO:");
 		//	get_READ_ELECTRO_StatusXBee(funcType, field1, field2);
-		//	break;
-		//case READ_GAZ:
-		//	//Serial.println("READ_GAZ:");
-		//	get_READ_GAZ_StatusXBee(funcType, field1, field2);
-		//	break;
-		//case READ_COLWATER:
-		//	//Serial.println("READ_COLWATER:");
-		//	get_READ_COLWATER_StatusXBee(funcType, field1, field2);
-		//	break;
-		//case READ_HOTWATER:
-		//	//Serial.println("READ_HOTWATER:");
-		//	get_READ_HOTWATER_StatusXBee(funcType, field1, field2);
-		//	break;
-		//case READ_WAR_GAZ:
-		//	//Serial.println("WRITE_DO:");
-		//	get_READ_WAR_GAZ_StatusXBee(funcType, field1, field2);
-		//	break;
-		//case READ_WAR_TEMPERATURA:
-		//	//Serial.println("WRITE_AO:");
-		//	get_READ_WAR_TEMPERATURA_StatusXBee(funcType, field1, field2);
-		//	break;
+			break;
+		case KN2:
+			//Serial.println("READ_GAZ:");
+			//get_READ_GAZ_StatusXBee(funcType, field1, field2);
+			break;
+		case KN3:
+			//Serial.println("READ_COLWATER:");
+			//get_READ_COLWATER_StatusXBee(funcType, field1, field2);
+			break;
+		case KN4:
+			//Serial.println("READ_HOTWATER:");
+			//get_READ_HOTWATER_StatusXBee(funcType, field1, field2);
+			break;
+		case KN5:
+			//Serial.println("WRITE_DO:");
+			//get_READ_WAR_GAZ_StatusXBee(funcType, field1, field2);
+			break;
+		case KN6:
+			//Serial.println("WRITE_AO:");
+			//get_READ_WAR_TEMPERATURA_StatusXBee(funcType, field1, field2);
+			break;
+		case KN7:
+			//Serial.println("WRITE_DO:");
+			//get_READ_WAR_GAZ_StatusXBee(funcType, field1, field2);
+			break;
+		case KN8:
+			//Serial.println("WRITE_AO:");
+			//get_READ_WAR_TEMPERATURA_StatusXBee(funcType, field1, field2);
+			break;
 		default:
-			//return;
 			break;
 		}
-//	Serial.println(field1, HEX);   
-//	Serial.println(field2, HEX);   
 	ZigBeeWrite();
  }
  void ZigBeeWrite()
@@ -590,7 +595,8 @@ void setup()
 {
 	  Serial.begin(9600);
 	  xbee.setSerial(Serial);
-     //set_info_ZigBee();
+	  pinMode(led_13, OUTPUT);                             //
+	  digitalWrite(led_13, HIGH);                          //
 }
 
 void loop()
