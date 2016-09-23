@@ -409,30 +409,33 @@ void drawGlavMenu()
 	myGLCD.drawRoundRect (97, 93, 186, 178);
 	myGLCD.printNumI(4, 102, 98);                   //"4"
 //------------------------------------------------------------------
+
+
 	myGLCD.setColor(0, 0, 255);                    //1
 	myGLCD.fillRoundRect (5, 183, 60, 243);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 183, 60, 243);
-	myGLCD.printNumI(1, 25, 205);                   //"1"
+	myGLCD.printNumI(5, 25, 205);                   //"1"
 	
 	myGLCD.setColor(0, 0, 255);                    //2
 	myGLCD.fillRoundRect (63, 183, 118, 243);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (63, 183, 118, 243);
-	myGLCD.printNumI(2, 83, 205);                   //"2"
+	myGLCD.printNumI(6, 83, 205);                   //"2"
 
 	myGLCD.setColor(0, 0, 255);                    //3
 	myGLCD.fillRoundRect (121, 183, 176, 243);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (121, 183, 176, 243);
-	myGLCD.printNumI(3, 141, 205);                  //"3"
+	myGLCD.printNumI(7, 141, 205);                  //"3"
 
 	myGLCD.setColor(0, 0, 255);                      //4
 	myGLCD.fillRoundRect (179, 183, 234, 243);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (179, 183, 234, 243);
-	myGLCD.printNumI(4, 199, 205);                  //"4"
+	myGLCD.printNumI(8, 199, 205);                  //"4"
 //----------------------------------------------------------
+
 	myGLCD.setColor(0, 0, 255);
 	myGLCD.fillRoundRect (5, 248, 118, 293);
 	myGLCD.setColor(255, 255, 255);
@@ -468,35 +471,40 @@ void klav_Glav_Menu()
 	if(digitalRead(KN1) == false)
 	{
 		myGLCD.printNumI(1, 208, 51);
-		XBee_alarm();
+		payload[0] = 0x01;
+		payload[1] = 0x00;
+		payload[2] = 0x0A;
+		payload[3] = 0x00;
+		payload[4] = 0x1F;
+		XBeeWrite();
 	}
 	if(digitalRead(KN2) == LOW)
 	{
-		myGLCD.printNumI(1, 208, 51);
+		myGLCD.printNumI(2, 208, 51);
 	}
 	if(digitalRead(KN3) == LOW)
 	{
-		myGLCD.printNumI(1, 208, 51);
+		myGLCD.printNumI(3, 208, 51);
 	}
 	if(digitalRead(KN4) == LOW)
 	{
-		myGLCD.printNumI(1, 208, 51);
+		myGLCD.printNumI(4, 208, 51);
 	}
 	if(digitalRead(KN5) == false)
 	{
-		myGLCD.printNumI(1, 208, 51);
+		myGLCD.printNumI(5, 208, 51);
 	}
 	if(digitalRead(KN6) == LOW)
 	{
-		myGLCD.printNumI(1, 208, 51);
+		myGLCD.printNumI(6, 208, 51);
 	}
 	if(digitalRead(KN7) == LOW)
 	{
-		myGLCD.printNumI(1, 208, 51);
+		myGLCD.printNumI(7, 208, 51);
 	}
 	if(digitalRead(KN8) == LOW)
 	{
-		myGLCD.printNumI(1, 208, 51);
+		myGLCD.printNumI(8, 208, 51);
 	}
 
     if (myTouch.dataAvailable())
@@ -509,12 +517,12 @@ void klav_Glav_Menu()
        if ((x >= 5) && (x <= 94))                                   // Button: 1
         {
           waitForIt(5, 5, 94, 90);
-         // updateStr('1');
+          myGLCD.printNumI(1, 208, 51);
         }
         if ((x >= 97) && (x <= 186))                                // Button: 2
         {
           waitForIt(97, 5, 186, 90);
-        //  updateStr('2');
+          myGLCD.printNumI(3, 208, 51);
         }
 	  }
 	 
@@ -523,12 +531,12 @@ void klav_Glav_Menu()
        if ((x >= 5) && (x <= 94))                                   // Button: 1
         {
           waitForIt(5, 93, 94, 178);
-       //   updateStr('3');
+          myGLCD.printNumI(2, 208, 51);
         }
         if ((x >= 97) && (x <= 186))                                // Button: 2
         {
           waitForIt(97, 93, 186, 178);
-        //  updateStr('4');
+          myGLCD.printNumI(4, 208, 51);
         }
 	  }
 	 
@@ -537,22 +545,22 @@ void klav_Glav_Menu()
        if ((x >= 5) && (x <= 60))                                   // Button: 1
         {
           waitForIt(5, 183, 60, 243);
-        //  updateStr('1');
+        myGLCD.printNumI(5, 208, 51);
         }
         if ((x >= 63) && (x <= 118))                                // Button: 2
         {
           waitForIt(63, 183, 118, 243);
-        //  updateStr('2');
+         myGLCD.printNumI(6, 208, 51);
         }
         if ((x >= 121) && (x <= 176))                               // Button: 3
         {
           waitForIt(121, 183, 176, 243);
-        //  updateStr('3');
+        myGLCD.printNumI(7, 208, 51);
         }
         if ((x >= 179) && (x <= 234))                               // Button: 4
         {
           waitForIt(179, 183, 234, 243);
-         // updateStr('4');
+         myGLCD.printNumI(8, 208, 51);
         }
 	  }
 
@@ -2550,11 +2558,16 @@ void XBee_alarm()
 {
 	 word val;
 	 word i = 0;
-	 funcType = 9;
-	 clock_read();
-	 payload[0] = funcType;
-	 payload[1] = 0;//i2c_eeprom_read_byte( deviceaddress,adr_level_war_gaz_max+1);
-	 payload[2] = 0;//i2c_eeprom_read_byte( deviceaddress,adr_level_war_gaz_max);
+	 		payload[0] = 0x01;
+		payload[1] = 0x00;
+		payload[2] = 0x0A;
+		payload[3] = 0x00;
+		payload[4] = 0x1F;
+	 //funcType = 9;
+	 //clock_read();
+	 //payload[0] = funcType;
+	 //payload[1] = 0;//i2c_eeprom_read_byte( deviceaddress,adr_level_war_gaz_max+1);
+	 //payload[2] = 0;//i2c_eeprom_read_byte( deviceaddress,adr_level_war_gaz_max);
 
 	 //for (int i_xbee = 0;i_xbee<20;i_xbee++)
 	 //{
