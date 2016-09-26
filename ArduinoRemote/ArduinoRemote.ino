@@ -1272,7 +1272,7 @@ void updateStr(int val)
   }
 }
 
-void XBeeRead()
+void XBeeRead() 
 {
   xbee.readPacket();   // Получить пакет
 	
@@ -2553,7 +2553,6 @@ void set_adr_device()
 	}			
 }
 
-
 void XBee_alarm()
 {
 	 word val;
@@ -2676,8 +2675,6 @@ void read_memory1()
 
 }
 
-
-
 void setup_pin()
 {
 	pinMode(led_13, OUTPUT);                             //
@@ -2700,8 +2697,6 @@ void setup_pin()
 	digitalWrite(KN7, HIGH); 
 	digitalWrite(KN8, HIGH); 
 }
-
-
 void setup()
 {
 	Serial.begin(9600);                                    // Подключение к USB ПК
@@ -2739,7 +2734,6 @@ void setup()
 	Serial.println(" ");                                   //
 	Serial.println("System initialization OK!.");          // Информация о завершении настройки
 }
-
 void loop()
 {
 	klav_Glav_Menu();
