@@ -1299,30 +1299,29 @@ void XBeeRead()
 				   Serial.println("packet not acknowledged");
 				}
 		
-					 //Serial.print("checksum is ");
-					 //Serial.println(rx.getChecksum(), HEX);    // Контрольная сумма
-
-					 //Serial.print("All packet length is ");
-					 //Serial.println(rx.getPacketLength(), DEC); // Длина пакета общего пакета
-					 //Serial.print("Data packet length is ");
-					 //Serial.println(rx.getDataLength(), DEC); // Длина пакета пакета данных
+				//Serial.print("checksum is ");
+				//Serial.println(rx.getChecksum(), HEX);    // Контрольная сумма
+				//Serial.print("All packet length is ");
+				//Serial.println(rx.getPacketLength(), DEC); // Длина пакета общего пакета
+				//Serial.print("Data packet length is ");
+				//Serial.println(rx.getDataLength(), DEC); // Длина пакета пакета данных
 
 				for (int i = 0; i < rx.getDataLength(); i++)    // Считать информацию длина пакета  в rx.getDataLength()
-				 {
-				   //Serial.print("payload [");                   //
-				   //Serial.print(i, DEC);                        //
-				   //Serial.print("] is ");                       //
-				   //Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
-				  }
+				{
+					//Serial.print("payload [");                   //
+					//Serial.print(i, DEC);                        //
+					//Serial.print("] is ");                       //
+					//Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
+				}
 		
 				for (int i = 0; i < xbee.getResponse().getFrameDataLength(); i++) // Длина пакета в xbee.getResponse().getFrameDataLength()
-				   {
-					 //Serial.print("frame data [");                                //  frame data с 0 по 7 находится адрес отправителя
-					 //Serial.print(i, DEC);
-					 //Serial.print("] is ");                                       //
-					 //Serial.println(xbee.getResponse().getFrameData()[i], HEX);   //  Информация пакета в xbee.getResponse().getFrameData()[i], длина пакета 
-				   }
-				Serial.println();
+				{
+					//Serial.print("frame data [");                                //  frame data с 0 по 7 находится адрес отправителя
+					//Serial.print(i, DEC);
+					//Serial.print("] is ");                                       //
+					//Serial.println(xbee.getResponse().getFrameData()[i], HEX);   //  Информация пакета в xbee.getResponse().getFrameData()[i], длина пакета 
+				}
+			//	Serial.println();
 					//Получаем верхние 32-битное слово 64-битный адрес.  64-битный адрес 802.15.4 MAC адрес источника 
 					// слоя адрес (например, "сожженные").
 					XBee_Addr64_MS=(uint32_t(rx.getFrameData()[0]) << 24) + (uint32_t(rx.getFrameData()[1]) << 16) + (uint16_t(rx.getFrameData()[2]) << 8) + rx.getFrameData()[3];
@@ -1341,9 +1340,6 @@ void XBeeRead()
 					/*Serial.print("Addr16: ");
 					Serial.println(XBee_Addr16,HEX);
 */
-
-
-
 		   }
 	  sl_XBee();
 	  } 
@@ -1356,24 +1352,17 @@ void XBeeRead()
 }
 void sl_XBee()// формировать ответ Координатору 
  {
- //copy the function type from the incoming query
-	funcType = (rx.getData()[0]);
-
-	//copy field 1 from the incoming query
-	field1	= (rx.getData()[1] << 8) | rx.getData()[2];
-
-	//copy field 2 from the incoming query
-	field2  = (rx.getData()[3] << 8) | rx.getData()[4];
-	
-	//generate query response based on function type
-	switch(funcType)
+ 	funcType = (rx.getData()[0]);                           //copy the function type from the incoming query
+	field1	= (rx.getData()[1] << 8) | rx.getData()[2];     //copy field 1 from the incoming query
+	field2  = (rx.getData()[3] << 8) | rx.getData()[4];     //copy field 2 from the incoming query
+	switch(funcType)                                        //generate query response based on function type
 		{
-// #define READ_ELECTRO          0x01  // чтение из памяти и передача XBee
-// #define READ_GAZ		         0x02  // чтение из памяти и передача XBee
-// #define READ_COLWATER 	     0x03  // чтение из памяти и передача XBee
-// #define READ_HOTWATER	     0x04  // чтение из памяти и передача XBee
-// #define READ_WAR_GAZ	         0x05  // чтение из памяти и передача XBee
-// #define READ_WAR_TEMPERATURA  0x06  // чтение из памяти и передача XBee
+		// #define READ_ELECTRO          0x01  // чтение из памяти и передача XBee
+		// #define READ_GAZ		         0x02  // чтение из памяти и передача XBee
+		// #define READ_COLWATER 	     0x03  // чтение из памяти и передача XBee
+		// #define READ_HOTWATER	     0x04  // чтение из памяти и передача XBee
+		// #define READ_WAR_GAZ	         0x05  // чтение из памяти и передача XBee
+		// #define READ_WAR_TEMPERATURA  0x06  // чтение из памяти и передача XBee
 
 		//case READ_ELECTRO:
 		//	// Serial.println("READ_ELECTRO:");
@@ -1403,8 +1392,6 @@ void sl_XBee()// формировать ответ Координатору
 			return;
 			break;
 		}
-//	Serial.println(field1, HEX);   
-//	Serial.println(field2, HEX);   
 	XBeeWrite();
  }
 void XBeeWrite()
@@ -1481,8 +1468,8 @@ void XBeeWrite()
 	  }
 
   delay(1000);
-}
-void XBee_Setup()
+} 
+void XBee_Setup()            //  
  {
 	myGLCD.clrScr();   // Очистить экран CENTER
 	myGLCD.setColor(0, 0, 255);
@@ -1494,42 +1481,36 @@ void XBee_Setup()
 	myGLCD.print("Setup XBee", CENTER, 5);
 	myGLCD.print(txt_return, CENTER, 218);// Завершить просмотр 
 	int x, y;
-		while (true)
-			{
-				if (Serial2.available()) 
-					{
-						int inByte = Serial2.read();
-						Serial.write(inByte);
-					}
-				
-				// read from port 0, send to port 2:
-			  if (Serial.available())
-				    {
-						int inByte = Serial.read();
-						Serial2.write(inByte);
-					}
+	while (true)
+	{
+	if (Serial2.available()) 
+		{
+			int inByte = Serial2.read();
+			Serial.write(inByte);
+		}
+	// read from port 0, send to port 2:
+	if (Serial.available())
+		{
+			int inByte = Serial.read();
+			Serial2.write(inByte);
+		}
+	if (myTouch.dataAvailable())
+		{
+			myTouch.read();
+			x=myTouch.getX();
+			y=myTouch.getY();
 
-
-				   
-			  if (myTouch.dataAvailable())
-					 {
-						  myTouch.read();
-						  x=myTouch.getX();
-						  y=myTouch.getY();
-
-					 if ((y>=2) && (y<=240))  // Upper row
-					  {
-						if ((x>=2) && (x<=319))  // Выход
-						  {
-
-							  waitForIt(10, 10, 60, 60);
-							 return;
-						  }
-					   }
-					}
-
-		  }	
- } 
+		if ((y>=2) && (y<=240))  // Upper row
+		{
+			if ((x>=2) && (x<=319))  // Выход
+				{
+					waitForIt(10, 10, 60, 60);
+					return;
+				}
+			}
+	    }
+	}	
+} 
 void XBee_status()
 {
 	time_flag_start();
