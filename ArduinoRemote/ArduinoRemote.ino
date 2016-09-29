@@ -229,8 +229,8 @@ uint8_t payload[50] ;                       // = {3, 4,};
 uint8_t payload1[10] ;// = {3, 4,};
 
 //Два 32-битных половинки th4 64-разрядный адрес
-long XBee_Addr64_MS;// = 0x0013a200;
-long XBee_Addr64_LS;// = 0x4054de2d;
+long XBee_Addr64_MS = 0x0013a200;
+long XBee_Addr64_LS = 0x40672567;
 
 //Два 32-битных половинки th4 64-разрядный адрес
 long XBee_Addr64_MS_tmp;                    //
