@@ -213,20 +213,19 @@ const char* const table_message[] PROGMEM =
 
 
 // ************ XBee******************
-//создаем XBee библиотеку
-XBee xbee = XBee();
 
-//Это создает экземпляр объекта "response" "ответ" обрабатывать пакеты Xbee
-XBeeResponse response = XBeeResponse();
-//Это создает экземпляр объекта "rx" на процесс Xbee Series 2 API пакеты
-ZBRxResponse rx = ZBRxResponse();
-//Это создает экземпляр объекта "msr" процесс associate/disassociate packets (PAN membership)
-ModemStatusResponse msr = ModemStatusResponse();
+XBee xbee = XBee();                                   //создаем XBee библиотеку
 
+// ++++++++++  настройки для приема и передачи пакета +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+XBeeResponse response = XBeeResponse();               //Это создает экземпляр объекта "response" "ответ" обрабатывать пакеты Xbee
+ZBRxResponse rx = ZBRxResponse();                     //Это создает экземпляр объекта "rx" на процесс Xbee Series 2 API пакеты
+ModemStatusResponse msr = ModemStatusResponse();      //Это создает экземпляр объекта "msr" процесс associate/disassociate packets (PAN membership)
 ZBRxIoSampleResponse ioSample = ZBRxIoSampleResponse();
 
+
 //Строка с данными
-uint8_t payload[50] ;// = {3, 4,};
+uint8_t payload[50] ;                       // = {3, 4,};
 uint8_t payload1[10] ;// = {3, 4,};
 
 //Два 32-битных половинки th4 64-разрядный адрес
@@ -234,91 +233,77 @@ long XBee_Addr64_MS;// = 0x0013a200;
 long XBee_Addr64_LS;// = 0x4054de2d;
 
 //Два 32-битных половинки th4 64-разрядный адрес
-long XBee_Addr64_MS_tmp;            //
-long XBee_Addr64_LS_tmp;            //
+long XBee_Addr64_MS_tmp;                    //
+long XBee_Addr64_LS_tmp;                    //
 
-
-//16-разрядный адрес
-int XBee_Addr16;// = 0xffff;
+int XBee_Addr16;                            //16-разрядный адрес
 int Len_XBee = 0;
 unsigned char info_XBee_data[10];
 unsigned char info_XBee_data1[10];
 char* simbol_ascii[2];
 char   cmd;
 
-// serial high
-uint8_t shCmd[] = {'S','H'}; // Старший байт адреса
-// serial low
-uint8_t slCmd[] = {'S','L'}; // Младший байт адреса
-// association status
-uint8_t assocCmd[] = {'A','I'}; // Индикация присоединения 
-								/*
-								Считывает информацию о последнем запросе узла на присоединение:
-								0x00 – Завершено успешно - Координатор стартовал илиМаршрутизатор/Конечное устройство
-								обнаружило и присоединилось родительскому устройству.
-								0x21 – Сканирование не обнаружило сети
-								0x22 – Сканирование не обнаружило работающей сети с текущими установками SC и ID
-								0x23 – Работающий Координатор или Маршрутизаторы найдены, но они не дали разрешение на
-								присоединение к сети (истекло время NJ)
-								0x27 – Попытка присоединения не удалась
-								0x2A – Запуск Координатора не удался
-								0xFF – Идет поиск родительского устройства
-								*/
+uint8_t shCmd[] = {'S','H'};                // serial high Старший байт адреса куда отправляется пакет
+uint8_t slCmd[] = {'S','L'};                // serial low Младший байт адреса куда отправляется пакет
+uint8_t assocCmd[] = {'A','I'};             // association status Индикация присоединения 
+											/*
+											Считывает информацию о последнем запросе узла на присоединение:
+											0x00 – Завершено успешно - Координатор стартовал илиМаршрутизатор/Конечное устройство
+											обнаружило и присоединилось родительскому устройству.
+											0x21 – Сканирование не обнаружило сети
+											0x22 – Сканирование не обнаружило работающей сети с текущими установками SC и ID
+											0x23 – Работающий Координатор или Маршрутизаторы найдены, но они не дали разрешение на
+											присоединение к сети (истекло время NJ)
+											0x27 – Попытка присоединения не удалась
+											0x2A – Запуск Координатора не удался
+											0xFF – Идет поиск родительского устройства
+											*/
 uint8_t irCmd[]    = {'I','R'};
-uint8_t opCmd[]    = {'O','P'}; // Номер сети (PAN ID)
-uint8_t IDCmd[]    = {'I','D'}; // Номер сети (ID)
-uint8_t OICmd[]    = {'O','I'}; // Operating 16-bit PAN ID(OI)
-uint8_t MYCmd[]    = {'M','Y'}; // Номер сети (16-bit Network Adress
-uint8_t CHCmd[]    = {'C','H'}; // Номер Радиоканала
-uint8_t SCCmd[]    = {'S','C'}; // Scan Channel
-uint8_t BDCmd[]    = {'B','D'}; // Скорость канала (Baud Rate )
-uint8_t VoltCmd[]  = {'%','V'}; // Напряжение питания Считывает напряжение на выводе Vcc. Для преобразования значения
-								// в мВ, поделите значение на 1023 и умножьте на 1200. Значение %V равное 0x8FE (или 2302 в
-								// десятичном виде) соответствует 2700мВ или 2.70В
-uint8_t TPCmd[]    = {'T','P'}; // Температура
-uint8_t dhCmd[]    = {'D','H'}; // Старший байт адреса
-uint8_t dlCmd[]    = {'D','L'}; // Младший байт адреса
-uint8_t d0Cmd[]    = {'D','0'}; //
-uint8_t WRCmd[]    = {'W','R'}; // Запись в модуль параметров
-								// Примечание: Если введена команда WR, до получения ответа "OK\r" не должно вводится
-								// дополнительных символов
-uint8_t FRCmd[]    = {'F','R'}; // Перезапуск программного обеспечения
-uint8_t NRCmd[]    = {'N','R'}; // Перезапуск сети 
-								// Если NR = 0: Переустанавливает параметры сети на узле, вызвавшем команду. 
-								// Если NR = 1:Отправляетшироковещательную передачу для перезапуска параметров на всех узлах сети.
+uint8_t opCmd[]    = {'O','P'};             // Номер сети (PAN ID)
+uint8_t IDCmd[]    = {'I','D'};             // Номер сети (ID)
+uint8_t OICmd[]    = {'O','I'};             // Operating 16-bit PAN ID(OI)
+uint8_t MYCmd[]    = {'M','Y'};             // Номер сети (16-bit Network Adress
+uint8_t CHCmd[]    = {'C','H'};             // Номер Радиоканала
+uint8_t SCCmd[]    = {'S','C'};             // Scan Channel
+uint8_t BDCmd[]    = {'B','D'};             // Скорость канала (Baud Rate )
+uint8_t VoltCmd[]  = {'%','V'};             // Напряжение питания Считывает напряжение на выводе Vcc. Для преобразования значения
+								            // в мВ, поделите значение на 1023 и умножьте на 1200. Значение %V равное 0x8FE (или 2302 в
+								            // десятичном виде) соответствует 2700мВ или 2.70В
+uint8_t TPCmd[]    = {'T','P'};             // Температура
+uint8_t dhCmd[]    = {'D','H'};             // Старший байт адреса
+uint8_t dlCmd[]    = {'D','L'};             // Младший байт адреса
+uint8_t d0Cmd[]    = {'D','0'};             //
+uint8_t WRCmd[]    = {'W','R'};             // Запись в модуль параметров
+								            // Примечание: Если введена команда WR, до получения ответа "OK\r" не должно вводится
+								            // дополнительных символов
+uint8_t FRCmd[]    = {'F','R'};             // Перезапуск программного обеспечения
+uint8_t NRCmd[]    = {'N','R'};             // Перезапуск сети 
+								            // Если NR = 0: Переустанавливает параметры сети на узле, вызвавшем команду. 
+								            // Если NR = 1:Отправляетшироковещательную передачу для перезапуска параметров на всех узлах сети.
 uint8_t d0Value[]  = { 0x2 };
 uint8_t irValue[]  = { 0xff, 0xff };
 uint8_t IDValue[]  = { 0x02, 0x34 };
 
-uint8_t command[]  = {'I','D'}; // Номер сети (ID)
+uint8_t command[]  = {'I','D'};              // Номер сети (ID)
 uint8_t commandValue[]  = { 0x02, 0x35 };
 uint8_t commandValueLength = 0x2 ;
 
-// SH + SL Address of receiving XBee
-
-XBeeAddress64 addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);
-ZBTxRequest zbTx = ZBTxRequest(addr64, payload, sizeof(payload));
-//Это создает экземпляр объекта "txStatus" процесс благодарности прислал Xbee Series 2 API пакеты
-ZBTxStatusResponse txStatus = ZBTxStatusResponse();
-
-//XBeeAddress64 remoteAddress = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);
-AtCommandRequest atRequest = AtCommandRequest(shCmd);
-AtCommandRequest arRequestMod = AtCommandRequest(command,commandValue, commandValueLength);
+XBeeAddress64 addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);                                     // SH + SL Address of receiving XBee
+ZBTxRequest zbTx = ZBTxRequest(addr64, payload, sizeof(payload));                                         // Формирует пакет  zbTx с адресом отправителя и данными
+ZBTxStatusResponse txStatus = ZBTxStatusResponse();                                                       // Это создает экземпляр объекта "txStatus" процесс благодарности прислал Xbee Series 2 API пакеты
+AtCommandRequest atRequest = AtCommandRequest(shCmd);                                                     // XBeeAddress64 remoteAddress = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);
+AtCommandRequest arRequestMod = AtCommandRequest(command,commandValue, commandValueLength); 
 AtCommandResponse atResponse = AtCommandResponse();
-// Create a remote AT request with the IR command
-RemoteAtCommandRequest remoteAtRequest = RemoteAtCommandRequest(addr64, irCmd, irValue, sizeof(irValue));
-// Create a Remote AT response object
-RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();
+RemoteAtCommandRequest remoteAtRequest = RemoteAtCommandRequest(addr64, irCmd, irValue, sizeof(irValue)); // Create a remote AT request with the IR command
+RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();                                     // Create a Remote AT response object
 
 
 //********************************
-	byte funcType;
-	word field1;
-	word field2;
-	byte *_msg, _len;
-	word _baud, _crc;
-
-
+byte funcType;
+word field1;
+word field2;
+byte *_msg, _len;
+word _baud, _crc;
 
 //-----------------------------------------------------------------------------------------------
 
@@ -481,14 +466,32 @@ void klav_Glav_Menu()
 	if(digitalRead(KN2) == LOW)
 	{
 		myGLCD.printNumI(2, 208, 51);
+		payload[0] = 0x02;
+		payload[1] = 0x00;
+		payload[2] = 0x0A;
+		payload[3] = 0x00;
+		payload[4] = 0x1F;
+		XBeeWrite();
 	}
 	if(digitalRead(KN3) == LOW)
 	{
 		myGLCD.printNumI(3, 208, 51);
+		payload[0] = 0x03;
+		payload[1] = 0x00;
+		payload[2] = 0x0A;
+		payload[3] = 0x00;
+		payload[4] = 0x1F;
+		XBeeWrite();
 	}
 	if(digitalRead(KN4) == LOW)
 	{
 		myGLCD.printNumI(4, 208, 51);
+		payload[0] = 4;
+		payload[1] = 0x00;
+		payload[2] = 0x0A;
+		payload[3] = 0x00;
+		payload[4] = 0x1F;
+		XBeeWrite();
 	}
 	if(digitalRead(KN5) == false)
 	{
@@ -1274,31 +1277,24 @@ void updateStr(int val)
 
 void XBeeRead() 
 {
-  xbee.readPacket();   // Получить пакет
-	
-	if (xbee.getResponse().isAvailable())  //Проверить наличие данных
+  xbee.readPacket();                                          // Получить пакет
+	if (xbee.getResponse().isAvailable())                     //Проверить наличие данных
 	  {
 		// есть что-то
 		 //   Serial.println("Got an rx packet8888!");
 	  if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) 
 		  {
 			// получен zb rx packet
-		
-			// Теперь заполнить наш класс ZB гх
-			xbee.getResponse().getZBRxResponse(rx); // пакет rx заполнен
-	  
+			xbee.getResponse().getZBRxResponse(rx);           // Теперь заполнить наш класс ZB гх  пакет rx заполнен
 			// Serial.println("Got an rx packet!");
-			
-			if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED) 
+			if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED)     // отправитель получил  ответ ACK
 				{
-					// отправитель получил  ответ ACK
 					// Serial.println("packet acknowledged");
 				} 
 			else 
 				{
 				   Serial.println("packet not acknowledged");
 				}
-		
 				//Serial.print("checksum is ");
 				//Serial.println(rx.getChecksum(), HEX);    // Контрольная сумма
 				//Serial.print("All packet length is ");
@@ -1306,7 +1302,7 @@ void XBeeRead()
 				//Serial.print("Data packet length is ");
 				//Serial.println(rx.getDataLength(), DEC); // Длина пакета пакета данных
 
-				for (int i = 0; i < rx.getDataLength(); i++)    // Считать информацию длина пакета  в rx.getDataLength()
+				for (int i = 0; i < rx.getDataLength(); i++)       // Считать информацию длина пакета  в rx.getDataLength()
 				{
 					//Serial.print("payload [");                   //
 					//Serial.print(i, DEC);                        //
@@ -1321,36 +1317,35 @@ void XBeeRead()
 					//Serial.print("] is ");                                       //
 					//Serial.println(xbee.getResponse().getFrameData()[i], HEX);   //  Информация пакета в xbee.getResponse().getFrameData()[i], длина пакета 
 				}
-			//	Serial.println();
-					//Получаем верхние 32-битное слово 64-битный адрес.  64-битный адрес 802.15.4 MAC адрес источника 
-					// слоя адрес (например, "сожженные").
-					XBee_Addr64_MS=(uint32_t(rx.getFrameData()[0]) << 24) + (uint32_t(rx.getFrameData()[1]) << 16) + (uint16_t(rx.getFrameData()[2]) << 8) + rx.getFrameData()[3];
-					//Получаем ниже 32-битное слово...
-					XBee_Addr64_LS=(uint32_t(rx.getFrameData()[4]) << 24) + (uint32_t(rx.getFrameData()[5]) << 16) + (uint16_t(rx.getFrameData()[6]) << 8) + rx.getFrameData()[7];
-					//Отправить две части адреса программного обеспечения последовательного порта
-					/*Serial.print("Addr64 MS: ");
-					Serial.print(XBee_Addr64_MS,HEX);
-					Serial.print('\n');
-					Serial.print("Addr64 LS: ");
-					Serial.print(XBee_Addr64_LS,HEX);
-					Serial.print('\n');
-					Serial.println();*/
-							// IP-адреса в TCP/IP. 
-					XBee_Addr16=rx.getRemoteAddress16();
-					/*Serial.print("Addr16: ");
-					Serial.println(XBee_Addr16,HEX);
+				//	Serial.println();
+				//Получаем верхние 32-битное слово 64-битный адрес.  64-битный адрес 802.15.4 MAC адрес источника 
+				// слоя адрес (например, "сожженные").
+				XBee_Addr64_MS=(uint32_t(rx.getFrameData()[0]) << 24) + (uint32_t(rx.getFrameData()[1]) << 16) + (uint16_t(rx.getFrameData()[2]) << 8) + rx.getFrameData()[3];
+				//Получаем ниже 32-битное слово...
+				XBee_Addr64_LS=(uint32_t(rx.getFrameData()[4]) << 24) + (uint32_t(rx.getFrameData()[5]) << 16) + (uint16_t(rx.getFrameData()[6]) << 8) + rx.getFrameData()[7];
+				//Отправить две части адреса программного обеспечения последовательного порта
+				/*Serial.print("Addr64 MS: ");
+				Serial.print(XBee_Addr64_MS,HEX);
+				Serial.print('\n');
+				Serial.print("Addr64 LS: ");
+				Serial.print(XBee_Addr64_LS,HEX);
+				Serial.print('\n');
+				Serial.println();*/
+				XBee_Addr16=rx.getRemoteAddress16();         		  // IP-адреса в TCP/IP. 
+				/*Serial.print("Addr16: ");
+				Serial.println(XBee_Addr16,HEX);
 */
 		   }
-	  sl_XBee();
+//	  sl_XBee();
 	  } 
 
-	 else if (xbee.getResponse().isError()) //  Ошибка приема
+	 else if (xbee.getResponse().isError())                           //  Ошибка приема
 		{
 		  // Serial.print("error code:");
-		  // Serial.println(xbee.getResponse().getErrorCode());            // Код ошибки xbee.getResponse().getErrorCode()
+		  // Serial.println(xbee.getResponse().getErrorCode());       // Код ошибки xbee.getResponse().getErrorCode()
 		}
 }
-void sl_XBee()// формировать ответ Координатору 
+void sl_XBee()                                              // формировать ответ Координатору 
  {
  	funcType = (rx.getData()[0]);                           //copy the function type from the incoming query
 	field1	= (rx.getData()[1] << 8) | rx.getData()[2];     //copy field 1 from the incoming query
@@ -1728,6 +1723,118 @@ void time_flag_start()
 	 timeF = millis();
 	 if (timeF>60000) flag_time = 1;
  }
+
+// ++++++++++++++++++++   Вариант 2 обработки  XBee протокола ++++++++++++++++++++++++
+void XBeeRead2() 
+{
+    xbee.readPacket();
+    
+    if (xbee.getResponse().isAvailable()) 
+	{
+      // got something
+      
+      if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) 
+	  {
+        // got a zb rx packet
+        
+        // now fill our zb rx class
+        xbee.getResponse().getZBRxResponse(rx);
+            
+        if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED) 
+		{
+            // the sender got an ACK
+            //flashLed(statusLed, 10, 10);
+        }
+		else 
+		{
+            // we got it (obviously) but sender didn't get an ACK
+            // flashLed(errorLed, 2, 20);
+        }
+        // set dataLed PWM to value of the first byte in the data
+         // analogWrite(dataLed, rx.getData(0));
+      }
+	  else if (xbee.getResponse().getApiId() == MODEM_STATUS_RESPONSE) 
+	  {
+        xbee.getResponse().getModemStatusResponse(msr);
+        // the local XBee sends this response on certain events, like association/dissociation
+        
+        if (msr.getStatus() == ASSOCIATED) 
+		{
+          // yay this is great.  flash led
+            //flashLed(statusLed, 10, 10);
+        }
+		else if (msr.getStatus() == DISASSOCIATED) 
+		{
+          // this is awful.. flash led to show our discontent
+          //flashLed(errorLed, 10, 10);
+        }
+		else 
+		{
+          // another status
+          //flashLed(statusLed, 5, 10);
+        }
+      }
+	  else 
+	  {
+      	// not something we were expecting
+        //flashLed(errorLed, 1, 25);    
+      }
+    }
+	else if (xbee.getResponse().isError()) 
+	{
+      //nss.print("Error reading packet.  Error code: ");  
+      //nss.println(xbee.getResponse().getErrorCode());
+    }
+}
+void XBeeWrite2()
+{
+ // break down 10-bit reading into two bytes and place in payload
+ /* pin5 = analogRead(5);
+  payload[0] = pin5 >> 8 & 0xff;
+  payload[1] = pin5 & 0xff;*/
+
+  xbee.send(zbTx);
+
+  // flash TX indicator
+ // flashLed(statusLed, 1, 100);
+
+  // after sending a tx request, we expect a status response
+  // wait up to half second for the status response
+  if (xbee.readPacket(500)) 
+  {
+    // got a response!
+
+    // should be a znet tx status            	
+    if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) 
+	{
+      xbee.getResponse().getZBTxStatusResponse(txStatus);
+
+      // get the delivery status, the fifth byte
+      if (txStatus.getDeliveryStatus() == SUCCESS) 
+	  {
+        // success.  time to celebrate
+       // flashLed(statusLed, 5, 50);
+      }
+	  else 
+	  {
+        // the remote XBee did not receive our packet. is it powered on?
+        //flashLed(errorLed, 3, 500);
+      }
+    }
+  } 
+  else if (xbee.getResponse().isError()) 
+  {
+    //nss.print("Error reading packet.  Error code: ");  
+    //nss.println(xbee.getResponse().getErrorCode());
+  }
+  else 
+  {
+    // local XBee did not provide a timely TX Status Response -- should not happen
+   // flashLed(errorLed, 2, 50);
+  }
+}
+
+// -----------------------------------------------------------------------------------
 
 void updateStrXBee(int val) // Проверка длины строки при вводе адреса XBee
 {
@@ -2569,7 +2676,7 @@ void XBee_alarm()
 		//		} 
 	 XBeeWrite();
 
-}
+} 
 
 byte i2c_eeprom_read_byte( int deviceaddress, unsigned int eeaddress )
 {

@@ -107,6 +107,8 @@ void XBeeWrite();
 void XBee_Setup();
 void XBee_status();
 void time_flag_start();
+void XBeeRead2();
+void XBeeWrite2();
 void updateStrXBee(int val);
 void XBee_SetH(int adr_xbee_h);
 void XBee_SetL(int adr_xbee_h);
