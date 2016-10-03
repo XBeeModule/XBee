@@ -103,7 +103,6 @@ void klav_menu2();
 void waitForIt(int x1, int y1, int x2, int y2);
 void updateStr(int val);
 void XBeeRead();
-void XBeeReadBack();
 void sl_XBee();
 void XBeeWrite();
 void XBee_Setup();

@@ -209,7 +209,6 @@ void sl_XBee()                                              // формировать ответ
  }
 void XBeeWrite()
 {
-
   zbTx = ZBTxRequest(addr64, payload, sizeof(payload));  
   xbee.send(zbTx);
   if (xbee.readPacket(500))    	                                         //  После отправки запроса TX, мы ожидаем ответ статуса. Ждать до половины секунды для реагирования состояния 
@@ -219,25 +218,24 @@ void XBeeWrite()
 			xbee.getResponse().getZBTxStatusResponse(txStatus);
 			if (txStatus.getDeliveryStatus() == SUCCESS)		    	 // Получить статус доставки, пятый байт
 				{
-					//flashLed(statusLed, 5, 50);                         // Успешно, можно радоваться.
-					delay(300);
+				//	delay(300);
 				}
 			else 
 				{
 					 Serial.println("Error reading packet.  Error code: 1");  
-					//flashLed(errorLed, 10, 100);                         // Управляемый XBee не ответил. Он включен?
+					 flashLed(errorLed, 10, 100);                         // Управляемый XBee не ответил. Он включен?
 				}
 		}
 	  }
   else if (xbee.getResponse().isError())
 	  {
 		   Serial.println("Error reading packet.  Error code: 2");  
-		  //flashLed(errorLed, 3, 100);                                   // Управляемый XBee не ответил. Он включен?
+		   flashLed(errorLed, 10, 100);                                   // Управляемый XBee не ответил. Он включен?
 	  } 
   else 
 	  {
 		  Serial.println("Error reading packet.  Error code: 3");  
-			//flashLed(errorLed, 3, 100);                                  // Управляемый XBee не ответил. Он включен?
+			flashLed(errorLed, 10, 100);                                  // Управляемый XBee не ответил. Он включен?
 			delay(200); 
 	  }
   delay(500);
@@ -257,9 +255,6 @@ void run_KN1_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 		//payload[3+i_xbee] = i2c_eeprom_read_byte( deviceaddress,adr_n_user+i_xbee);
 	//}
 	payload[23] = 1;
-	payload[24] = 1;
-	payload[25] = 1;
-	payload[26] = 1;
 }
 void run_KN2_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
@@ -372,7 +367,7 @@ void setup()
       SerialXBee.begin(9600);
 	  xbee.setSerial(SerialXBee);
 	  set_pin();
-      flashLed(statusLed, 3, 50);
+   //   flashLed(statusLed, 3, 50);
 }
 
 void loop()

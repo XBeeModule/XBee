@@ -1365,13 +1365,9 @@ void XBeeRead()
   xbee.readPacket();                                          // Получить пакет
 	if (xbee.getResponse().isAvailable())                     //Проверить наличие данных
 	  {
-		// есть что-то
-		 //   Serial.println("Got an rx packet8888!");
-	  if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) 
+	  if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) 			// получен zb rx packet
 		  {
-			// получен zb rx packet
 			xbee.getResponse().getZBRxResponse(rx);           // Теперь заполнить наш класс ZB гх  пакет rx заполнен
-			// Serial.println("Got an rx packet!");
 			if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED)     // отправитель получил  ответ ACK
 				{
 					// Serial.println("packet acknowledged");
@@ -1396,18 +1392,17 @@ void XBeeRead()
 				}
 				Serial.println();
 				//Получаем верхние 32-битное слово 64-битный адрес.  64-битный адрес 802.15.4 MAC адрес источника 
-				// слоя адрес (например, "сожженные").
 				XBee_Addr64_MS=(uint32_t(rx.getFrameData()[0]) << 24) + (uint32_t(rx.getFrameData()[1]) << 16) + (uint16_t(rx.getFrameData()[2]) << 8) + rx.getFrameData()[3];
 				//Получаем ниже 32-битное слово...
 				XBee_Addr64_LS=(uint32_t(rx.getFrameData()[4]) << 24) + (uint32_t(rx.getFrameData()[5]) << 16) + (uint16_t(rx.getFrameData()[6]) << 8) + rx.getFrameData()[7];
 				//Отправить две части адреса программного обеспечения последовательного порта
-				Serial.print("Addr64 MS: ");
-				Serial.print(XBee_Addr64_MS,HEX);
-				Serial.print('\n');
-				Serial.print("Addr64 LS: ");
-				Serial.print(XBee_Addr64_LS,HEX);
-				Serial.print('\n');
-				Serial.println();
+				//Serial.print("Addr64 MS: ");
+				//Serial.print(XBee_Addr64_MS,HEX);
+				//Serial.print('\n');
+				//Serial.print("Addr64 LS: ");
+				//Serial.print(XBee_Addr64_LS,HEX);
+				//Serial.print('\n');
+				//Serial.println();
 				XBee_Addr16=rx.getRemoteAddress16();         		  // IP-адреса в TCP/IP. 
 				/*Serial.print("Addr16: ");
 				Serial.println(XBee_Addr16,HEX);
@@ -1423,82 +1418,13 @@ void XBeeRead()
 		   Serial.println(xbee.getResponse().getErrorCode());       // Код ошибки xbee.getResponse().getErrorCode()
 		}
 }
-void XBeeReadBack() 
-{
-  xbee.readPacket();                                          // Получить пакет
-	if (xbee.getResponse().isAvailable())                     //Проверить наличие данных
-	  {
-		// есть что-то
-		 //   Serial.println("Got an rx packet8888!");
-	  if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) 
-		  {
-			// получен zb rx packet
-			xbee.getResponse().getZBRxResponse(rx);           // Теперь заполнить наш класс ZB гх  пакет rx заполнен
-			// Serial.println("Got an rx packet!");
-			if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED)     // отправитель получил  ответ ACK
-				{
-					// Serial.println("packet acknowledged");
-				} 
-			else 
-				{
-				   Serial.println("packet not acknowledged");
-				}
-				Serial.print("checksum is ");
-				Serial.println(rx.getChecksum(), HEX);    // Контрольная сумма
-				Serial.print("All packet length is ");
-				Serial.println(rx.getPacketLength(), DEC); // Длина пакета общего пакета
-				Serial.print("Data packet length is ");
-				Serial.println(rx.getDataLength(), DEC); // Длина пакета пакета данных
 
-				for (int i = 0; i < rx.getDataLength(); i++)       // Считать информацию длина пакета  в rx.getDataLength()
-				{
-					Serial.print("payload [");                   //
-					Serial.print(i, DEC);                        //
-					Serial.print("] is ");                       //
-					Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
-				}
-		
-				for (int i = 0; i < xbee.getResponse().getFrameDataLength(); i++) // Длина пакета в xbee.getResponse().getFrameDataLength()
-				{
-					Serial.print("frame data [");                                //  frame data с 0 по 7 находится адрес отправителя
-					Serial.print(i, DEC);
-					Serial.print("] is ");                                       //
-					Serial.println(xbee.getResponse().getFrameData()[i], HEX);   //  Информация пакета в xbee.getResponse().getFrameData()[i], длина пакета 
-				}
-					Serial.println();
-				//Получаем верхние 32-битное слово 64-битный адрес.  64-битный адрес 802.15.4 MAC адрес источника 
-				// слоя адрес (например, "сожженные").
-				XBee_Addr64_MS=(uint32_t(rx.getFrameData()[0]) << 24) + (uint32_t(rx.getFrameData()[1]) << 16) + (uint16_t(rx.getFrameData()[2]) << 8) + rx.getFrameData()[3];
-				//Получаем ниже 32-битное слово...
-				XBee_Addr64_LS=(uint32_t(rx.getFrameData()[4]) << 24) + (uint32_t(rx.getFrameData()[5]) << 16) + (uint16_t(rx.getFrameData()[6]) << 8) + rx.getFrameData()[7];
-				//Отправить две части адреса программного обеспечения последовательного порта
-				Serial.print("Addr64 MS: ");
-				Serial.print(XBee_Addr64_MS,HEX);
-				Serial.print('\n');
-				Serial.print("Addr64 LS: ");
-				Serial.print(XBee_Addr64_LS,HEX);
-				Serial.print('\n');
-				Serial.println();
-				XBee_Addr16=rx.getRemoteAddress16();         		  // IP-адреса в TCP/IP. 
-				/*Serial.print("Addr16: ");
-				Serial.println(XBee_Addr16,HEX);
-*/
-		   }
-//	  sl_XBee();
-	  } 
-
-	 else if (xbee.getResponse().isError())                           //  Ошибка приема
-		{
-		   Serial.print("error code:");
-		   Serial.println(xbee.getResponse().getErrorCode());       // Код ошибки xbee.getResponse().getErrorCode()
-		}
-}
 void sl_XBee()                                              // формировать ответ Координатору 
  {
  	funcType = (rx.getData()[0]);                           //copy the function type from the incoming query
 	field1	= (rx.getData()[1] << 8) | rx.getData()[2];     //copy field 1 from the incoming query
 	field2  = (rx.getData()[3] << 8) | rx.getData()[4];     //copy field 2 from the incoming query
-	Serial.println(funcType);
+//	Serial.println(funcType);
 
 	switch(funcType)                                        //generate query response based on function type
 		{
@@ -1541,8 +1467,8 @@ void sl_XBee()                                              // формировать ответ
  }
 void XBeeWrite()
 {
-	Serial.println(XBee_Addr64_MS, HEX); 
-	Serial.println(XBee_Addr64_LS, HEX); 
+	//Serial.println(XBee_Addr64_MS, HEX); 
+	//Serial.println(XBee_Addr64_LS, HEX); 
 	zbTx = ZBTxRequest(addr64, payload, sizeof(payload));  
 	xbee.send(zbTx); 
 	if (xbee.readPacket(700))                                               //  После отправки запроса TX, мы ожидаем ответ статуса
