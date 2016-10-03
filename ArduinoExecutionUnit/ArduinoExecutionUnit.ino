@@ -41,6 +41,7 @@
 
 
 #include <XBee.h>
+#include <SoftwareSerial.h>
 
 #define led_13 13  
 #define KN1 1   
@@ -56,6 +57,12 @@
 #define set_time3 11  
 
 
+// Define NewSoftSerial TX/RX pins
+
+uint8_t ssRX = 3;           // Connect Arduino pin 3 to TX of XBee device
+uint8_t ssTX = 2;           // Connect Arduino pin 2 to RX of XBee device
+SoftwareSerial SerialXBee(ssRX, ssTX);
+
 // ************ ZigBee******************
 
 XBee xbee               = XBee();                           //создаем XBee библиотеку
@@ -66,8 +73,7 @@ ModemStatusResponse msr = ModemStatusResponse();            //Это создает экземп
 ZBRxIoSampleResponse ioSample = ZBRxIoSampleResponse();
 
 //Строка с данными
-uint8_t payload[50];                                        // = {3, 4,};
-uint8_t payload1[10];                                       // = {3, 4,};
+uint8_t payload[30];                                        // = {3, 4,};
 
 //Два 32-битных половинки th4 64-разрядный адрес
 long XBee_Addr64_MS;                                        // = 0x0013a200;
@@ -125,53 +131,40 @@ void XBeeRead()
 			xbee.getResponse().getZBRxResponse(rx);              //  Теперь заполнить наш класс ZB гх  пакет rx заполнен, получен zb rx packet
 			if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED)        // отправитель получил  ответ ACK
 				{
-					// Serial.println("packet acknowledged");
+					 Serial.println("packet acknowledged");
 				}  
 			else 
 				{
-				   //Serial.println("packet not acknowledged");
+				   Serial.println("packet not acknowledged");
 				}
 				Serial.print("checksum is ");
 				Serial.println(rx.getChecksum(), HEX);    // Контрольная сумма
 				Serial.print("All packet length is ");
 				Serial.println(rx.getPacketLength(), DEC); // Длина пакета общего пакета
 				Serial.print("Data packet length is ");
-				Serial.println(rx.getDataLength(), DEC); // Длина пакета пакета данных
-				for (int i = 0; i < rx.getDataLength(); i++)       // Считать информацию длина пакета  в rx.getDataLength()
-				{
-					Serial.print("payload [");                   //
-					Serial.print(i, DEC);                        //
-					Serial.print("] is ");                       //
-					Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
-				}
-				//for (int i = 0; i < xbee.getResponse().getFrameDataLength(); i++) // Длина пакета в xbee.getResponse().getFrameDataLength()
-				//{
-				//	Serial.print("frame data [");                                //  frame data с 0 по 7 находится адрес отправителя
-				//	Serial.print(i, DEC);
-				//	Serial.print("] is ");                                       //
-				//	Serial.println(xbee.getResponse().getFrameData()[i], HEX);     //  Информация пакета в xbee.getResponse().getFrameData()[i], длина пакета 
-				//}
 				//Получаем верхние 32-битное слово 64-битный адрес.  64-битный адрес 802.15.4 MAC адрес источника 
 				XBee_Addr64_MS=(uint32_t(rx.getFrameData()[0]) << 24) + (uint32_t(rx.getFrameData()[1]) << 16) + (uint16_t(rx.getFrameData()[2]) << 8) + rx.getFrameData()[3];
 				//Получаем ниже 32-битное слово...
 				XBee_Addr64_LS=(uint32_t(rx.getFrameData()[4]) << 24) + (uint32_t(rx.getFrameData()[5]) << 16) + (uint16_t(rx.getFrameData()[6]) << 8) + rx.getFrameData()[7];
 				//Отправить две части адреса программного обеспечения последовательного порта
 				XBee_Addr16=rx.getRemoteAddress16();                  // IP-адреса в TCP/IP. 
-				//flashLed(dataLed, 5, 250);
+				Serial.println(XBee_Addr64_MS, HEX); 
+                Serial.println(XBee_Addr64_LS, HEX); 
+				addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);
 		   }
 	  sl_XBee();
 	  } 
 	 else if (xbee.getResponse().isError())                            //  Ошибка приема
 		{
-		  // Serial.print("error code:");
-		  // Serial.println(xbee.getResponse().getErrorCode());            // Код ошибки xbee.getResponse().getErrorCode()
+		   Serial.print("error code:");
+		   Serial.println(xbee.getResponse().getErrorCode());            // Код ошибки xbee.getResponse().getErrorCode()
 		}
 }
 void sl_XBee()                                              // формировать ответ Координатору 
  {
     //copy the function type from the incoming query
 	funcType = (rx.getData()[0]);
-	field1	 = (rx.getData()[1] << 8) | rx.getData()[2];
+	field1	 = (rx.getData()[1] << 8) | rx.getData()[2]; 
 	field2   = (rx.getData()[3] << 8) | rx.getData()[4];
 	Serial.println(rx.getData()[0], HEX);        // Информация находится в rx.getData()[i]
 	switch(funcType)                                        // Выполнить действие и сформировать ответ
@@ -216,33 +209,38 @@ void sl_XBee()                                              // формировать ответ
  }
 void XBeeWrite()
 {
+
+  zbTx = ZBTxRequest(addr64, payload, sizeof(payload));  
   xbee.send(zbTx);
-  if (xbee.readPacket(500))    	                                        //  После отправки запроса TX, мы ожидаем ответ статуса. Ждать до половины секунды для реагирования состояния 
+  if (xbee.readPacket(500))    	                                         //  После отправки запроса TX, мы ожидаем ответ статуса. Ждать до половины секунды для реагирования состояния 
 	  {
-		if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE)     // получил ответ!  Должен быть znet tx status    
+		if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE)      // получил ответ!  Должен быть znet tx status    
 		{
 			xbee.getResponse().getZBTxStatusResponse(txStatus);
-			if (txStatus.getDeliveryStatus() == SUCCESS)		    	// Получить статус доставки, пятый байт
+			if (txStatus.getDeliveryStatus() == SUCCESS)		    	 // Получить статус доставки, пятый байт
 				{
 					//flashLed(statusLed, 5, 50);                         // Успешно, можно радоваться.
 					delay(300);
 				}
 			else 
 				{
-					flashLed(errorLed, 3, 100);                         // Управляемый XBee не ответил. Он включен?
+					 Serial.println("Error reading packet.  Error code: 1");  
+					//flashLed(errorLed, 10, 100);                         // Управляемый XBee не ответил. Он включен?
 				}
 		}
 	  }
   else if (xbee.getResponse().isError())
 	  {
-		  flashLed(errorLed, 3, 100);                                   // Управляемый XBee не ответил. Он включен?
+		   Serial.println("Error reading packet.  Error code: 2");  
+		  //flashLed(errorLed, 3, 100);                                   // Управляемый XBee не ответил. Он включен?
 	  } 
   else 
 	  {
-			flashLed(errorLed, 3, 100);                                  // Управляемый XBee не ответил. Он включен?
+		  Serial.println("Error reading packet.  Error code: 3");  
+			//flashLed(errorLed, 3, 100);                                  // Управляемый XBee не ответил. Он включен?
 			delay(200); 
 	  }
-  delay(1000);
+  delay(500);
 }
 
 void run_KN1_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
@@ -251,7 +249,7 @@ void run_KN1_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 	word i = 0;
 	payload[0] = funcType;
 
-	flashLed(dataLed, 1, 300);
+	flashLed(dataLed, 1, 150);
 	payload[1] = 0;
 	payload[2] = 1;
 	//for (int i_xbee = 0;i_xbee<20;i_xbee++)
@@ -262,65 +260,42 @@ void run_KN1_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 	payload[24] = 1;
 	payload[25] = 1;
 	payload[26] = 1;
-	//payload[27] = i2c_eeprom_read_byte( deviceaddress,adr_elektro_hour);
-	//payload[28] = i2c_eeprom_read_byte( deviceaddress,adr_elektro_min);
-	//payload[29] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_old+3);
-	//payload[30] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_old+2);
-	//payload[31] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_old+1);
-	//payload[32] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_old);
-	//payload[33] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_ok+3);
-	//payload[34] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_ok+2);
-	//payload[35] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_ok+1);
-	//payload[36] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_ok);
-	//payload[37] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_result+3);
-	//payload[38] = i2c_eeprom_read_byte( deviceaddress,adr_count_electro_result+2);
-	payload[48] = 255;  // FF
-	payload[49] = 8;    // 08
 }
 void run_KN2_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
 	word val;
 	word i = 0;
 	payload[0] = funcType;
-	flashLed(dataLed, 2, 300);
+	flashLed(dataLed, 1, 150);
 	payload[1] = 0;
 	payload[2] = 2;
 	payload[23] = 2;
-	payload[24] = 2;
-	payload[25] = 2;
-	payload[26] = 2;
 }
 void run_KN3_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
 	word val;
 	word i = 0;
-	flashLed(dataLed, 3, 300);
+	flashLed(dataLed, 1, 150);
 	payload[0] = funcType;
 	payload[1] = 0;
 	payload[2] = 3;
 	payload[23] = 3;
-	payload[24] = 3;
-	payload[25] = 3;
-	payload[26] = 3;
 }
 void run_KN4_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
 	word val;
 	word i = 0;
-	flashLed(dataLed, 4, 300);
+	flashLed(dataLed, 1, 150);
 	payload[0] = funcType;
 	payload[1] = 0;
 	payload[2] = 4;
 	payload[23] = 4;
-	payload[24] = 4;
-	payload[25] = 4;
-	payload[26] = 4;
 }
 void run_KN5_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
 	word val;
 	word i = 0;
-	flashLed(dataLed, 5, 300);
+	flashLed(dataLed, 1, 150);
 	payload[0] = funcType;
 	payload[1] = 0;
 	payload[2] = 5;
@@ -333,7 +308,7 @@ void run_KN6_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 {
 	word val;
 	word i = 0;
-	flashLed(dataLed, 6, 300);
+	flashLed(dataLed, 1, 150);
 	payload[0] = funcType;
 	payload[1] = 0;
 	payload[2] = 6;
@@ -342,7 +317,7 @@ void run_KN7_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 {
 	word val;
 	word i = 0;
-	flashLed(dataLed, 7, 300);
+	flashLed(dataLed, 1, 150);
 	payload[0] = funcType;
 	payload[1] = 0;
 	payload[2] = 7;
@@ -351,7 +326,7 @@ void run_KN8_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 {
 	word val;
 	word i = 0;
-	flashLed(dataLed, 8, 300);
+	flashLed(dataLed, 1, 150);
 	payload[0] = funcType;
 	payload[1] = 0;
 	payload[2] = 8;
@@ -360,7 +335,7 @@ void run_set_time1_StatusXBee(byte funcType, word startreg, word numregs) // Выв
  {
 	 word val;
 	 word i = 0;
-	// flashLed(dataLed, startreg, numregs);
+	 flashLed(dataLed, 1, 150);
 	 payload[0] = funcType;
 	 payload[1] = 0;
 	 payload[2] = 9;
@@ -369,22 +344,20 @@ void run_set_time2_StatusXBee(byte funcType, word startreg, word numregs) // Выв
 {
 	word val;
 	word i = 0;
-	//flashLed(dataLed, startreg, numregs);
+	flashLed(dataLed, 1, 150);
 	payload[0] = funcType;
-	payload[1] = 1;
-	payload[2] = 1;
+	payload[1] = 0;
+	payload[2] = 10;
 }
 void run_set_time3_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
 	word val;
 	word i = 0;
-	//flashLed(dataLed, startreg, numregs);
+	flashLed(dataLed, 1, 150);
 	payload[0] = funcType;
-	payload[1] = 1;
-	payload[2] = 2;
+	payload[1] = 0;
+	payload[2] = 11;
 }
-
-
 
 
 void set_pin()
@@ -396,7 +369,8 @@ void set_pin()
 void setup()
 {
 	  Serial.begin(9600);
-	  xbee.setSerial(Serial);
+      SerialXBee.begin(9600);
+	  xbee.setSerial(SerialXBee);
 	  set_pin();
       flashLed(statusLed, 3, 50);
 }

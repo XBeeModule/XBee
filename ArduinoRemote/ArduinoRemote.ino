@@ -57,7 +57,9 @@
 #define KN5 A4  
 #define KN6 A6  
 #define KN7 A3  
-#define KN8 A5  
+#define KN8 A5 
+int statusLed = 13;
+int errorLed = 13;
 
 //********************* Настройка монитора ***********************************
 UTFT          myGLCD(ITDB24E_8, 38, 39, 40, 41);        // Дисплей 2.4" !! Внимание! Изменены настройки UTouchCD.h
@@ -125,7 +127,7 @@ byte number_device           = 0;         // Номер исполнительного устройства.
 
 //int result_minus = 0;
 
-
+int pin5 = 11;
 
 
 
@@ -163,11 +165,6 @@ const char  txt_view_device1[]                 PROGMEM = "A\x99""peca";         
 const char  txt_view_device2[]                 PROGMEM = "yc""\xA4""po""\x9E""c""\xA4\x97";                     // устройств
 const char  txt_Set_device[]                   PROGMEM = "\x89""o""\x99\x9F\xA0\xAE\xA7\x9D\xA4\xAC"" ""\x86\x8A"; // Подключить ИУ
 const char  txt_null[]                         PROGMEM = "===========";                                         // "==============="
-
-
-
-
-
 
 
 char buffer[30];
@@ -228,14 +225,6 @@ ZBRxIoSampleResponse ioSample = ZBRxIoSampleResponse();
 uint8_t payload[50] ;                       // = {3, 4,};
 uint8_t payload1[10] ;// = {3, 4,};
 
-//Два 32-битных половинки th4 64-разрядный адрес
-long XBee_Addr64_MS = 0x0013a200;
-long XBee_Addr64_LS = 0x40672567;
-
-//Два 32-битных половинки th4 64-разрядный адрес
-long XBee_Addr64_MS_tmp;                    //
-long XBee_Addr64_LS_tmp;                    //
-
 int XBee_Addr16;                            //16-разрядный адрес
 int Len_XBee = 0;
 unsigned char info_XBee_data[10];
@@ -288,6 +277,16 @@ uint8_t command[]  = {'I','D'};              // Номер сети (ID)
 uint8_t commandValue[]  = { 0x02, 0x35 };
 uint8_t commandValueLength = 0x2 ;
 
+
+
+//Два 32-битных половинки th4 64-разрядный адрес
+long XBee_Addr64_MS = 0 ; //0x0013a200;
+long XBee_Addr64_LS = 0 ; //0x40672567;
+
+//Два 32-битных половинки th4 64-разрядный адрес
+long XBee_Addr64_MS_tmp = 0;                    //
+long XBee_Addr64_LS_tmp = 0;                    //
+
 XBeeAddress64 addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);                                     // SH + SL Address of receiving XBee
 ZBTxRequest zbTx = ZBTxRequest(addr64, payload, sizeof(payload));                                         // Формирует пакет  zbTx с адресом отправителя и данными
 ZBTxStatusResponse txStatus = ZBTxStatusResponse();                                                       // Это создает экземпляр объекта "txStatus" процесс благодарности прислал Xbee Series 2 API пакеты
@@ -307,7 +306,18 @@ word _baud, _crc;
 
 //-----------------------------------------------------------------------------------------------
 
+void flashLed(int pin, int times, int wait) {
 
+  for (int i = 0; i < times; i++) {
+    digitalWrite(pin, HIGH);
+    delay(wait);
+    digitalWrite(pin, LOW);
+
+    if (i + 1 < times) {
+      delay(wait);
+    }
+  }
+}
 
 void dateTime(uint16_t* date, uint16_t* time)                                    // Программа записи времени и даты файла
 {
@@ -450,138 +460,213 @@ void klav_Glav_Menu()
 	drawGlavMenu();
 	while (true)
 	{
-	test_power();
-  	myGLCD.setColor(255, 255, 255);
+		test_power();
+		//XBeeRead();
+  		myGLCD.setColor(255, 255, 255);
 
-	if(digitalRead(KN1) == false)
-	{
-		myGLCD.printNumI(1, 208, 51);
-		payload[0] = 0x01;
-		payload[1] = 0x00;
-		payload[2] = 0x0A;
-		payload[3] = 0x00;
-		payload[4] = 0x1F;
-		XBeeWrite();
-	}
-	if(digitalRead(KN2) == LOW)
-	{
-		myGLCD.printNumI(2, 208, 51);
-		payload[0] = 0x02;
-		payload[1] = 0x00;
-		payload[2] = 0x0A;
-		payload[3] = 0x00;
-		payload[4] = 0x1F;
-		XBeeWrite();
-	}
-	if(digitalRead(KN3) == LOW)
-	{
-		myGLCD.printNumI(3, 208, 51);
-		payload[0] = 0x03;
-		payload[1] = 0x00;
-		payload[2] = 0x0A;
-		payload[3] = 0x00;
-		payload[4] = 0x1F;
-		XBeeWrite();
-	}
-	if(digitalRead(KN4) == LOW)
-	{
-		myGLCD.printNumI(4, 208, 51);
-		payload[0] = 4;
-		payload[1] = 0x00;
-		payload[2] = 0x0A;
-		payload[3] = 0x00;
-		payload[4] = 0x1F;
-		XBeeWrite();
-	}
-	if(digitalRead(KN5) == false)
-	{
-		myGLCD.printNumI(5, 208, 51);
-	}
-	if(digitalRead(KN6) == LOW)
-	{
-		myGLCD.printNumI(6, 208, 51);
-	}
-	if(digitalRead(KN7) == LOW)
-	{
-		myGLCD.printNumI(7, 208, 51);
-	}
-	if(digitalRead(KN8) == LOW)
-	{
-		myGLCD.printNumI(8, 208, 51);
-	}
+		if(digitalRead(KN1) == false)
+		{
+			myGLCD.printNumI(1, 208, 51);
+			payload[0] = 0x01;
+			payload[1] = 0x00;
+			payload[2] = 0x0A;
+			payload[3] = 0x00;
+			payload[4] = 0x1F;
+			XBeeWrite();
+		}
+		if(digitalRead(KN2) == LOW)
+		{
+			myGLCD.printNumI(2, 208, 51);
+			payload[0] = 0x02;
+			payload[1] = 0x00;
+			payload[2] = 0x0A;
+			payload[3] = 0x00;
+			payload[4] = 0x1F;
+			XBeeWrite();
+		}
+		if(digitalRead(KN3) == LOW)
+		{
+			myGLCD.printNumI(3, 208, 51);
+			payload[0] = 0x03;
+			payload[1] = 0x00;
+			payload[2] = 0x0A;
+			payload[3] = 0x00;
+			payload[4] = 0x1F;
+			XBeeWrite();
+		}
+		if(digitalRead(KN4) == LOW)
+		{
+			myGLCD.printNumI(4, 208, 51);
+			payload[0] = 4;
+			payload[1] = 0x00;
+			payload[2] = 0x0A;
+			payload[3] = 0x00;
+			payload[4] = 0x1F;
+			XBeeWrite();
+		}
+		if(digitalRead(KN5) == false)
+		{
 
-    if (myTouch.dataAvailable())
-    {
-      myTouch.read();
-      x = myTouch.getX();
-      y = myTouch.getY();
-	  if ((y >= 5) && (y <= 90))                                    // Первый ряд
-      {
-       if ((x >= 5) && (x <= 94))                                   // Button: 1
-        {
-          waitForIt(5, 5, 94, 90);
-          myGLCD.printNumI(1, 208, 51);
-        }
-        if ((x >= 97) && (x <= 186))                                // Button: 2
-        {
-          waitForIt(97, 5, 186, 90);
-          myGLCD.printNumI(3, 208, 51);
-        }
-	  }
+			myGLCD.printNumI(5, 208, 51);
+			payload[0] = 5;
+			payload[1] = 0x00;
+			payload[2] = 0x0A;
+			payload[3] = 0x00;
+			payload[4] = 0x1F;
+			XBeeWrite();
+		}
+		if(digitalRead(KN6) == LOW)
+		{
+			myGLCD.printNumI(6, 208, 51);
+			payload[0] = 6;
+			payload[1] = 0x00;
+			payload[2] = 0x0A;
+			payload[3] = 0x00;
+			payload[4] = 0x1F;
+			XBeeWrite();
+		}
+		if(digitalRead(KN7) == LOW)
+		{
+			myGLCD.printNumI(7, 208, 51);
+			payload[0] = 7;
+			payload[1] = 0x00;
+			payload[2] = 0x0A;
+			payload[3] = 0x00;
+			payload[4] = 0x1F;
+			XBeeWrite();
+		}
+		if(digitalRead(KN8) == LOW)
+		{
+			myGLCD.printNumI(8, 208, 51);
+			payload[0] = 8;
+			payload[1] = 0x00;
+			payload[2] = 0x0A;
+			payload[3] = 0x00;
+			payload[4] = 0x1F;
+			XBeeWrite();
+		}
+
+		if (myTouch.dataAvailable())
+		{
+		  myTouch.read();
+		  x = myTouch.getX();
+		  y = myTouch.getY();
+		  if ((y >= 5) && (y <= 90))                                    // Первый ряд
+		  {
+		   if ((x >= 5) && (x <= 94))                                   // Button: 1
+			{
+				waitForIt(5, 5, 94, 90);
+				myGLCD.printNumI(1, 208, 51);
+				payload[0] = 1;
+				payload[1] = 0x00;
+				payload[2] = 0x0A;
+				payload[3] = 0x00;
+				payload[4] = 0x1F;
+				XBeeWrite();
+			}
+			if ((x >= 97) && (x <= 186))                                // Button: 2
+			{
+				waitForIt(97, 5, 186, 90);
+				myGLCD.printNumI(3, 208, 51);
+				payload[0] = 3;
+				payload[1] = 0x00;
+				payload[2] = 0x0A;
+				payload[3] = 0x00;
+				payload[4] = 0x1F;
+				XBeeWrite();
+			}
+		  }
 	 
-	  if ((y >= 93) && (y <= 178))                                    // Первый ряд
-      {
-       if ((x >= 5) && (x <= 94))                                   // Button: 1
-        {
-          waitForIt(5, 93, 94, 178);
-          myGLCD.printNumI(2, 208, 51);
-        }
-        if ((x >= 97) && (x <= 186))                                // Button: 2
-        {
-          waitForIt(97, 93, 186, 178);
-          myGLCD.printNumI(4, 208, 51);
-        }
-	  }
+		  if ((y >= 93) && (y <= 178))                                    // Первый ряд
+		  {
+		   if ((x >= 5) && (x <= 94))                                   // Button: 3
+			{
+				waitForIt(5, 93, 94, 178);
+				myGLCD.printNumI(2, 208, 51);
+				payload[0] = 2;
+				payload[1] = 0x00;
+				payload[2] = 0x0A;
+				payload[3] = 0x00;
+				payload[4] = 0x1F;
+				XBeeWrite();
+			}
+			if ((x >= 97) && (x <= 186))                                // Button: 4
+			{
+				waitForIt(97, 93, 186, 178);
+				myGLCD.printNumI(4, 208, 51);
+				payload[0] = 4;
+				payload[1] = 0x00;
+				payload[2] = 0x0A;
+				payload[3] = 0x00;
+				payload[4] = 0x1F;
+				XBeeWrite();
+			}
+		  }
 	 
-	  if ((y >= 183) && (y <= 243))                                    // Nh ряд
-      {
-       if ((x >= 5) && (x <= 60))                                   // Button: 1
-        {
-          waitForIt(5, 183, 60, 243);
-        myGLCD.printNumI(5, 208, 51);
-        }
-        if ((x >= 63) && (x <= 118))                                // Button: 2
-        {
-          waitForIt(63, 183, 118, 243);
-         myGLCD.printNumI(6, 208, 51);
-        }
-        if ((x >= 121) && (x <= 176))                               // Button: 3
-        {
-          waitForIt(121, 183, 176, 243);
-        myGLCD.printNumI(7, 208, 51);
-        }
-        if ((x >= 179) && (x <= 234))                               // Button: 4
-        {
-          waitForIt(179, 183, 234, 243);
-         myGLCD.printNumI(8, 208, 51);
-        }
-	  }
+		  if ((y >= 183) && (y <= 243))                                    //  ряд
+		  {
+		   if ((x >= 5) && (x <= 60))                                   // Button: 5
+			{
+				waitForIt(5, 183, 60, 243);
+				myGLCD.printNumI(5, 208, 51);
+				payload[0] = 5;
+				payload[1] = 0x00;
+				payload[2] = 0x0A;
+				payload[3] = 0x00;
+				payload[4] = 0x1F;
+				XBeeWrite();
+			}
+			if ((x >= 63) && (x <= 118))                                // Button: 6
+			{
+				waitForIt(63, 183, 118, 243);
+				myGLCD.printNumI(6, 208, 51);
+				payload[0] = 6;
+				payload[1] = 0x00;
+				payload[2] = 0x0A;
+				payload[3] = 0x00;
+				payload[4] = 0x1F;
+				XBeeWrite();
+			}
+			if ((x >= 121) && (x <= 176))                               // Button: 7
+			{
+				waitForIt(121, 183, 176, 243);
+				myGLCD.printNumI(7, 208, 51);
+				payload[0] = 7;
+				payload[1] = 0x00;
+				payload[2] = 0x0A;
+				payload[3] = 0x00;
+				payload[4] = 0x1F;
+				XBeeWrite();
+			}
+			if ((x >= 179) && (x <= 234))                               // Button: 8
+			{
+				waitForIt(179, 183, 234, 243);
+				myGLCD.printNumI(8, 208, 51);
+				payload[0] = 8;
+				payload[1] = 0x00;
+				payload[2] = 0x0A;
+				payload[3] = 0x00;
+				payload[4] = 0x1F;
+				XBeeWrite();
+			}
+		  }
 
-	  if ((y >= 248) && (y <= 293))                                // Четвертый ряд
-      {
-        if ((x >= 5) && (x <= 118))                                // Button: Меню 1
-        {
-          waitForIt(5, 248, 118, 293);
-          klav_menu1();
-        }
-        if ((x >= 121) && (x <= 234))                              // Button: Меню 1
-        {
-          waitForIt(121, 248, 234, 293);
-          klav_menu2();
-        }
-	  }
+		  if ((y >= 248) && (y <= 293))                                // Четвертый ряд
+		  {
+			if ((x >= 5) && (x <= 118))                                // Button: Меню 1
+			{
+			  waitForIt(5, 248, 118, 293);
+			  klav_menu1();
+			}
+			if ((x >= 121) && (x <= 234))                              // Button: Меню 1
+			{
+			  waitForIt(121, 248, 234, 293);
+			  klav_menu2();
+			}
+		  }
+		}
+	XBeeRead();
 	}
-  }
 }
 
 void test_power()
@@ -1295,42 +1380,105 @@ void XBeeRead()
 				{
 				   Serial.println("packet not acknowledged");
 				}
-				//Serial.print("checksum is ");
-				//Serial.println(rx.getChecksum(), HEX);    // Контрольная сумма
-				//Serial.print("All packet length is ");
-				//Serial.println(rx.getPacketLength(), DEC); // Длина пакета общего пакета
-				//Serial.print("Data packet length is ");
-				//Serial.println(rx.getDataLength(), DEC); // Длина пакета пакета данных
+				Serial.print("checksum is ");
+				Serial.println(rx.getChecksum(), HEX);    // Контрольная сумма
+				Serial.print("All packet length is ");
+				Serial.println(rx.getPacketLength(), DEC); // Длина пакета общего пакета
+				Serial.print("Data packet length is ");
+				Serial.println(rx.getDataLength(), DEC); // Длина пакета пакета данных
 
 				for (int i = 0; i < rx.getDataLength(); i++)       // Считать информацию длина пакета  в rx.getDataLength()
 				{
-					//Serial.print("payload [");                   //
-					//Serial.print(i, DEC);                        //
-					//Serial.print("] is ");                       //
-					//Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
+					Serial.print("payload [");                   //
+					Serial.print(i, DEC);                        //
+					Serial.print("] is ");                       //
+					Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
 				}
-		
-				for (int i = 0; i < xbee.getResponse().getFrameDataLength(); i++) // Длина пакета в xbee.getResponse().getFrameDataLength()
-				{
-					//Serial.print("frame data [");                                //  frame data с 0 по 7 находится адрес отправителя
-					//Serial.print(i, DEC);
-					//Serial.print("] is ");                                       //
-					//Serial.println(xbee.getResponse().getFrameData()[i], HEX);   //  Информация пакета в xbee.getResponse().getFrameData()[i], длина пакета 
-				}
-				//	Serial.println();
+				Serial.println();
 				//Получаем верхние 32-битное слово 64-битный адрес.  64-битный адрес 802.15.4 MAC адрес источника 
 				// слоя адрес (например, "сожженные").
 				XBee_Addr64_MS=(uint32_t(rx.getFrameData()[0]) << 24) + (uint32_t(rx.getFrameData()[1]) << 16) + (uint16_t(rx.getFrameData()[2]) << 8) + rx.getFrameData()[3];
 				//Получаем ниже 32-битное слово...
 				XBee_Addr64_LS=(uint32_t(rx.getFrameData()[4]) << 24) + (uint32_t(rx.getFrameData()[5]) << 16) + (uint16_t(rx.getFrameData()[6]) << 8) + rx.getFrameData()[7];
 				//Отправить две части адреса программного обеспечения последовательного порта
-				/*Serial.print("Addr64 MS: ");
+				Serial.print("Addr64 MS: ");
 				Serial.print(XBee_Addr64_MS,HEX);
 				Serial.print('\n');
 				Serial.print("Addr64 LS: ");
 				Serial.print(XBee_Addr64_LS,HEX);
 				Serial.print('\n');
-				Serial.println();*/
+				Serial.println();
+				XBee_Addr16=rx.getRemoteAddress16();         		  // IP-адреса в TCP/IP. 
+				/*Serial.print("Addr16: ");
+				Serial.println(XBee_Addr16,HEX);
+*/
+				addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);
+		   }
+	  sl_XBee();
+	  } 
+
+	 else if (xbee.getResponse().isError())                           //  Ошибка приема
+		{
+		   Serial.print("error code:");
+		   Serial.println(xbee.getResponse().getErrorCode());       // Код ошибки xbee.getResponse().getErrorCode()
+		}
+}
+void XBeeReadBack() 
+{
+  xbee.readPacket();                                          // Получить пакет
+	if (xbee.getResponse().isAvailable())                     //Проверить наличие данных
+	  {
+		// есть что-то
+		 //   Serial.println("Got an rx packet8888!");
+	  if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) 
+		  {
+			// получен zb rx packet
+			xbee.getResponse().getZBRxResponse(rx);           // Теперь заполнить наш класс ZB гх  пакет rx заполнен
+			// Serial.println("Got an rx packet!");
+			if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED)     // отправитель получил  ответ ACK
+				{
+					// Serial.println("packet acknowledged");
+				} 
+			else 
+				{
+				   Serial.println("packet not acknowledged");
+				}
+				Serial.print("checksum is ");
+				Serial.println(rx.getChecksum(), HEX);    // Контрольная сумма
+				Serial.print("All packet length is ");
+				Serial.println(rx.getPacketLength(), DEC); // Длина пакета общего пакета
+				Serial.print("Data packet length is ");
+				Serial.println(rx.getDataLength(), DEC); // Длина пакета пакета данных
+
+				for (int i = 0; i < rx.getDataLength(); i++)       // Считать информацию длина пакета  в rx.getDataLength()
+				{
+					Serial.print("payload [");                   //
+					Serial.print(i, DEC);                        //
+					Serial.print("] is ");                       //
+					Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
+				}
+		
+				for (int i = 0; i < xbee.getResponse().getFrameDataLength(); i++) // Длина пакета в xbee.getResponse().getFrameDataLength()
+				{
+					Serial.print("frame data [");                                //  frame data с 0 по 7 находится адрес отправителя
+					Serial.print(i, DEC);
+					Serial.print("] is ");                                       //
+					Serial.println(xbee.getResponse().getFrameData()[i], HEX);   //  Информация пакета в xbee.getResponse().getFrameData()[i], длина пакета 
+				}
+					Serial.println();
+				//Получаем верхние 32-битное слово 64-битный адрес.  64-битный адрес 802.15.4 MAC адрес источника 
+				// слоя адрес (например, "сожженные").
+				XBee_Addr64_MS=(uint32_t(rx.getFrameData()[0]) << 24) + (uint32_t(rx.getFrameData()[1]) << 16) + (uint16_t(rx.getFrameData()[2]) << 8) + rx.getFrameData()[3];
+				//Получаем ниже 32-битное слово...
+				XBee_Addr64_LS=(uint32_t(rx.getFrameData()[4]) << 24) + (uint32_t(rx.getFrameData()[5]) << 16) + (uint16_t(rx.getFrameData()[6]) << 8) + rx.getFrameData()[7];
+				//Отправить две части адреса программного обеспечения последовательного порта
+				Serial.print("Addr64 MS: ");
+				Serial.print(XBee_Addr64_MS,HEX);
+				Serial.print('\n');
+				Serial.print("Addr64 LS: ");
+				Serial.print(XBee_Addr64_LS,HEX);
+				Serial.print('\n');
+				Serial.println();
 				XBee_Addr16=rx.getRemoteAddress16();         		  // IP-адреса в TCP/IP. 
 				/*Serial.print("Addr16: ");
 				Serial.println(XBee_Addr16,HEX);
@@ -1341,8 +1489,8 @@ void XBeeRead()
 
 	 else if (xbee.getResponse().isError())                           //  Ошибка приема
 		{
-		  // Serial.print("error code:");
-		  // Serial.println(xbee.getResponse().getErrorCode());       // Код ошибки xbee.getResponse().getErrorCode()
+		   Serial.print("error code:");
+		   Serial.println(xbee.getResponse().getErrorCode());       // Код ошибки xbee.getResponse().getErrorCode()
 		}
 }
 void sl_XBee()                                              // формировать ответ Координатору 
@@ -1350,6 +1498,8 @@ void sl_XBee()                                              // формировать ответ
  	funcType = (rx.getData()[0]);                           //copy the function type from the incoming query
 	field1	= (rx.getData()[1] << 8) | rx.getData()[2];     //copy field 1 from the incoming query
 	field2  = (rx.getData()[3] << 8) | rx.getData()[4];     //copy field 2 from the incoming query
+	Serial.println(funcType);
+
 	switch(funcType)                                        //generate query response based on function type
 		{
 		// #define READ_ELECTRO          0x01  // чтение из памяти и передача XBee
@@ -1390,40 +1540,19 @@ void sl_XBee()                                              // формировать ответ
 	XBeeWrite();
  }
 void XBeeWrite()
- {
-  // break down 10-bit reading into two bytes and place in payload
-  //разложить 10-битный код  в два байта и поместить в полезной нагрузке
-  //pin5 = analogRead(5);
- /* pin5 = 1023;
-  payload[0] = pin5 >> 8 & 0xff;
-  payload[1] = pin5 & 0xff;
-*/
-
-	/* zki++;
-		 if (zki == 254)
-		 {
-			 zki = 0;
-		 }
-	  payload[0] = zki;*/
-
-  xbee.send(zbTx); 
-
-	 //  После отправки запроса TX, мы ожидаем ответ статуса
-	 //  Ждать до половины секунды для реагирования состояния 
-  XBeeRead();
-  if (xbee.readPacket(500))
-	   // xbee.readPacket();
-	  {
-		// получил ответ! 
-		// Должен быть znet tx status            	
-		if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) 
+{
+	Serial.println(XBee_Addr64_MS, HEX); 
+	Serial.println(XBee_Addr64_LS, HEX); 
+	zbTx = ZBTxRequest(addr64, payload, sizeof(payload));  
+	xbee.send(zbTx); 
+	if (xbee.readPacket(700))                                               //  После отправки запроса TX, мы ожидаем ответ статуса
+		{
+		if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) 		// получил ответ! // Должен быть znet tx status       
 			{
-			  xbee.getResponse().getZBTxStatusResponse(txStatus);
-			   // Получить статус доставки, пятый байт
-			  if (txStatus.getDeliveryStatus() == SUCCESS)
-				  {
-					
-					   Serial.println("Success.  time to celebrate!");   // Успешно, можно радоваться.
+				xbee.getResponse().getZBTxStatusResponse(txStatus);
+				if (txStatus.getDeliveryStatus() == SUCCESS)                // Получить статус доставки, пятый байт
+					{
+						Serial.println("Success.  time to celebrate!");     // Успешно, можно радоваться.
 						myGLCD.setColor(VGA_LIME);
 						myGLCD.fillRoundRect (194, 70, 234, 110);
 						myGLCD.setColor(255, 255, 255);
@@ -1434,21 +1563,21 @@ void XBeeWrite()
 						myGLCD.fillRoundRect (194, 70, 234, 110);
 						myGLCD.setColor(0, 0, 0);
 						myGLCD.drawRoundRect (194, 70, 234, 110);
-				  }
-			  else 
-				  {
-					// Управляемый XBee не ответил. Он включен?
-					  Serial.println("The remote XBee did not receive our packet. is it powered on?");  
-				  }
+						delay(300);
+					}
+				else 
+					{
+						Serial.println("The remote XBee did not receive our packet. is it powered on?");  	// Управляемый XBee не ответил. Он включен?
+					}
 			}
-	  }
-  else if (xbee.getResponse().isError())
-	  {
+		}
+	else if (xbee.getResponse().isError())
+		{
 		Serial.print("Error reading packet.  Error code: ");  
 		Serial.println(xbee.getResponse().getErrorCode());
-	  } 
-  else 
-	  {
+		} 
+	else 
+		{
 		// local XBee did not provide a timely TX Status Response -- should not happen
 		myGLCD.setColor(255 , 0, 0);
 		myGLCD.fillRoundRect (194, 70, 234, 110);
@@ -1460,9 +1589,8 @@ void XBeeWrite()
 		myGLCD.fillRoundRect (194, 70, 234, 110);
 		myGLCD.setColor(0, 0, 0);
 		myGLCD.drawRoundRect (194, 70, 234, 110);
-	  }
-
-  delay(1000);
+		}
+	delay(1000);
 } 
 void XBee_Setup()            //  
  {
@@ -1724,116 +1852,6 @@ void time_flag_start()
 	 if (timeF>60000) flag_time = 1;
  }
 
-// ++++++++++++++++++++   Вариант 2 обработки  XBee протокола ++++++++++++++++++++++++
-void XBeeRead2() 
-{
-    xbee.readPacket();
-    
-    if (xbee.getResponse().isAvailable()) 
-	{
-      // got something
-      
-      if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) 
-	  {
-        // got a zb rx packet
-        
-        // now fill our zb rx class
-        xbee.getResponse().getZBRxResponse(rx);
-            
-        if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED) 
-		{
-            // the sender got an ACK
-            //flashLed(statusLed, 10, 10);
-        }
-		else 
-		{
-            // we got it (obviously) but sender didn't get an ACK
-            // flashLed(errorLed, 2, 20);
-        }
-        // set dataLed PWM to value of the first byte in the data
-         // analogWrite(dataLed, rx.getData(0));
-      }
-	  else if (xbee.getResponse().getApiId() == MODEM_STATUS_RESPONSE) 
-	  {
-        xbee.getResponse().getModemStatusResponse(msr);
-        // the local XBee sends this response on certain events, like association/dissociation
-        
-        if (msr.getStatus() == ASSOCIATED) 
-		{
-          // yay this is great.  flash led
-            //flashLed(statusLed, 10, 10);
-        }
-		else if (msr.getStatus() == DISASSOCIATED) 
-		{
-          // this is awful.. flash led to show our discontent
-          //flashLed(errorLed, 10, 10);
-        }
-		else 
-		{
-          // another status
-          //flashLed(statusLed, 5, 10);
-        }
-      }
-	  else 
-	  {
-      	// not something we were expecting
-        //flashLed(errorLed, 1, 25);    
-      }
-    }
-	else if (xbee.getResponse().isError()) 
-	{
-      //nss.print("Error reading packet.  Error code: ");  
-      //nss.println(xbee.getResponse().getErrorCode());
-    }
-}
-void XBeeWrite2()
-{
- // break down 10-bit reading into two bytes and place in payload
- /* pin5 = analogRead(5);
-  payload[0] = pin5 >> 8 & 0xff;
-  payload[1] = pin5 & 0xff;*/
-
-  xbee.send(zbTx);
-
-  // flash TX indicator
- // flashLed(statusLed, 1, 100);
-
-  // after sending a tx request, we expect a status response
-  // wait up to half second for the status response
-  if (xbee.readPacket(500)) 
-  {
-    // got a response!
-
-    // should be a znet tx status            	
-    if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) 
-	{
-      xbee.getResponse().getZBTxStatusResponse(txStatus);
-
-      // get the delivery status, the fifth byte
-      if (txStatus.getDeliveryStatus() == SUCCESS) 
-	  {
-        // success.  time to celebrate
-       // flashLed(statusLed, 5, 50);
-      }
-	  else 
-	  {
-        // the remote XBee did not receive our packet. is it powered on?
-        //flashLed(errorLed, 3, 500);
-      }
-    }
-  } 
-  else if (xbee.getResponse().isError()) 
-  {
-    //nss.print("Error reading packet.  Error code: ");  
-    //nss.println(xbee.getResponse().getErrorCode());
-  }
-  else 
-  {
-    // local XBee did not provide a timely TX Status Response -- should not happen
-   // flashLed(errorLed, 2, 50);
-  }
-}
-
 // -----------------------------------------------------------------------------------
 
 void updateStrXBee(int val) // Проверка длины строки при вводе адреса XBee
@@ -1881,7 +1899,7 @@ void XBee_SetH(int adr_xbee_h)
 	byte *m = (byte *)&li1;                                                       //Разложить данные старшего адреса координатора побайтно для записи в память
 	for (int i=0; i<4; i++)
 		{
-			i2c_eeprom_write_byte(deviceaddress, i+_adr_xbee_h+2, m[i]); // Записать в память данные старшего адреса координатора
+			i2c_eeprom_write_byte(deviceaddress, i+_adr_xbee_h+2, m[i]);          // Записать в память данные старшего адреса координатора
 		}
 }
 void XBee_SetL(int adr_xbee_h)
@@ -1895,11 +1913,11 @@ void XBee_SetL(int adr_xbee_h)
 			return;
 		}
 	strcpy(temp_stLast,stLast);
-	long int li1 = strtol(temp_stLast, NULL, 16); // преобразовать первую часть строки в значение HEX	
-	byte *m = (byte *)&li1; //Разложить данные младшего адреса координатора побайтно для записи в память
+	long int li1 = strtol(temp_stLast, NULL, 16);                                // преобразовать первую часть строки в значение HEX	
+	byte *m = (byte *)&li1;                                                       //Разложить данные младшего адреса координатора побайтно для записи в память
 	for (int i=0; i<4; i++)
 		{
-			i2c_eeprom_write_byte(deviceaddress, i+_adr_xbee_h+6, m[i]);    // Записать в память данные младшего адреса координатора
+			i2c_eeprom_write_byte(deviceaddress, i+_adr_xbee_h+6, m[i]);           // Записать в память данные младшего адреса координатора
 		}
  }
 void XBee_Set_Network()
@@ -2202,6 +2220,7 @@ void read_HL_mem_XBee(int N_device )
 		i2c_eeprom_write_byte(deviceaddress, adr_xbee_current_H, y[0]);      // Записать в память данные 
 		XBee_Addr64_MS = (unsigned long&) y;  // Сложить восстановленные текущие данные
 
+
 	    //Чтение из памяти текущих данных младшего адреса координатора
 		y[3]= i2c_eeprom_read_byte( deviceaddress, 3+N_device+6);
 	    i2c_eeprom_write_byte(deviceaddress, 3+adr_xbee_current_L, y[3]);    // Записать в память данные 
@@ -2212,6 +2231,9 @@ void read_HL_mem_XBee(int N_device )
 		y[0]= i2c_eeprom_read_byte( deviceaddress, 0+N_device+6);
 		i2c_eeprom_write_byte(deviceaddress, adr_xbee_current_L, y[0]);    // Записать в память данные 
 		XBee_Addr64_LS = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
+		Serial.println(XBee_Addr64_MS, HEX); 
+        Serial.println(XBee_Addr64_LS, HEX); 
+	    addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);                                     // SH + SL Address of receiving XBee
 }
 void draw_view_adr_device()
 {
@@ -2464,6 +2486,7 @@ byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
 	y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_current_L);
 	y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_current_L);
 	XBee_Addr64_LS = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
+	addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);                                     // SH + SL Address of receiving XBee
 }
 void read_adr_device(int N_device)
 {
@@ -2788,10 +2811,10 @@ void setup_pin()
 void setup()
 {
 	Serial.begin(9600);                                    // Подключение к USB ПК
-	Serial1.begin(115200);                                 // Подключение к
+//	Serial1.begin(115200);                                 // Подключение к
 	Serial2.begin(9600);                                 // Подключение к
 	xbee.setSerial(Serial2);
-	Serial3.begin(115200);                                 // Подключение к
+	//Serial3.begin(115200);                                 // Подключение к
 	Serial.println(" ");
 	Serial.println(" ***** Start system  *****");
 	Serial.println(" ");
@@ -2825,6 +2848,4 @@ void setup()
 void loop()
 {
 	klav_Glav_Menu();
-	delay(100);
-
 }
