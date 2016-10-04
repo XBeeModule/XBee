@@ -108,6 +108,15 @@ int statusLed = 13;
 int errorLed = 13;
 int dataLed = 13;
 
+int statusRele1 = 1;
+int statusRele2 = 1;
+int statusRele3 = 1;
+int statusRele4 = 1;
+
+int timeMotor1 = 500;
+int timeMotor2 = 500;
+
+
 void flashLed(int pin, int times, int wait) 
 {
    for (int i = 0; i < times; i++) 

@@ -60,6 +60,16 @@
 #define KN8 A5 
 int statusLed = 13;
 int errorLed = 13;
+int N_KN = 0;
+
+bool count1 = false;
+bool count2 = false;
+bool count3 = false;
+bool count4 = false;
+bool count5 = false;
+bool count6 = false;
+bool count7 = false;
+bool count8 = false;
 
 //********************* Настройка монитора ***********************************
 UTFT          myGLCD(ITDB24E_8, 38, 39, 40, 41);        // Дисплей 2.4" !! Внимание! Изменены настройки UTouchCD.h
@@ -104,7 +114,8 @@ int ret = 0;                                                      // Признак пре
 int lenStr = 8;                                                   // Длина строки XBee
 int count_s = 0;                                                  // Счетчик введенных символов 
 
-
+int x_dev = 16;
+int y_dev = 16;
 //-------------------------------------------------------------------------------------------------
 float power60 = 0;                       // Измерение источника питания 6,0 вольт
 float power50 = 0;                       // Измерение источника питания 5,0 вольт
@@ -124,11 +135,6 @@ int adr_xbee_current_L       = 128;       // Адрес текущего устройства младший
 
 int adr_start_baseHL         = 1000;      // Стартовый адрес базы данных номеров исполнительных устройств
 byte number_device           = 0;         // Номер исполнительного устройства. 
-
-//int result_minus = 0;
-
-int pin5 = 11;
-
 
 
 //----------------------------------------------------------------------
@@ -154,7 +160,7 @@ const char  txt_info_XBee_Baud_Rate[]          PROGMEM = "Baud(BD)";            
 const char  txt_info_XBee_Voltage []           PROGMEM = "Volt(V) ";                                            // Напряжение модуля XBee
 const char  txt_return[]                       PROGMEM = "B""\x91""XO""\x82";                                   // ВЫХОД
 const char  txt_XBee_Set[]                     PROGMEM = "Hac""\xA4""po""\x9E\x9F""a XBee";                     // Настройка XBee
-const char  txt_err_pass_user[]                PROGMEM = "O\xA8\x9D\x96ka \x97\x97o\x99""a" ;                   //Ошибка ввода
+const char  txt_err_pass_user[]                PROGMEM = "O\xA8\x9D\x96ka \x97\x97o\x99""a" ;                   // Ошибка ввода
 const char  txt_menu2_1[]                      PROGMEM = "\x86H\x8BO XBee";                                     // Инфо XBee
 const char  txt_menu2_2[]                      PROGMEM = "Coordinator SH";                                      //
 const char  txt_menu2_3[]                      PROGMEM = "Coordinator SL";                                      // 
@@ -165,6 +171,8 @@ const char  txt_view_device1[]                 PROGMEM = "A\x99""peca";         
 const char  txt_view_device2[]                 PROGMEM = "yc""\xA4""po""\x9E""c""\xA4\x97";                     // устройств
 const char  txt_Set_device[]                   PROGMEM = "\x89""o""\x99\x9F\xA0\xAE\xA7\x9D\xA4\xAC"" ""\x86\x8A"; // Подключить ИУ
 const char  txt_null[]                         PROGMEM = "===========";                                         // "==============="
+const char  txt_reset_count[]                  PROGMEM = "C""\x96""poc c""\xA7""e""\xA4\xA7\x9D\x9F""a";        // Сброс счетчика
+const char  txt_reset_count1[]                 PROGMEM = "C""\x80""POC";                                        // Сброс
 
 
 char buffer[30];
@@ -201,7 +209,11 @@ const char* const table_message[] PROGMEM =
  txt_view_device1,                 // 28 "A\x99""peca yc""\xA4""po""\x9E""c""\xA4\x97";                           // Адреса
  txt_view_device2,                 // 29 "yc""\xA4""po""\x9E""c""\xA4\x97";                                       // устройств
  txt_Set_device,                   // 30 "\x89""o""\x99\x9F\xA0\xAE\xA7\x9D\xA4\xAC"" ""\x86\x8A";                // Подключить ИУ
- txt_null                          // 31 "===========";                                                           // "==============="
+ txt_null,                         // 31 "===========";                                                           // "==============="
+ txt_reset_count,                  // 32 "C""\x96""poc""\x9D\xA4\xAC"" c""\xA7""e""\xA4\xA7\x9D\x9F";             // Сброс счетчика
+ txt_reset_count1                  // 33 "C""\x96""poc";                                                          // Сброс
+
+
 
 
 
@@ -380,55 +392,61 @@ void drawGlavMenu()
 	myGLCD.clrScr();
 	myGLCD.setBackColor( 0, 0, 255);
 
-	myGLCD.setColor(0, 0, 255);                    //1
+	myGLCD.setColor(0, 0, 255);                       //1
 	myGLCD.fillRoundRect (5, 5, 94, 90);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 5,94, 90);
-	myGLCD.printNumI(1, 10, 10);                   //"1"
+	//myGLCD.printNumI(1, 10, 10);                   //"1"
+	myGLCD.print("+ 1", 10, 10); 
+
+
 	
-	myGLCD.setColor(0, 0, 255);                    //2
+	myGLCD.setColor(0, 0, 255);                      //3
 	myGLCD.fillRoundRect (97, 5, 186, 90);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (97, 5, 186, 90);
-	myGLCD.printNumI(3, 102, 10);                  //"2"
+//	myGLCD.printNumI(3, 102, 10);                   //"3"
+	myGLCD.print("+ 3", 102, 10);    
 
-	myGLCD.setColor(0, 0, 255);                    //3
+	myGLCD.setColor(0, 0, 255);                     //2
 	myGLCD.fillRoundRect (5, 93, 94, 178);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 93,94, 178);
-	myGLCD.printNumI(2, 10, 98);                   //"3"
-	
-	myGLCD.setColor(0, 0, 255);                    //4
+	//myGLCD.printNumI(2, 10, 98);                  //"2"
+	myGLCD.print("- 2", 10, 98);    
+
+	myGLCD.setColor(0, 0, 255);                     //4
 	myGLCD.fillRoundRect (97, 93, 186, 178);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (97, 93, 186, 178);
-	myGLCD.printNumI(4, 102, 98);                   //"4"
-//------------------------------------------------------------------
+	//myGLCD.printNumI(4, 102, 98);                 //"4"
+	myGLCD.print("- 4", 102, 98);                   //"4"
 
+//------------------------------------------------------------------
 
 	myGLCD.setColor(0, 0, 255);                    //1
 	myGLCD.fillRoundRect (5, 183, 60, 243);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 183, 60, 243);
-	myGLCD.printNumI(5, 25, 205);                   //"1"
+	myGLCD.printNumI(5, 25-x_dev, 205-y_dev);                   //"1"
 	
 	myGLCD.setColor(0, 0, 255);                    //2
 	myGLCD.fillRoundRect (63, 183, 118, 243);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (63, 183, 118, 243);
-	myGLCD.printNumI(6, 83, 205);                   //"2"
+	myGLCD.printNumI(6, 83-x_dev, 205-y_dev);                   //"2"
 
 	myGLCD.setColor(0, 0, 255);                    //3
 	myGLCD.fillRoundRect (121, 183, 176, 243);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (121, 183, 176, 243);
-	myGLCD.printNumI(7, 141, 205);                  //"3"
+	myGLCD.printNumI(7, 141-x_dev, 205-y_dev);                  //"3"
 
 	myGLCD.setColor(0, 0, 255);                      //4
 	myGLCD.fillRoundRect (179, 183, 234, 243);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (179, 183, 234, 243);
-	myGLCD.printNumI(8, 199, 205);                  //"4"
+	myGLCD.printNumI(8, 199-x_dev, 205-y_dev);                  //"4"
 //----------------------------------------------------------
 
 	myGLCD.setColor(0, 0, 255);
@@ -436,23 +454,21 @@ void drawGlavMenu()
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 248, 118, 293);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[5])));
-	myGLCD.print(buffer, 16, 262);                                      // "МЕНЮ 1"
+	myGLCD.print(buffer, 16, 262);                                      // "ВЫХОД"
 
 	myGLCD.setColor(0, 0, 255);
 	myGLCD.fillRoundRect (121, 248, 234, 293);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (121, 248, 234, 293);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[6])));
-	myGLCD.print(buffer, 130, 262);                                     //"МЕНЮ 2"
-
-
+	myGLCD.print(buffer, 130, 262);                                     //"СБРОС"
 
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (194, 70, 234, 110);
-
-
 	myGLCD.setBackColor (0, 0, 0);
 }
+
+
 
 void klav_Glav_Menu()
 {
@@ -468,6 +484,7 @@ void klav_Glav_Menu()
 		if(digitalRead(KN1) == false)
 		{
 			myGLCD.printNumI(1, 208, 51);
+			N_KN = 1;
 			waitForStart(5, 5, 94, 90);
 			payload[0] = 0x01;
 			payload[1] = 0x00;
@@ -480,6 +497,7 @@ void klav_Glav_Menu()
 		if(digitalRead(KN2) == LOW)
 		{
 			myGLCD.printNumI(2, 208, 51);
+			N_KN = 2;
 			waitForStart(5, 93, 94, 178);
 			payload[0] = 0x02;
 			payload[1] = 0x00;
@@ -491,6 +509,7 @@ void klav_Glav_Menu()
 		if(digitalRead(KN3) == LOW)
 		{
 			myGLCD.printNumI(3, 208, 51);
+			N_KN = 3;
 			waitForStart(97, 5, 186, 90);
 			payload[0] = 0x03;
 			payload[1] = 0x00;
@@ -502,6 +521,7 @@ void klav_Glav_Menu()
 		if(digitalRead(KN4) == LOW)
 		{
 			myGLCD.printNumI(4, 208, 51);
+			N_KN = 4;
 			waitForStart(97, 93, 186, 178);
 			payload[0] = 4;
 			payload[1] = 0x00;
@@ -514,6 +534,7 @@ void klav_Glav_Menu()
 		{
 
 			myGLCD.printNumI(5, 208, 51);
+			N_KN = 5;
 			waitForStart(5, 183, 60, 243);
 			payload[0] = 5;
 			payload[1] = 0x00;
@@ -525,6 +546,7 @@ void klav_Glav_Menu()
 		if(digitalRead(KN6) == LOW)
 		{
 			myGLCD.printNumI(6, 208, 51);
+			N_KN = 6;
 			waitForStart(63, 183, 118, 243);;
 			payload[0] = 6;
 			payload[1] = 0x00;
@@ -536,6 +558,7 @@ void klav_Glav_Menu()
 		if(digitalRead(KN7) == LOW)
 		{
 			myGLCD.printNumI(7, 208, 51);
+			N_KN = 7;
 			waitForStart(121, 183, 176, 243);
 			payload[0] = 7;
 			payload[1] = 0x00;
@@ -547,6 +570,7 @@ void klav_Glav_Menu()
 		if(digitalRead(KN8) == LOW)
 		{
 			myGLCD.printNumI(8, 208, 51);
+			N_KN = 8;
 			waitForStart(179, 183, 234, 243);
 			payload[0] = 8;
 			payload[1] = 0x00;
@@ -566,6 +590,7 @@ void klav_Glav_Menu()
 		   if ((x >= 5) && (x <= 94))                                   // Button: 1
 			{
 				waitForStart(5, 5, 94, 90);
+				N_KN = 1;
 				myGLCD.printNumI(1, 208, 51);
 				payload[0] = 1;
 				payload[1] = 0x00;
@@ -574,9 +599,10 @@ void klav_Glav_Menu()
 				payload[4] = 0x1F;
 				XBeeWrite();
 			}
-			if ((x >= 97) && (x <= 186))                                // Button: 2
+			if ((x >= 97) && (x <= 186))                                // Button: 3
 			{
 				waitForStart(97, 5, 186, 90);
+				N_KN = 3;
 				myGLCD.printNumI(3, 208, 51);
 				payload[0] = 3;
 				payload[1] = 0x00;
@@ -589,9 +615,10 @@ void klav_Glav_Menu()
 	 
 		  if ((y >= 93) && (y <= 178))                                    // Первый ряд
 		  {
-		   if ((x >= 5) && (x <= 94))                                   // Button: 3
+		   if ((x >= 5) && (x <= 94))                                   // Button: 2
 			{
 				waitForStart(5, 93, 94, 178);
+				N_KN = 2;
 				myGLCD.printNumI(2, 208, 51);
 				payload[0] = 2;
 				payload[1] = 0x00;
@@ -603,6 +630,7 @@ void klav_Glav_Menu()
 			if ((x >= 97) && (x <= 186))                                // Button: 4
 			{
 				waitForStart(97, 93, 186, 178);
+				N_KN = 4;
 				myGLCD.printNumI(4, 208, 51);
 				payload[0] = 4;
 				payload[1] = 0x00;
@@ -618,6 +646,7 @@ void klav_Glav_Menu()
 		   if ((x >= 5) && (x <= 60))                                   // Button: 5
 			{
 				waitForStart(5, 183, 60, 243);
+				N_KN = 5;
 				myGLCD.printNumI(5, 208, 51);
 				payload[0] = 5;
 				payload[1] = 0x00;
@@ -629,6 +658,7 @@ void klav_Glav_Menu()
 			if ((x >= 63) && (x <= 118))                                // Button: 6
 			{
 				waitForStart(63, 183, 118, 243);
+				N_KN = 6;
 				myGLCD.printNumI(6, 208, 51);
 				payload[0] = 6;
 				payload[1] = 0x00;
@@ -640,6 +670,7 @@ void klav_Glav_Menu()
 			if ((x >= 121) && (x <= 176))                               // Button: 7
 			{
 				waitForStart(121, 183, 176, 243);
+				N_KN = 7;
 				myGLCD.printNumI(7, 208, 51);
 				payload[0] = 7;
 				payload[1] = 0x00;
@@ -651,6 +682,7 @@ void klav_Glav_Menu()
 			if ((x >= 179) && (x <= 234))                               // Button: 8
 			{
 				waitForStart(179, 183, 234, 243);
+				N_KN = 8;
 				myGLCD.printNumI(8, 208, 51);
 				payload[0] = 8;
 				payload[1] = 0x00;
@@ -1168,7 +1200,7 @@ void draw_menu1()
 	myGLCD.fillRoundRect (5, 86, 234, 141);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 86, 234, 141);	
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[31])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[32])));
 	myGLCD.print(buffer, CENTER, 106);  
 
 	myGLCD.setColor(0, 0, 255);                    // 1
@@ -1262,8 +1294,8 @@ void klav_menu1()
 				{
 				 waitForIt(5, 86, 234, 141);
                  myGLCD.clrScr();
-				 klavXBee();
-				 draw_menu1();
+				 klav_Menu_Reset();
+//				 draw_menu1();
 				}
 				if ((y >= 144) && (y <= 199))                               // Button: 3
 				{
@@ -1331,12 +1363,329 @@ void klav_menu2()
 		}
 	}
 }
+
+void drawMenuReset()
+{
+	myGLCD.clrScr();
+	myGLCD.setBackColor( 0, 0, 255);
+
+	myGLCD.setColor(0, 0, 255);                       //1
+	myGLCD.fillRoundRect (5, 5, 94, 90);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 5,94, 90);
+	myGLCD.print("+ 1", 10, 10); 
+
+
+	
+	myGLCD.setColor(0, 0, 255);                      //3
+	myGLCD.fillRoundRect (97, 5, 186, 90);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (97, 5, 186, 90);
+	myGLCD.print("+ 3", 102, 10);    
+
+	myGLCD.setColor(0, 0, 255);                     //2
+	myGLCD.fillRoundRect (5, 93, 94, 178);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 93,94, 178);
+	myGLCD.print("- 2", 10, 98);    
+
+	myGLCD.setColor(0, 0, 255);                     //4
+	myGLCD.fillRoundRect (97, 93, 186, 178);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (97, 93, 186, 178);
+	myGLCD.print("- 4", 102, 98);                   //"4"
+
+//------------------------------------------------------------------
+
+	myGLCD.setColor(0, 0, 255);                    //1
+	myGLCD.fillRoundRect (5, 183, 60, 243);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 183, 60, 243);
+	myGLCD.printNumI(5, 25-x_dev, 205-y_dev);                   //"1"
+	
+	myGLCD.setColor(0, 0, 255);                    //2
+	myGLCD.fillRoundRect (63, 183, 118, 243);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (63, 183, 118, 243);
+	myGLCD.printNumI(6, 83-x_dev, 205-y_dev);                   //"2"
+
+	myGLCD.setColor(0, 0, 255);                    //3
+	myGLCD.fillRoundRect (121, 183, 176, 243);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (121, 183, 176, 243);
+	myGLCD.printNumI(7, 141-x_dev, 205-y_dev);                  //"3"
+
+	myGLCD.setColor(0, 0, 255);                      //4
+	myGLCD.fillRoundRect (179, 183, 234, 243);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (179, 183, 234, 243);
+	myGLCD.printNumI(8, 199-x_dev, 205-y_dev);                  //"4"
+//----------------------------------------------------------
+
+	myGLCD.setColor(0, 0, 255);
+	myGLCD.fillRoundRect (5, 248, 118, 293);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 248, 118, 293);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[19])));
+	myGLCD.print(buffer, 22, 262);                                      // "Выход"
+
+	myGLCD.setColor(0, 0, 255);
+	myGLCD.fillRoundRect (121, 248, 234, 293);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (121, 248, 234, 293);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[33])));
+	myGLCD.print(buffer, 135, 262);                                     //  "СБРОС"
+
+	myGLCD.setBackColor (0, 0, 0);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[32])));
+	myGLCD.print(buffer, CENTER, 298);                                  //  Сброс счетчика
+
+}
+void klav_Menu_Reset()
+{
+
+	int x,y;
+	drawMenuReset();
+	while (true)
+	{
+  		myGLCD.setColor(255, 255, 255);
+		if (myTouch.dataAvailable())
+		{
+		  myTouch.read();
+		  x = myTouch.getX();
+		  y = myTouch.getY();
+		  if ((y >= 5) && (y <= 90))                                    // Первый ряд
+		  {
+		   if ((x >= 5) && (x <= 94))                                   // Button: 1
+			{
+				N_KN = 1;
+	            count1=!count1;
+				if(count1)
+				{
+					waitForStartR(5, 5, 94, 90);
+				}
+				else
+				{
+					waitForEndR(5, 5, 94, 90);
+				}
+
+				//payload[0] = 1;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
+				//XBeeWrite();
+			}
+			if ((x >= 97) && (x <= 186))                                // Button: 3
+			{
+				N_KN = 3;
+			    count3=!count3;
+				if(count3)
+				{
+					waitForStartR(97, 5, 186, 90);
+				}
+				else
+				{
+					waitForEnd(97, 5, 186, 90);
+				}
+				//payload[0] = 3;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
+				//XBeeWrite();
+			}
+		  }
+	 
+		  if ((y >= 93) && (y <= 178))                                    // Первый ряд
+		  {
+		   if ((x >= 5) && (x <= 94))                                   // Button: 2
+			{
+				N_KN = 2;
+		        count2=!count2;
+				if(count2)
+				{
+					waitForStartR(5, 93, 94, 178);
+				}
+				else
+				{
+					waitForEndR(5, 93, 94, 178);
+				}
+				//payload[0] = 2;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
+				//XBeeWrite();
+			}
+			if ((x >= 97) && (x <= 186))                                // Button: 4
+			{
+				N_KN = 4;
+		        count4=!count4;
+				if(count4)
+				{
+					waitForStartR(97, 93, 186, 178);
+				}
+				else
+				{
+					waitForEndR(97, 93, 186, 178);
+				}
+				//payload[0] = 4;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
+				//XBeeWrite();
+			}
+		  }
+	 
+		  if ((y >= 183) && (y <= 243))                                    //  ряд
+		  {
+		   if ((x >= 5) && (x <= 60))                                   // Button: 5
+			{
+				N_KN = 5;
+				count5=!count5;
+				if(count5)
+				{
+					waitForStartR(5, 183, 60, 243);
+				}
+				else
+				{
+					waitForEndR(5, 183, 60, 243);
+				}
+				//payload[0] = 5;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
+				//XBeeWrite();
+			}
+			if ((x >= 63) && (x <= 118))                                // Button: 6
+			{
+				N_KN = 6;
+				count6=!count6;
+				if(count6)
+				{
+					waitForStartR(63, 183, 118, 243);
+				}
+				else
+				{
+					waitForEndR(63, 183, 118, 243);
+				}
+				//payload[0] = 6;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
+				//XBeeWrite();
+			}
+			if ((x >= 121) && (x <= 176))                               // Button: 7
+			{
+				N_KN = 7;
+		        count7=!count7;
+				if(count7)
+				{
+					waitForStartR(121, 183, 176, 243);
+				}
+				else
+				{
+					waitForEndR(121, 183, 176, 243);
+				}
+				//payload[0] = 7;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
+				//XBeeWrite();
+			}
+			if ((x >= 179) && (x <= 234))                               // Button: 8
+			{
+				N_KN = 8;
+	            count8=!count8;
+				if(count8)
+				{
+					waitForStartR(179, 183, 234, 243);
+				}
+				else
+				{
+					waitForEndR(179, 183, 234, 243);
+				}
+				//payload[0] = 8;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
+				//XBeeWrite();
+			}
+		  }
+
+		  if ((y >= 248) && (y <= 293))                                // Четвертый ряд
+		  {
+			if ((x >= 5) && (x <= 118))                                // Button: Выход
+			{
+			  waitForIt(5, 248, 118, 293);
+			  draw_menu1();
+			  break;
+			}
+			if ((x >= 121) && (x <= 234))                              // Button: Сброс
+			{
+				waitForIt(121, 248, 234, 293);
+	
+				if(count1)
+				{
+					payload[11] = 0x00;
+					waitForEndR(5, 5, 94, 90);
+				}
+				if(count2)
+				{
+					payload[12] = 0x00;
+					waitForEndR(5, 93, 94, 178);
+				}
+				if(count3)
+				{
+					payload[13] = 0x00;
+					waitForEnd(97, 5, 186, 90);
+				}
+				if(count4)
+				{
+					payload[14] = 0x00;
+					waitForEndR(97, 93, 186, 178);
+				}
+				if(count5)
+				{
+					payload[15] = 0x00;
+					waitForEndR(5, 183, 60, 243);
+				}
+				if(count6)
+				{
+					payload[16] = 0x00;
+					waitForEndR(63, 183, 118, 243);
+				}
+				if(count7)
+				{
+					payload[17] = 0x00;
+					waitForEndR(121, 183, 176, 243);
+				}
+				if(count8)
+				{
+					payload[18] = 0x00;
+					waitForEndR(179, 183, 234, 243);
+				}
+				XBeeWrite();
+				//draw_menu1();
+				//break;
+			}
+		  }
+		}
+	XBeeRead();
+	}
+}
+
 void waitForIt(int x1, int y1, int x2, int y2)
 {
   myGLCD.setColor(255, 0, 0);
   myGLCD.drawRoundRect (x1, y1, x2, y2);
-  while (myTouch.dataAvailable())
-  myTouch.read();
+  while (myTouch.dataAvailable())  myTouch.read();
   myGLCD.setColor(255, 255, 255);
   myGLCD.drawRoundRect (x1, y1, x2, y2);
 }
@@ -1348,7 +1697,6 @@ void waitForStart(int x1, int y1, int x2, int y2)
 	myGLCD.drawRoundRect (x1+1, y1+1, x2-1, y2-1);
 	myGLCD.drawRoundRect (x1+2, y1+2, x2-2, y2-2);
 }
-
 void waitForEnd(int x1, int y1, int x2, int y2)
 {
 	myGLCD.setColor(255, 255, 255);
@@ -1357,6 +1705,23 @@ void waitForEnd(int x1, int y1, int x2, int y2)
 	myGLCD.drawRoundRect (x1+1, y1+1, x2-1, y2-1);
 	myGLCD.drawRoundRect (x1+2, y1+2, x2-2, y2-2);
 }
+void waitForStartR(int x1, int y1, int x2, int y2)
+{
+	myGLCD.setColor(255, 0, 0);
+	myGLCD.drawRoundRect (x1, y1, x2, y2);
+	myGLCD.drawRoundRect (x1+1, y1+1, x2-1, y2-1);
+	myGLCD.drawRoundRect (x1+2, y1+2, x2-2, y2-2);
+	while (myTouch.dataAvailable())  myTouch.read();
+}
+void waitForEndR(int x1, int y1, int x2, int y2)
+{
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (x1, y1, x2, y2);
+    myGLCD.setColor(0, 0, 255);
+	myGLCD.drawRoundRect (x1+1, y1+1, x2-1, y2-1);
+	myGLCD.drawRoundRect (x1+2, y1+2, x2-2, y2-2);
+}
+
 
 void updateStr(int val)
 {
@@ -1576,9 +1941,38 @@ void XBeeWrite()
 		delay(400); 
 		myGLCD.setColor(0, 0, 0);
 		myGLCD.fillRoundRect (195, 71, 233, 109);
-	/*	myGLCD.setColor(0, 0, 0);
-		myGLCD.drawRoundRect (194, 70, 234, 110);*/
+		myGLCD.setColor(255, 255, 255);
+		
+		switch(N_KN)                                        //generate query response based on function type
+		{
+		case 1:
+			waitForEnd(5, 5, 94, 90);
+			break;
+		case 2:
+			waitForEnd(5, 93, 94, 178);
+			break;
+		case 3:
+			waitForEnd(97, 5, 186, 90);
+			break;
+		case 4:
+			waitForEnd(97, 93, 186, 178);
+			break;
+		case 5:
+			waitForEnd(5, 183, 60, 243);
+			break;
+		case 6:
+			waitForEnd(63, 183, 118, 243);
+			break;
+		case 7:
+			waitForEnd(121, 183, 176, 243);
+			break;
+		case 8:
+			waitForEnd(179, 183, 234, 243);
+			break;
+		default:
+			break;
 		}
+	}
 	delay(1000);
 } 
 void XBee_Setup()            //  
