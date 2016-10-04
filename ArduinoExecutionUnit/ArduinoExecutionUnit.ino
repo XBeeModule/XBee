@@ -254,7 +254,7 @@ void run_KN1_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 	//{
 		//payload[3+i_xbee] = i2c_eeprom_read_byte( deviceaddress,adr_n_user+i_xbee);
 	//}
-	payload[23] = 1;
+	payload[29] = 2;
 }
 void run_KN2_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
@@ -264,7 +264,7 @@ void run_KN2_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 	flashLed(dataLed, 1, 150);
 	payload[1] = 0;
 	payload[2] = 2;
-	payload[23] = 2;
+	payload[29] = 2;
 }
 void run_KN3_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
@@ -274,7 +274,7 @@ void run_KN3_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 	payload[0] = funcType;
 	payload[1] = 0;
 	payload[2] = 3;
-	payload[23] = 3;
+	payload[29] = 2;
 }
 void run_KN4_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
@@ -284,7 +284,7 @@ void run_KN4_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 	payload[0] = funcType;
 	payload[1] = 0;
 	payload[2] = 4;
-	payload[23] = 4;
+	payload[29] = 2;
 }
 void run_KN5_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
@@ -297,7 +297,7 @@ void run_KN5_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 	payload[4] = 5;
 	payload[5] = 5;
 	payload[6] = 5;
-	payload[7] = 5;
+	payload[29] = 2;
 }
 void run_KN6_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
@@ -307,6 +307,7 @@ void run_KN6_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 	payload[0] = funcType;
 	payload[1] = 0;
 	payload[2] = 6;
+	payload[29] = 2;
 }
 void run_KN7_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
@@ -316,6 +317,7 @@ void run_KN7_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 	payload[0] = funcType;
 	payload[1] = 0;
 	payload[2] = 7;
+	payload[29] = 2;
 }
 void run_KN8_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
@@ -325,6 +327,7 @@ void run_KN8_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
 	payload[0] = funcType;
 	payload[1] = 0;
 	payload[2] = 8;
+	payload[29] = 2;
 }
 void run_set_time1_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
  {
@@ -334,6 +337,7 @@ void run_set_time1_StatusXBee(byte funcType, word startreg, word numregs) // Выв
 	 payload[0] = funcType;
 	 payload[1] = 0;
 	 payload[2] = 9;
+	 payload[29] = 2;
  }
 void run_set_time2_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
@@ -343,6 +347,7 @@ void run_set_time2_StatusXBee(byte funcType, word startreg, word numregs) // Выв
 	payload[0] = funcType;
 	payload[1] = 0;
 	payload[2] = 10;
+	payload[29] = 2;
 }
 void run_set_time3_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации electro в XBee
 {
@@ -352,6 +357,7 @@ void run_set_time3_StatusXBee(byte funcType, word startreg, word numregs) // Выв
 	payload[0] = funcType;
 	payload[1] = 0;
 	payload[2] = 11;
+	payload[29] = 2;
 }
 
 
@@ -367,7 +373,7 @@ void setup()
       SerialXBee.begin(9600);
 	  xbee.setSerial(SerialXBee);
 	  set_pin();
-   //   flashLed(statusLed, 3, 50);
+      flashLed(statusLed, 3, 50);
 }
 
 void loop()

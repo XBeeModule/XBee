@@ -463,20 +463,24 @@ void klav_Glav_Menu()
 		test_power();
 		//XBeeRead();
   		myGLCD.setColor(255, 255, 255);
+//		myGLCD.drawRoundRect (194, 70, 234, 110);
 
 		if(digitalRead(KN1) == false)
 		{
 			myGLCD.printNumI(1, 208, 51);
+			waitForStart(5, 5, 94, 90);
 			payload[0] = 0x01;
 			payload[1] = 0x00;
 			payload[2] = 0x0A;
 			payload[3] = 0x00;
 			payload[4] = 0x1F;
+
 			XBeeWrite();
 		}
 		if(digitalRead(KN2) == LOW)
 		{
 			myGLCD.printNumI(2, 208, 51);
+			waitForStart(5, 93, 94, 178);
 			payload[0] = 0x02;
 			payload[1] = 0x00;
 			payload[2] = 0x0A;
@@ -487,6 +491,7 @@ void klav_Glav_Menu()
 		if(digitalRead(KN3) == LOW)
 		{
 			myGLCD.printNumI(3, 208, 51);
+			waitForStart(97, 5, 186, 90);
 			payload[0] = 0x03;
 			payload[1] = 0x00;
 			payload[2] = 0x0A;
@@ -497,6 +502,7 @@ void klav_Glav_Menu()
 		if(digitalRead(KN4) == LOW)
 		{
 			myGLCD.printNumI(4, 208, 51);
+			waitForStart(97, 93, 186, 178);
 			payload[0] = 4;
 			payload[1] = 0x00;
 			payload[2] = 0x0A;
@@ -508,6 +514,7 @@ void klav_Glav_Menu()
 		{
 
 			myGLCD.printNumI(5, 208, 51);
+			waitForStart(5, 183, 60, 243);
 			payload[0] = 5;
 			payload[1] = 0x00;
 			payload[2] = 0x0A;
@@ -518,6 +525,7 @@ void klav_Glav_Menu()
 		if(digitalRead(KN6) == LOW)
 		{
 			myGLCD.printNumI(6, 208, 51);
+			waitForStart(63, 183, 118, 243);;
 			payload[0] = 6;
 			payload[1] = 0x00;
 			payload[2] = 0x0A;
@@ -528,6 +536,7 @@ void klav_Glav_Menu()
 		if(digitalRead(KN7) == LOW)
 		{
 			myGLCD.printNumI(7, 208, 51);
+			waitForStart(121, 183, 176, 243);
 			payload[0] = 7;
 			payload[1] = 0x00;
 			payload[2] = 0x0A;
@@ -538,6 +547,7 @@ void klav_Glav_Menu()
 		if(digitalRead(KN8) == LOW)
 		{
 			myGLCD.printNumI(8, 208, 51);
+			waitForStart(179, 183, 234, 243);
 			payload[0] = 8;
 			payload[1] = 0x00;
 			payload[2] = 0x0A;
@@ -555,7 +565,7 @@ void klav_Glav_Menu()
 		  {
 		   if ((x >= 5) && (x <= 94))                                   // Button: 1
 			{
-				waitForIt(5, 5, 94, 90);
+				waitForStart(5, 5, 94, 90);
 				myGLCD.printNumI(1, 208, 51);
 				payload[0] = 1;
 				payload[1] = 0x00;
@@ -566,7 +576,7 @@ void klav_Glav_Menu()
 			}
 			if ((x >= 97) && (x <= 186))                                // Button: 2
 			{
-				waitForIt(97, 5, 186, 90);
+				waitForStart(97, 5, 186, 90);
 				myGLCD.printNumI(3, 208, 51);
 				payload[0] = 3;
 				payload[1] = 0x00;
@@ -581,7 +591,7 @@ void klav_Glav_Menu()
 		  {
 		   if ((x >= 5) && (x <= 94))                                   // Button: 3
 			{
-				waitForIt(5, 93, 94, 178);
+				waitForStart(5, 93, 94, 178);
 				myGLCD.printNumI(2, 208, 51);
 				payload[0] = 2;
 				payload[1] = 0x00;
@@ -592,7 +602,7 @@ void klav_Glav_Menu()
 			}
 			if ((x >= 97) && (x <= 186))                                // Button: 4
 			{
-				waitForIt(97, 93, 186, 178);
+				waitForStart(97, 93, 186, 178);
 				myGLCD.printNumI(4, 208, 51);
 				payload[0] = 4;
 				payload[1] = 0x00;
@@ -607,7 +617,7 @@ void klav_Glav_Menu()
 		  {
 		   if ((x >= 5) && (x <= 60))                                   // Button: 5
 			{
-				waitForIt(5, 183, 60, 243);
+				waitForStart(5, 183, 60, 243);
 				myGLCD.printNumI(5, 208, 51);
 				payload[0] = 5;
 				payload[1] = 0x00;
@@ -618,7 +628,7 @@ void klav_Glav_Menu()
 			}
 			if ((x >= 63) && (x <= 118))                                // Button: 6
 			{
-				waitForIt(63, 183, 118, 243);
+				waitForStart(63, 183, 118, 243);
 				myGLCD.printNumI(6, 208, 51);
 				payload[0] = 6;
 				payload[1] = 0x00;
@@ -629,7 +639,7 @@ void klav_Glav_Menu()
 			}
 			if ((x >= 121) && (x <= 176))                               // Button: 7
 			{
-				waitForIt(121, 183, 176, 243);
+				waitForStart(121, 183, 176, 243);
 				myGLCD.printNumI(7, 208, 51);
 				payload[0] = 7;
 				payload[1] = 0x00;
@@ -640,7 +650,7 @@ void klav_Glav_Menu()
 			}
 			if ((x >= 179) && (x <= 234))                               // Button: 8
 			{
-				waitForIt(179, 183, 234, 243);
+				waitForStart(179, 183, 234, 243);
 				myGLCD.printNumI(8, 208, 51);
 				payload[0] = 8;
 				payload[1] = 0x00;
@@ -1331,6 +1341,23 @@ void waitForIt(int x1, int y1, int x2, int y2)
   myGLCD.drawRoundRect (x1, y1, x2, y2);
 }
 
+void waitForStart(int x1, int y1, int x2, int y2)
+{
+	myGLCD.setColor(255, 0, 0);
+	myGLCD.drawRoundRect (x1, y1, x2, y2);
+	myGLCD.drawRoundRect (x1+1, y1+1, x2-1, y2-1);
+	myGLCD.drawRoundRect (x1+2, y1+2, x2-2, y2-2);
+}
+
+void waitForEnd(int x1, int y1, int x2, int y2)
+{
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (x1, y1, x2, y2);
+    myGLCD.setColor(0, 0, 255);
+	myGLCD.drawRoundRect (x1+1, y1+1, x2-1, y2-1);
+	myGLCD.drawRoundRect (x1+2, y1+2, x2-2, y2-2);
+}
+
 void updateStr(int val)
 {
   if (stCurrentLen < 15)
@@ -1390,7 +1417,42 @@ void XBeeRead()
 					Serial.print("] is ");                       //
 					Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
 				}
-				Serial.println();
+
+				int x_back = rx.getData()[0];
+
+			//	Serial.println(x_back);
+				myGLCD.setColor(255, 255, 255);
+				switch( x_back)                                        //generate query response based on function type
+				{
+					case 1:
+						waitForEnd(5, 5, 94, 90);
+						break;
+					case 2:
+						waitForEnd(5, 93, 94, 178);
+						break;
+					case 3:
+						waitForEnd(97, 5, 186, 90);
+						break;
+					case 4:
+						waitForEnd(97, 93, 186, 178);
+						break;
+					case 5:
+						waitForEnd(5, 183, 60, 243);
+						break;
+					case 6:
+						waitForEnd(63, 183, 118, 243);
+						break;
+					case 7:
+						waitForEnd(121, 183, 176, 243);
+						break;
+					case 8:
+						waitForEnd(179, 183, 234, 243);
+						break;
+					default:
+					//	return;
+						break;
+					}
+//				Serial.println();
 				//Получаем верхние 32-битное слово 64-битный адрес.  64-битный адрес 802.15.4 MAC адрес источника 
 				XBee_Addr64_MS=(uint32_t(rx.getFrameData()[0]) << 24) + (uint32_t(rx.getFrameData()[1]) << 16) + (uint16_t(rx.getFrameData()[2]) << 8) + rx.getFrameData()[3];
 				//Получаем ниже 32-битное слово...
@@ -1408,6 +1470,7 @@ void XBeeRead()
 				Serial.println(XBee_Addr16,HEX);
 */
 				addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);
+
 		   }
 	  sl_XBee();
 	  } 
@@ -1480,16 +1543,16 @@ void XBeeWrite()
 					{
 						Serial.println("Success.  time to celebrate!");     // Успешно, можно радоваться.
 						myGLCD.setColor(VGA_LIME);
-						myGLCD.fillRoundRect (194, 70, 234, 110);
+						myGLCD.fillRoundRect (195, 71, 233, 109);
 						myGLCD.setColor(255, 255, 255);
 						myGLCD.drawRoundRect (194, 70, 234, 110);
 						myGLCD.setBackColor(0, 0, 0);
 						delay(400); 
 						myGLCD.setColor(0, 0, 0);
-						myGLCD.fillRoundRect (194, 70, 234, 110);
-						myGLCD.setColor(0, 0, 0);
-						myGLCD.drawRoundRect (194, 70, 234, 110);
-						delay(300);
+						myGLCD.fillRoundRect (195, 71, 233, 109);
+					/*	myGLCD.setColor(0, 0, 0);
+						myGLCD.drawRoundRect (194, 70, 234, 110);*/
+						//delay(300);
 					}
 				else 
 					{
@@ -1506,15 +1569,15 @@ void XBeeWrite()
 		{
 		// local XBee did not provide a timely TX Status Response -- should not happen
 		myGLCD.setColor(255 , 0, 0);
-		myGLCD.fillRoundRect (194, 70, 234, 110);
+		myGLCD.fillRoundRect (195, 71, 233, 109);
 		myGLCD.setColor(255, 255, 255);
 		myGLCD.drawRoundRect (194, 70, 234, 110);
 		myGLCD.setBackColor(0, 0, 0);
 		delay(400); 
 		myGLCD.setColor(0, 0, 0);
-		myGLCD.fillRoundRect (194, 70, 234, 110);
-		myGLCD.setColor(0, 0, 0);
-		myGLCD.drawRoundRect (194, 70, 234, 110);
+		myGLCD.fillRoundRect (195, 71, 233, 109);
+	/*	myGLCD.setColor(0, 0, 0);
+		myGLCD.drawRoundRect (194, 70, 234, 110);*/
 		}
 	delay(1000);
 } 

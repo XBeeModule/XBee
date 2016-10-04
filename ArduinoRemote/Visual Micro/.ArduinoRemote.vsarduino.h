@@ -101,6 +101,8 @@ void draw_menu2();
 void klav_menu1();
 void klav_menu2();
 void waitForIt(int x1, int y1, int x2, int y2);
+void waitForStart(int x1, int y1, int x2, int y2);
+void waitForEnd(int x1, int y1, int x2, int y2);
 void updateStr(int val);
 void XBeeRead();
 void sl_XBee();
