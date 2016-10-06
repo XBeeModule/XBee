@@ -234,8 +234,8 @@ ZBRxIoSampleResponse ioSample = ZBRxIoSampleResponse();
 
 
 //Строка с данными
-uint8_t payload[50] ;                       // = {3, 4,};
-uint8_t payload1[10] ;// = {3, 4,};
+uint8_t payload[30] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+//uint8_t payload1[10] ;// = {3, 4,};
 
 int XBee_Addr16;                            //16-разрядный адрес
 int Len_XBee = 0;
@@ -447,7 +447,7 @@ void drawGlavMenu()
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (179, 183, 234, 243);
 	myGLCD.printNumI(8, 199-x_dev, 205-y_dev);                  //"4"
-//----------------------------------------------------------
+
 
 	myGLCD.setColor(0, 0, 255);
 	myGLCD.fillRoundRect (5, 248, 118, 293);
@@ -462,7 +462,7 @@ void drawGlavMenu()
 	myGLCD.drawRoundRect (121, 248, 234, 293);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[6])));
 	myGLCD.print(buffer, 130, 262);                                     //"СБРОС"
-
+	
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (194, 70, 234, 110);
 	myGLCD.setBackColor (0, 0, 0);
@@ -477,7 +477,6 @@ void klav_Glav_Menu()
 	while (true)
 	{
 		test_power();
-		//XBeeRead();
   		myGLCD.setColor(255, 255, 255);
 //		myGLCD.drawRoundRect (194, 70, 234, 110);
 
@@ -487,10 +486,10 @@ void klav_Glav_Menu()
 			N_KN = 1;
 			waitForStart(5, 5, 94, 90);
 			payload[0] = 0x01;
-			payload[1] = 0x00;
-			payload[2] = 0x0A;
-			payload[3] = 0x00;
-			payload[4] = 0x1F;
+			//payload[1] = 0x00;
+			//payload[2] = 0x0A;
+			//payload[3] = 0x00;
+			//payload[4] = 0x1F;
 
 			XBeeWrite();
 		}
@@ -500,10 +499,10 @@ void klav_Glav_Menu()
 			N_KN = 2;
 			waitForStart(5, 93, 94, 178);
 			payload[0] = 0x02;
-			payload[1] = 0x00;
-			payload[2] = 0x0A;
-			payload[3] = 0x00;
-			payload[4] = 0x1F;
+			//payload[1] = 0x00;
+			//payload[2] = 0x0A;
+			//payload[3] = 0x00;
+			//payload[4] = 0x1F;
 			XBeeWrite();
 		}
 		if(digitalRead(KN3) == LOW)
@@ -512,10 +511,10 @@ void klav_Glav_Menu()
 			N_KN = 3;
 			waitForStart(97, 5, 186, 90);
 			payload[0] = 0x03;
-			payload[1] = 0x00;
-			payload[2] = 0x0A;
-			payload[3] = 0x00;
-			payload[4] = 0x1F;
+			//payload[1] = 0x00;
+			//payload[2] = 0x0A;
+			//payload[3] = 0x00;
+			//payload[4] = 0x1F;
 			XBeeWrite();
 		}
 		if(digitalRead(KN4) == LOW)
@@ -524,10 +523,10 @@ void klav_Glav_Menu()
 			N_KN = 4;
 			waitForStart(97, 93, 186, 178);
 			payload[0] = 4;
-			payload[1] = 0x00;
-			payload[2] = 0x0A;
-			payload[3] = 0x00;
-			payload[4] = 0x1F;
+			//payload[1] = 0x00;
+			//payload[2] = 0x0A;
+			//payload[3] = 0x00;
+			//payload[4] = 0x1F;
 			XBeeWrite();
 		}
 		if(digitalRead(KN5) == false)
@@ -537,10 +536,10 @@ void klav_Glav_Menu()
 			N_KN = 5;
 			waitForStart(5, 183, 60, 243);
 			payload[0] = 5;
-			payload[1] = 0x00;
-			payload[2] = 0x0A;
-			payload[3] = 0x00;
-			payload[4] = 0x1F;
+			//payload[1] = 0x00;
+			//payload[2] = 0x0A;
+			//payload[3] = 0x00;
+			//payload[4] = 0x1F;
 			XBeeWrite();
 		}
 		if(digitalRead(KN6) == LOW)
@@ -549,10 +548,10 @@ void klav_Glav_Menu()
 			N_KN = 6;
 			waitForStart(63, 183, 118, 243);;
 			payload[0] = 6;
-			payload[1] = 0x00;
-			payload[2] = 0x0A;
-			payload[3] = 0x00;
-			payload[4] = 0x1F;
+			//payload[1] = 0x00;
+			//payload[2] = 0x0A;
+			//payload[3] = 0x00;
+			//payload[4] = 0x1F;
 			XBeeWrite();
 		}
 		if(digitalRead(KN7) == LOW)
@@ -561,10 +560,10 @@ void klav_Glav_Menu()
 			N_KN = 7;
 			waitForStart(121, 183, 176, 243);
 			payload[0] = 7;
-			payload[1] = 0x00;
-			payload[2] = 0x0A;
-			payload[3] = 0x00;
-			payload[4] = 0x1F;
+			//payload[1] = 0x00;
+			//payload[2] = 0x0A;
+			//payload[3] = 0x00;
+			//payload[4] = 0x1F;
 			XBeeWrite();
 		}
 		if(digitalRead(KN8) == LOW)
@@ -573,10 +572,10 @@ void klav_Glav_Menu()
 			N_KN = 8;
 			waitForStart(179, 183, 234, 243);
 			payload[0] = 8;
-			payload[1] = 0x00;
-			payload[2] = 0x0A;
-			payload[3] = 0x00;
-			payload[4] = 0x1F;
+			//payload[1] = 0x00;
+			//payload[2] = 0x0A;
+			//payload[3] = 0x00;
+			//payload[4] = 0x1F;
 			XBeeWrite();
 		}
 
@@ -585,6 +584,7 @@ void klav_Glav_Menu()
 		  myTouch.read();
 		  x = myTouch.getX();
 		  y = myTouch.getY();
+
 		  if ((y >= 5) && (y <= 90))                                    // Первый ряд
 		  {
 		   if ((x >= 5) && (x <= 94))                                   // Button: 1
@@ -593,10 +593,10 @@ void klav_Glav_Menu()
 				N_KN = 1;
 				myGLCD.printNumI(1, 208, 51);
 				payload[0] = 1;
-				payload[1] = 0x00;
-				payload[2] = 0x0A;
-				payload[3] = 0x00;
-				payload[4] = 0x1F;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
 				XBeeWrite();
 			}
 			if ((x >= 97) && (x <= 186))                                // Button: 3
@@ -605,10 +605,10 @@ void klav_Glav_Menu()
 				N_KN = 3;
 				myGLCD.printNumI(3, 208, 51);
 				payload[0] = 3;
-				payload[1] = 0x00;
-				payload[2] = 0x0A;
-				payload[3] = 0x00;
-				payload[4] = 0x1F;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
 				XBeeWrite();
 			}
 		  }
@@ -621,10 +621,10 @@ void klav_Glav_Menu()
 				N_KN = 2;
 				myGLCD.printNumI(2, 208, 51);
 				payload[0] = 2;
-				payload[1] = 0x00;
-				payload[2] = 0x0A;
-				payload[3] = 0x00;
-				payload[4] = 0x1F;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
 				XBeeWrite();
 			}
 			if ((x >= 97) && (x <= 186))                                // Button: 4
@@ -633,10 +633,10 @@ void klav_Glav_Menu()
 				N_KN = 4;
 				myGLCD.printNumI(4, 208, 51);
 				payload[0] = 4;
-				payload[1] = 0x00;
-				payload[2] = 0x0A;
-				payload[3] = 0x00;
-				payload[4] = 0x1F;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
 				XBeeWrite();
 			}
 		  }
@@ -649,10 +649,10 @@ void klav_Glav_Menu()
 				N_KN = 5;
 				myGLCD.printNumI(5, 208, 51);
 				payload[0] = 5;
-				payload[1] = 0x00;
-				payload[2] = 0x0A;
-				payload[3] = 0x00;
-				payload[4] = 0x1F;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
 				XBeeWrite();
 			}
 			if ((x >= 63) && (x <= 118))                                // Button: 6
@@ -661,10 +661,10 @@ void klav_Glav_Menu()
 				N_KN = 6;
 				myGLCD.printNumI(6, 208, 51);
 				payload[0] = 6;
-				payload[1] = 0x00;
-				payload[2] = 0x0A;
-				payload[3] = 0x00;
-				payload[4] = 0x1F;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
 				XBeeWrite();
 			}
 			if ((x >= 121) && (x <= 176))                               // Button: 7
@@ -673,10 +673,10 @@ void klav_Glav_Menu()
 				N_KN = 7;
 				myGLCD.printNumI(7, 208, 51);
 				payload[0] = 7;
-				payload[1] = 0x00;
-				payload[2] = 0x0A;
-				payload[3] = 0x00;
-				payload[4] = 0x1F;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
 				XBeeWrite();
 			}
 			if ((x >= 179) && (x <= 234))                               // Button: 8
@@ -685,10 +685,10 @@ void klav_Glav_Menu()
 				N_KN = 8;
 				myGLCD.printNumI(8, 208, 51);
 				payload[0] = 8;
-				payload[1] = 0x00;
-				payload[2] = 0x0A;
-				payload[3] = 0x00;
-				payload[4] = 0x1F;
+				//payload[1] = 0x00;
+				//payload[2] = 0x0A;
+				//payload[3] = 0x00;
+				//payload[4] = 0x1F;
 				XBeeWrite();
 			}
 		  }
@@ -707,8 +707,64 @@ void klav_Glav_Menu()
 			}
 		  }
 		}
-	XBeeRead();
+			XBeeRead();
+		wiev_count(N_KN);
+	//XBeeRead();
+	//myGLCD.setColor(255, 255, 255);
+	//myGLCD.setBackColor( 0, 0, 255);
+	//Serial.println(rx.getData()[11],HEX);
+	//myGLCD.printNumI(rx.getData()[11], 10+33, 10+40); 
+	//myGLCD.printNumI(2, 10+33, 98+40);
+	//myGLCD.printNumI(rx.getData()[13], 102+33, 10+40);    
+	//myGLCD.printNumI(4, 102+33, 98+40);      
+	//myGLCD.printNumI(5, 25 , 205+10 );   
+	//myGLCD.printNumI(6, 83 , 205+10 );    
+	//myGLCD.printNumI(7, 141, 205+10 );       
+	//myGLCD.printNumI(8, 199, 205+10 ); 
 	}
+}
+
+void wiev_count(int num)
+{
+//	XBeeRead();
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.setBackColor( 0, 0, 255);
+
+
+//	Serial.println(rx.getData()[11],HEX);
+
+	switch(num)                                        //generate query response based on function type
+	{
+	case 1:
+		myGLCD.printNumI(rx.getData()[11], 10+33, 10+40); 
+		break;
+	case 2:
+		myGLCD.printNumI(rx.getData()[11], 10+33, 10+40); 
+		break;
+	case 3:
+		myGLCD.printNumI(rx.getData()[13], 102+33, 10+40);    
+		break;
+	case 4:
+		myGLCD.printNumI(rx.getData()[13], 102+33, 10+40);     
+		break;
+	case 5:
+		myGLCD.printNumI(rx.getData()[15], 25 , 205+10 );   
+		break;
+	case 6:
+		myGLCD.printNumI(rx.getData()[16], 83 , 205+10 ); 
+		break;
+	case 7:
+		myGLCD.printNumI(rx.getData()[17], 141, 205+10 );       
+		break;
+	case 8:
+		myGLCD.printNumI(rx.getData()[18], 199, 205+10 ); 
+		break;
+	default:
+		break;
+	}
+
+
+
 }
 
 void test_power()
@@ -719,6 +775,7 @@ void test_power()
     loopTime = currentTime;                          // в loopTime записываем новое значение
     myGLCD.setFont(SmallFont);
     myGLCD.setColor(0, 255, 0);
+	myGLCD.setBackColor( 0, 0, 0);
     int power = analogRead(A11);
     // Serial.println(power);
     power60 = power * (5.0 / 1024.0 * 2*0.965);
@@ -747,7 +804,7 @@ void test_power()
 void drawButtons0_1() // Отображение цифровой клавиатуры
 {
 	myGLCD.clrScr();
-	 myGLCD.setBackColor( 0, 0, 255);
+	myGLCD.setBackColor( 0, 0, 255);
 
 	myGLCD.setColor(0, 0, 255);                    //1
 	myGLCD.fillRoundRect (5, 5, 60, 60);
@@ -1443,7 +1500,6 @@ void drawMenuReset()
 }
 void klav_Menu_Reset()
 {
-
 	int x,y;
 	drawMenuReset();
 	while (true)
@@ -1468,13 +1524,7 @@ void klav_Menu_Reset()
 				{
 					waitForEndR(5, 5, 94, 90);
 				}
-
-				//payload[0] = 1;
-				//payload[1] = 0x00;
-				//payload[2] = 0x0A;
-				//payload[3] = 0x00;
-				//payload[4] = 0x1F;
-				//XBeeWrite();
+				while (myTouch.dataAvailable())  myTouch.read();
 			}
 			if ((x >= 97) && (x <= 186))                                // Button: 3
 			{
@@ -1486,18 +1536,13 @@ void klav_Menu_Reset()
 				}
 				else
 				{
-					waitForEnd(97, 5, 186, 90);
+					waitForEndR(97, 5, 186, 90);
 				}
-				//payload[0] = 3;
-				//payload[1] = 0x00;
-				//payload[2] = 0x0A;
-				//payload[3] = 0x00;
-				//payload[4] = 0x1F;
-				//XBeeWrite();
+				while (myTouch.dataAvailable())  myTouch.read();
 			}
-		  }
+		}
 	 
-		  if ((y >= 93) && (y <= 178))                                    // Первый ряд
+		  if ((y >= 93) && (y <= 178))                                  // Второй ряд
 		  {
 		   if ((x >= 5) && (x <= 94))                                   // Button: 2
 			{
@@ -1511,12 +1556,7 @@ void klav_Menu_Reset()
 				{
 					waitForEndR(5, 93, 94, 178);
 				}
-				//payload[0] = 2;
-				//payload[1] = 0x00;
-				//payload[2] = 0x0A;
-				//payload[3] = 0x00;
-				//payload[4] = 0x1F;
-				//XBeeWrite();
+				while (myTouch.dataAvailable())  myTouch.read();
 			}
 			if ((x >= 97) && (x <= 186))                                // Button: 4
 			{
@@ -1530,14 +1570,9 @@ void klav_Menu_Reset()
 				{
 					waitForEndR(97, 93, 186, 178);
 				}
-				//payload[0] = 4;
-				//payload[1] = 0x00;
-				//payload[2] = 0x0A;
-				//payload[3] = 0x00;
-				//payload[4] = 0x1F;
-				//XBeeWrite();
+				while (myTouch.dataAvailable())  myTouch.read();
 			}
-		  }
+		}
 	 
 		  if ((y >= 183) && (y <= 243))                                    //  ряд
 		  {
@@ -1553,12 +1588,7 @@ void klav_Menu_Reset()
 				{
 					waitForEndR(5, 183, 60, 243);
 				}
-				//payload[0] = 5;
-				//payload[1] = 0x00;
-				//payload[2] = 0x0A;
-				//payload[3] = 0x00;
-				//payload[4] = 0x1F;
-				//XBeeWrite();
+				while (myTouch.dataAvailable())  myTouch.read();
 			}
 			if ((x >= 63) && (x <= 118))                                // Button: 6
 			{
@@ -1572,12 +1602,7 @@ void klav_Menu_Reset()
 				{
 					waitForEndR(63, 183, 118, 243);
 				}
-				//payload[0] = 6;
-				//payload[1] = 0x00;
-				//payload[2] = 0x0A;
-				//payload[3] = 0x00;
-				//payload[4] = 0x1F;
-				//XBeeWrite();
+				while (myTouch.dataAvailable())  myTouch.read();
 			}
 			if ((x >= 121) && (x <= 176))                               // Button: 7
 			{
@@ -1591,12 +1616,7 @@ void klav_Menu_Reset()
 				{
 					waitForEndR(121, 183, 176, 243);
 				}
-				//payload[0] = 7;
-				//payload[1] = 0x00;
-				//payload[2] = 0x0A;
-				//payload[3] = 0x00;
-				//payload[4] = 0x1F;
-				//XBeeWrite();
+				while (myTouch.dataAvailable())  myTouch.read();
 			}
 			if ((x >= 179) && (x <= 234))                               // Button: 8
 			{
@@ -1610,14 +1630,9 @@ void klav_Menu_Reset()
 				{
 					waitForEndR(179, 183, 234, 243);
 				}
-				//payload[0] = 8;
-				//payload[1] = 0x00;
-				//payload[2] = 0x0A;
-				//payload[3] = 0x00;
-				//payload[4] = 0x1F;
-				//XBeeWrite();
+				while (myTouch.dataAvailable())  myTouch.read();
 			}
-		  }
+		}
 
 		  if ((y >= 248) && (y <= 293))                                // Четвертый ряд
 		  {
@@ -1636,44 +1651,54 @@ void klav_Menu_Reset()
 					payload[11] = 0x00;
 					waitForEndR(5, 5, 94, 90);
 				}
+
 				if(count2)
 				{
 					payload[12] = 0x00;
 					waitForEndR(5, 93, 94, 178);
 				}
+
 				if(count3)
 				{
 					payload[13] = 0x00;
 					waitForEnd(97, 5, 186, 90);
 				}
+
 				if(count4)
 				{
 					payload[14] = 0x00;
 					waitForEndR(97, 93, 186, 178);
 				}
+
 				if(count5)
 				{
 					payload[15] = 0x00;
 					waitForEndR(5, 183, 60, 243);
 				}
+
 				if(count6)
 				{
 					payload[16] = 0x00;
 					waitForEndR(63, 183, 118, 243);
 				}
+
 				if(count7)
 				{
 					payload[17] = 0x00;
 					waitForEndR(121, 183, 176, 243);
 				}
+
 				if(count8)
 				{
 					payload[18] = 0x00;
 					waitForEndR(179, 183, 234, 243);
 				}
+
+				payload[0] = 12; 
 				XBeeWrite();
-				//draw_menu1();
-				//break;
+				//delay(1000);
+				draw_menu1();
+				break;
 			}
 		  }
 		}
@@ -1696,6 +1721,9 @@ void waitForStart(int x1, int y1, int x2, int y2)
 	myGLCD.drawRoundRect (x1, y1, x2, y2);
 	myGLCD.drawRoundRect (x1+1, y1+1, x2-1, y2-1);
 	myGLCD.drawRoundRect (x1+2, y1+2, x2-2, y2-2);
+	while (myTouch.dataAvailable())  myTouch.read();
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.setBackColor( 0, 0, 0);
 }
 void waitForEnd(int x1, int y1, int x2, int y2)
 {
@@ -1711,7 +1739,7 @@ void waitForStartR(int x1, int y1, int x2, int y2)
 	myGLCD.drawRoundRect (x1, y1, x2, y2);
 	myGLCD.drawRoundRect (x1+1, y1+1, x2-1, y2-1);
 	myGLCD.drawRoundRect (x1+2, y1+2, x2-2, y2-2);
-	while (myTouch.dataAvailable())  myTouch.read();
+	myGLCD.setColor(255, 255, 255);
 }
 void waitForEndR(int x1, int y1, int x2, int y2)
 {
@@ -1721,7 +1749,6 @@ void waitForEndR(int x1, int y1, int x2, int y2)
 	myGLCD.drawRoundRect (x1+1, y1+1, x2-1, y2-1);
 	myGLCD.drawRoundRect (x1+2, y1+2, x2-2, y2-2);
 }
-
 
 void updateStr(int val)
 {
@@ -1768,20 +1795,20 @@ void XBeeRead()
 				{
 				   Serial.println("packet not acknowledged");
 				}
-				Serial.print("checksum is ");
-				Serial.println(rx.getChecksum(), HEX);    // Контрольная сумма
-				Serial.print("All packet length is ");
-				Serial.println(rx.getPacketLength(), DEC); // Длина пакета общего пакета
-				Serial.print("Data packet length is ");
-				Serial.println(rx.getDataLength(), DEC); // Длина пакета пакета данных
+				//Serial.print("checksum is ");
+				//Serial.println(rx.getChecksum(), HEX);    // Контрольная сумма
+				//Serial.print("All packet length is ");
+				//Serial.println(rx.getPacketLength(), DEC); // Длина пакета общего пакета
+				//Serial.print("Data packet length is ");
+				//Serial.println(rx.getDataLength(), DEC); // Длина пакета пакета данных
 
-				for (int i = 0; i < rx.getDataLength(); i++)       // Считать информацию длина пакета  в rx.getDataLength()
-				{
-					Serial.print("payload [");                   //
-					Serial.print(i, DEC);                        //
-					Serial.print("] is ");                       //
-					Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
-				}
+				//for (int i = 0; i < rx.getDataLength(); i++)       // Считать информацию длина пакета  в rx.getDataLength()
+				//{
+				//	Serial.print("payload [");                   //
+				//	Serial.print(i, DEC);                        //
+				//	Serial.print("] is ");                       //
+				//	Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
+				//}
 
 				int x_back = rx.getData()[0];
 
@@ -1837,7 +1864,7 @@ void XBeeRead()
 				addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);
 
 		   }
-	  sl_XBee();
+	//  sl_XBee();
 	  } 
 
 	 else if (xbee.getResponse().isError())                           //  Ошибка приема
@@ -1847,56 +1874,39 @@ void XBeeRead()
 		}
 }
 
-void sl_XBee()                                              // формировать ответ Координатору 
+void sl_XBee()                                              // формировать ответ  ИУ
  {
  	funcType = (rx.getData()[0]);                           //copy the function type from the incoming query
 	field1	= (rx.getData()[1] << 8) | rx.getData()[2];     //copy field 1 from the incoming query
 	field2  = (rx.getData()[3] << 8) | rx.getData()[4];     //copy field 2 from the incoming query
-//	Serial.println(funcType);
-
 	switch(funcType)                                        //generate query response based on function type
 		{
-		// #define READ_ELECTRO          0x01  // чтение из памяти и передача XBee
-		// #define READ_GAZ		         0x02  // чтение из памяти и передача XBee
-		// #define READ_COLWATER 	     0x03  // чтение из памяти и передача XBee
-		// #define READ_HOTWATER	     0x04  // чтение из памяти и передача XBee
-		// #define READ_WAR_GAZ	         0x05  // чтение из памяти и передача XBee
-		// #define READ_WAR_TEMPERATURA  0x06  // чтение из памяти и передача XBee
+		case 1:
 
-		//case READ_ELECTRO:
-		//	// Serial.println("READ_ELECTRO:");
-		//	get_READ_ELECTRO_StatusXBee(funcType, field1, field2);
-		//	break;
-		//case READ_GAZ:
-		//	//Serial.println("READ_GAZ:");
-		//	get_READ_GAZ_StatusXBee(funcType, field1, field2);
-		//	break;
-		//case READ_COLWATER:
-		//	//Serial.println("READ_COLWATER:");
-		//	get_READ_COLWATER_StatusXBee(funcType, field1, field2);
-		//	break;
-		//case READ_HOTWATER:
-		//	//Serial.println("READ_HOTWATER:");
-		//	get_READ_HOTWATER_StatusXBee(funcType, field1, field2);
-		//	break;
-		//case READ_WAR_GAZ:
-		//	//Serial.println("WRITE_DO:");
-		//	get_READ_WAR_GAZ_StatusXBee(funcType, field1, field2);
-		//	break;
-		//case READ_WAR_TEMPERATURA:
-		//	//Serial.println("WRITE_AO:");
-		//	get_READ_WAR_TEMPERATURA_StatusXBee(funcType, field1, field2);
-		//	break;
+			break;
+		case 2:
+
+			break;
+		case 3:
+
+			break;
+		case 4:
+
+			break;
+		case 5:
+
+			break;
+		case 6:
+
+			break;
 		default:
 			return;
 			break;
 		}
-	XBeeWrite();
+	//XBeeWrite();
  }
 void XBeeWrite()
 {
-	//Serial.println(XBee_Addr64_MS, HEX); 
-	//Serial.println(XBee_Addr64_LS, HEX); 
 	zbTx = ZBTxRequest(addr64, payload, sizeof(payload));  
 	xbee.send(zbTx); 
 	if (xbee.readPacket(700))                                               //  После отправки запроса TX, мы ожидаем ответ статуса
@@ -1915,9 +1925,6 @@ void XBeeWrite()
 						delay(400); 
 						myGLCD.setColor(0, 0, 0);
 						myGLCD.fillRoundRect (195, 71, 233, 109);
-					/*	myGLCD.setColor(0, 0, 0);
-						myGLCD.drawRoundRect (194, 70, 234, 110);*/
-						//delay(300);
 					}
 				else 
 					{
@@ -1973,7 +1980,7 @@ void XBeeWrite()
 			break;
 		}
 	}
-	delay(1000);
+	delay(300);
 } 
 void XBee_Setup()            //  
  {
@@ -2234,6 +2241,64 @@ void time_flag_start()
 	 timeF = millis();
 	 if (timeF>60000) flag_time = 1;
  }
+
+void XBeeReadCount()
+{
+	zbTx = ZBTxRequest(addr64, payload, sizeof(payload));  
+	xbee.send(zbTx); 
+	if (xbee.readPacket(700))                                               //  После отправки запроса TX, мы ожидаем ответ статуса
+		{
+		if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) 		// получил ответ! // Должен быть znet tx status       
+			{
+				xbee.getResponse().getZBTxStatusResponse(txStatus);
+				if (txStatus.getDeliveryStatus() == SUCCESS)                // Получить статус доставки, пятый байт
+					{
+						Serial.println("Success.  time to celebrate!");     // Успешно, можно радоваться.
+						myGLCD.setColor(VGA_LIME);
+						myGLCD.fillRoundRect (195, 71, 233, 109);
+						myGLCD.setColor(255, 255, 255);
+						myGLCD.drawRoundRect (194, 70, 234, 110);
+						myGLCD.setBackColor(0, 0, 0);
+						delay(400); 
+						myGLCD.setColor(0, 0, 0);
+						myGLCD.fillRoundRect (195, 71, 233, 109);
+						myGLCD.setColor(255, 255, 255);
+	
+						myGLCD.printNumI(1, 10+10, 10+10); 
+						myGLCD.printNumI(1, 10+10, 98+10);
+						myGLCD.printNumI(3, 102+10, 10+10);    
+						myGLCD.printNumI(4, 102+10, 98+10);      
+						myGLCD.printNumI(5, 25 , 205 );   
+						myGLCD.printNumI(6, 83 , 205 );    
+						myGLCD.printNumI(7, 141, 205 );       
+						myGLCD.printNumI(8, 199, 205 );   
+
+					}
+				else 
+					{
+						Serial.println("The remote XBee did not receive our packet. is it powered on?");  	// Управляемый XBee не ответил. Он включен?
+					}
+			}
+		}
+	else if (xbee.getResponse().isError())
+		{
+		Serial.print("Error reading packet.  Error code: ");  
+		Serial.println(xbee.getResponse().getErrorCode());
+		} 
+	else 
+		{
+		// local XBee did not provide a timely TX Status Response -- should not happen
+		myGLCD.setColor(255 , 0, 0);
+		myGLCD.fillRoundRect (195, 71, 233, 109);
+		myGLCD.setColor(255, 255, 255);
+		myGLCD.drawRoundRect (194, 70, 234, 110);
+		myGLCD.setBackColor(0, 0, 0);
+		delay(400); 
+		myGLCD.setColor(0, 0, 0);
+		myGLCD.fillRoundRect (195, 71, 233, 109);
+		myGLCD.setColor(255, 255, 255);
+	}
+} 
 
 // -----------------------------------------------------------------------------------
 
@@ -3051,11 +3116,11 @@ void XBee_alarm()
 {
 	 word val;
 	 word i = 0;
-	 		payload[0] = 0x01;
-		payload[1] = 0x00;
-		payload[2] = 0x0A;
-		payload[3] = 0x00;
-		payload[4] = 0x1F;
+	 	payload[0] = 0x01;
+		//payload[1] = 0x00;
+		//payload[2] = 0x0A;
+		//payload[3] = 0x00;
+		//payload[4] = 0x1F;
 	 //funcType = 9;
 	 //clock_read();
 	 //payload[0] = funcType;

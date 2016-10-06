@@ -99,6 +99,7 @@ void run_KN8_StatusXBee(byte funcType, word startreg, word numregs);
 void run_set_time1_StatusXBee(byte funcType, word startreg, word numregs);
 void run_set_time2_StatusXBee(byte funcType, word startreg, word numregs);
 void run_set_time3_StatusXBee(byte funcType, word startreg, word numregs);
+void reset_count();
 void set_pin();
 //
 //
