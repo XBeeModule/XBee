@@ -1649,7 +1649,7 @@ void klav_Menu_Reset()
 				if(count1)
 				{
 					payload[11] = 0x00;
-					waitForEndR(5, 5, 94, 90);
+					waitForEndR(5, 5, 94, 90); 
 				}
 
 				if(count2)
