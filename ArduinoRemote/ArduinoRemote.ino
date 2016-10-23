@@ -268,19 +268,19 @@ uint8_t CHCmd[]    = {'C','H'};             // Номер Радиоканала
 uint8_t SCCmd[]    = {'S','C'};             // Scan Channel
 uint8_t BDCmd[]    = {'B','D'};             // Скорость канала (Baud Rate )
 uint8_t VoltCmd[]  = {'%','V'};             // Напряжение питания Считывает напряжение на выводе Vcc. Для преобразования значения
-								            // в мВ, поделите значение на 1023 и умножьте на 1200. Значение %V равное 0x8FE (или 2302 в
-								            // десятичном виде) соответствует 2700мВ или 2.70В
+											// в мВ, поделите значение на 1023 и умножьте на 1200. Значение %V равное 0x8FE (или 2302 в
+											// десятичном виде) соответствует 2700мВ или 2.70В
 uint8_t TPCmd[]    = {'T','P'};             // Температура
 uint8_t dhCmd[]    = {'D','H'};             // Старший байт адреса
 uint8_t dlCmd[]    = {'D','L'};             // Младший байт адреса
 uint8_t d0Cmd[]    = {'D','0'};             //
 uint8_t WRCmd[]    = {'W','R'};             // Запись в модуль параметров
-								            // Примечание: Если введена команда WR, до получения ответа "OK\r" не должно вводится
-								            // дополнительных символов
+											// Примечание: Если введена команда WR, до получения ответа "OK\r" не должно вводится
+											// дополнительных символов
 uint8_t FRCmd[]    = {'F','R'};             // Перезапуск программного обеспечения
 uint8_t NRCmd[]    = {'N','R'};             // Перезапуск сети 
-								            // Если NR = 0: Переустанавливает параметры сети на узле, вызвавшем команду. 
-								            // Если NR = 1:Отправляетшироковещательную передачу для перезапуска параметров на всех узлах сети.
+											// Если NR = 0: Переустанавливает параметры сети на узле, вызвавшем команду. 
+											// Если NR = 1:Отправляетшироковещательную передачу для перезапуска параметров на всех узлах сети.
 uint8_t d0Value[]  = { 0x2 };
 uint8_t irValue[]  = { 0xff, 0xff };
 uint8_t IDValue[]  = { 0x02, 0x34 };
@@ -321,13 +321,13 @@ word _baud, _crc;
 void flashLed(int pin, int times, int wait) {
 
   for (int i = 0; i < times; i++) {
-    digitalWrite(pin, HIGH);
-    delay(wait);
-    digitalWrite(pin, LOW);
+	digitalWrite(pin, HIGH);
+	delay(wait);
+	digitalWrite(pin, LOW);
 
-    if (i + 1 < times) {
-      delay(wait);
-    }
+	if (i + 1 < times) {
+	  delay(wait);
+	}
   }
 }
 
@@ -477,7 +477,7 @@ void klav_Glav_Menu()
 	while (true)
 	{
 		test_power();
-  		myGLCD.setColor(255, 255, 255);
+		myGLCD.setColor(255, 255, 255);
 //		myGLCD.drawRoundRect (194, 70, 234, 110);
 
 		if(digitalRead(KN1) == false)
@@ -772,33 +772,33 @@ void test_power()
   currentTime = millis();                           // считываем время, прошедшее с момента запуска программы
   if (currentTime >= (loopTime + time_power))
   { // сравниваем текущий таймер с переменной loopTime + 1 секунда
-    loopTime = currentTime;                          // в loopTime записываем новое значение
-    myGLCD.setFont(SmallFont);
-    myGLCD.setColor(0, 255, 0);
+	loopTime = currentTime;                          // в loopTime записываем новое значение
+	myGLCD.setFont(SmallFont);
+	myGLCD.setColor(0, 255, 0);
 	myGLCD.setBackColor( 0, 0, 0);
-    int power = analogRead(A11);
-    // Serial.println(power);
-    power60 = power * (5.0 / 1024.0 * 2*0.965);
-    //  Serial.println(power60);
-    if (power60 > 5.8) myGLCD.print("\xB0", 221, 5);
-    else if (power60 <= 5.8 && power60 > 5.6) myGLCD.print("\xB1", 212, 5);
-    else if (power60 <= 5.6 && power60 > 5.4) myGLCD.print("\xB2", 212, 5);
-    else if (power60 <= 5.4 && power60 > 5.2) myGLCD.print("\xB3", 212, 5);
+	int power = analogRead(A11);
+	// Serial.println(power);
+	power60 = power * (5.0 / 1024.0 * 2*0.965);
+	//  Serial.println(power60);
+	if (power60 > 5.8) myGLCD.print("\xB0", 221, 5);
+	else if (power60 <= 5.8 && power60 > 5.6) myGLCD.print("\xB1", 212, 5);
+	else if (power60 <= 5.6 && power60 > 5.4) myGLCD.print("\xB2", 212, 5);
+	else if (power60 <= 5.4 && power60 > 5.2) myGLCD.print("\xB3", 212, 5);
 
-    else if (power60 <= 5.2)
-    {
-      myGLCD.setColor(255, 0, 0);
-      myGLCD.print("\xB4", 212, 5);
-    }
-    myGLCD.printNumF(power60, 2, 200, 20);
-    myGLCD.setColor(255, 255, 255);
-    power = analogRead(A1);
-    power50 = power * (5.0 / 1024.0*2*0.965);
-    myGLCD.printNumF(power50, 2, 200, 30);
-    power = analogRead(A2);
-    power33 = power * (5.0 / 1024.0*0.965);
-    myGLCD.printNumF(power33, 2, 200, 40);
-    myGLCD.setFont(BigFont);
+	else if (power60 <= 5.2)
+	{
+	  myGLCD.setColor(255, 0, 0);
+	  myGLCD.print("\xB4", 212, 5);
+	}
+	myGLCD.printNumF(power60, 2, 200, 20);
+	myGLCD.setColor(255, 255, 255);
+	power = analogRead(A1);
+	power50 = power * (5.0 / 1024.0*2*0.965);
+	myGLCD.printNumF(power50, 2, 200, 30);
+	power = analogRead(A2);
+	power33 = power * (5.0 / 1024.0*0.965);
+	myGLCD.printNumF(power33, 2, 200, 40);
+	myGLCD.setFont(BigFont);
   }
 }
 void drawButtons0_1() // Отображение цифровой клавиатуры
@@ -896,7 +896,7 @@ void drawButtonsExit() // Отображение кнопок управления  клавиатуры
 void drawButtonsXBee() // Отображение кнопок управления  клавиатуры
 {
 	myGLCD.clrScr();
-    drawButtons0_1();
+	drawButtons0_1();
 	myGLCD.setColor(0, 0, 255);                    // A
 	myGLCD.fillRoundRect (121, 121, 176, 176);
 	myGLCD.setColor(255, 255, 255);
@@ -946,7 +946,7 @@ void drawButtonsXBee() // Отображение кнопок управления  клавиатуры
 	myGLCD.drawRoundRect (121, 237, 234, 292);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[1])));
 	myGLCD.print(buffer, 145, 257);                                 // "Ввод"
- 	myGLCD.setBackColor (0, 0, 0);
+	myGLCD.setBackColor (0, 0, 0);
 }
 void klav1()
 {
@@ -1037,7 +1037,7 @@ void klav1()
 				myGLCD.fillRect(0, 300, 239, 319);
 				myGLCD.setColor(0, 255, 0);
 				myGLCD.print(stLast, LEFT, 300);
-			    break;
+				break;
 			  }
 			  else
 			  {
@@ -1088,154 +1088,154 @@ void klavXBee()
  drawButtonsXBee();
  while (true)
   {
-    if (myTouch.dataAvailable())
-    {
-      myTouch.read();
-      x = myTouch.getX();
-      y = myTouch.getY();
+	if (myTouch.dataAvailable())
+	{
+	  myTouch.read();
+	  x = myTouch.getX();
+	  y = myTouch.getY();
 	  if ((y >= 5) && (y <= 60)) // Первый ряд
-      {
-       if ((x >= 5) && (x <= 60)) // Button: 1
-        {
-          waitForIt(5, 5, 60, 60);
-          updateStrXBee('1');
-        }
-        if ((x >= 63) && (x <= 118)) // Button: 2
-        {
-          waitForIt(63, 5, 118, 60);
-          updateStrXBee('2');
-        }
-        if ((x >= 121) && (x <= 176)) // Button: 3
-        {
-          waitForIt(121, 5, 176, 60);
-          updateStrXBee('3');
-        }
-        if ((x >= 179) && (x <= 234)) // Button: 4
-        {
-          waitForIt(179, 5, 234, 60);
-          updateStrXBee('4');
-        }
+	  {
+	   if ((x >= 5) && (x <= 60)) // Button: 1
+		{
+		  waitForIt(5, 5, 60, 60);
+		  updateStrXBee('1');
+		}
+		if ((x >= 63) && (x <= 118)) // Button: 2
+		{
+		  waitForIt(63, 5, 118, 60);
+		  updateStrXBee('2');
+		}
+		if ((x >= 121) && (x <= 176)) // Button: 3
+		{
+		  waitForIt(121, 5, 176, 60);
+		  updateStrXBee('3');
+		}
+		if ((x >= 179) && (x <= 234)) // Button: 4
+		{
+		  waitForIt(179, 5, 234, 60);
+		  updateStrXBee('4');
+		}
 	  }
 
 	  if ((y >= 63) && (y <= 118))    // Второй ряд
-      {
-       if ((x >= 5) && (x <= 60)) // Button: 5
-        {
-          waitForIt(5, 63, 60, 118);
-          updateStrXBee('5');
-        }
-        if ((x >= 63) && (x <= 118)) // Button: 6
-        {
-          waitForIt(63, 63, 118, 118);
-          updateStrXBee('6');
-        }
-        if ((x >= 121) && (x <= 176)) // Button: 7
-        {
-          waitForIt(121, 63, 176, 118);
-          updateStrXBee('7');
-        }
-        if ((x >= 179) && (x <= 234)) // Button: 8
-        {
-          waitForIt(179, 63, 234, 118);
-          updateStrXBee('8');
-        }
+	  {
+	   if ((x >= 5) && (x <= 60)) // Button: 5
+		{
+		  waitForIt(5, 63, 60, 118);
+		  updateStrXBee('5');
+		}
+		if ((x >= 63) && (x <= 118)) // Button: 6
+		{
+		  waitForIt(63, 63, 118, 118);
+		  updateStrXBee('6');
+		}
+		if ((x >= 121) && (x <= 176)) // Button: 7
+		{
+		  waitForIt(121, 63, 176, 118);
+		  updateStrXBee('7');
+		}
+		if ((x >= 179) && (x <= 234)) // Button: 8
+		{
+		  waitForIt(179, 63, 234, 118);
+		  updateStrXBee('8');
+		}
 	  }
 
 	  if ((y >= 121) && (y <= 176))    // Третий ряд
-      {
-       if ((x >= 5) && (x <= 60)) // Button: 9
-        {
-          waitForIt(5, 121, 60, 176);
-          updateStrXBee('9');
-        }
-        if ((x >= 63) && (x <= 118)) // Button: 0
-        {
-          waitForIt(63, 121, 118, 176);
-          updateStrXBee('0');
-        }
-        if ((x >= 121) && (x <= 176)) // Button: A
-        {
-          waitForIt(121, 121, 176, 176);
-          updateStrXBee('A');
-        }
-        if ((x >= 179) && (x <= 234)) // Button: B
-        {
-          waitForIt(179, 121, 234, 176);
-          updateStrXBee('B');
-        }
+	  {
+	   if ((x >= 5) && (x <= 60)) // Button: 9
+		{
+		  waitForIt(5, 121, 60, 176);
+		  updateStrXBee('9');
+		}
+		if ((x >= 63) && (x <= 118)) // Button: 0
+		{
+		  waitForIt(63, 121, 118, 176);
+		  updateStrXBee('0');
+		}
+		if ((x >= 121) && (x <= 176)) // Button: A
+		{
+		  waitForIt(121, 121, 176, 176);
+		  updateStrXBee('A');
+		}
+		if ((x >= 179) && (x <= 234)) // Button: B
+		{
+		  waitForIt(179, 121, 234, 176);
+		  updateStrXBee('B');
+		}
 	  }
 	 
 	  if ((y >= 179) && (y <= 234))    // Четвертый ряд
-      {
-       if ((x >= 5) && (x <= 60)) // Button: C
-        {
-          waitForIt(5, 179, 60, 234);
-          updateStrXBee('C');
-        }
-        if ((x >= 63) && (x <= 118)) // Button: D
-        {
-          waitForIt(63, 179, 118, 234);
-          updateStrXBee('D');
-        }
-        if ((x >= 121) && (x <= 176)) // Button: E
-        {
-          waitForIt(121, 179, 176, 234);
-          updateStrXBee('E');
-        }
-        if ((x >= 179) && (x <= 234)) // Button: F
-        {
-          waitForIt(179, 179, 234, 234);
-          updateStrXBee('F');
-        }
+	  {
+	   if ((x >= 5) && (x <= 60)) // Button: C
+		{
+		  waitForIt(5, 179, 60, 234);
+		  updateStrXBee('C');
+		}
+		if ((x >= 63) && (x <= 118)) // Button: D
+		{
+		  waitForIt(63, 179, 118, 234);
+		  updateStrXBee('D');
+		}
+		if ((x >= 121) && (x <= 176)) // Button: E
+		{
+		  waitForIt(121, 179, 176, 234);
+		  updateStrXBee('E');
+		}
+		if ((x >= 179) && (x <= 234)) // Button: F
+		{
+		  waitForIt(179, 179, 234, 234);
+		  updateStrXBee('F');
+		}
 	  }
 	 
 	  if ((y >= 237) && (y <= 292))                        // Пятый ряд
-      {
-        if ((x >= 5) && (x <= 118))                        // Button:    "Выход"
-        {
-          waitForIt(5, 237, 118, 292);
-          myGLCD.clrScr();
-          myGLCD.setBackColor(VGA_BLACK);
-          ret = 1;
-          stCurrent[0] = '\0';
-          stCurrentLen = 0;
-          break;
-        }
-        if ((x >= 121) && (x <= 234))                      // Button:   "Ввод"
-        {
-          waitForIt(121, 237, 234, 292);
-           if (stCurrentLen > 0)
-           {
-            for (int x = 0; x < stCurrentLen + 1; x++)
-            {
-              stLast[x] = stCurrent[x];
-            }
-            stCurrent[0] = '\0';
-            stLast[stCurrentLen + 1] = '\0';
-            stCurrentLen1 = stCurrentLen;
-            stCurrentLen = 0;
-            myGLCD.setColor(0, 0, 0);
-            myGLCD.fillRect(0, 300, 239, 319);
-            myGLCD.setColor(0, 255, 0);
-            myGLCD.print(stLast, LEFT, 300);
-            break;
-          }
-          else
-          {
-            myGLCD.setColor(0, 0, 0);
-            myGLCD.fillRect(0, 300, 239, 319);
-            myGLCD.setColor(255, 0, 0);
+	  {
+		if ((x >= 5) && (x <= 118))                        // Button:    "Выход"
+		{
+		  waitForIt(5, 237, 118, 292);
+		  myGLCD.clrScr();
+		  myGLCD.setBackColor(VGA_BLACK);
+		  ret = 1;
+		  stCurrent[0] = '\0';
+		  stCurrentLen = 0;
+		  break;
+		}
+		if ((x >= 121) && (x <= 234))                      // Button:   "Ввод"
+		{
+		  waitForIt(121, 237, 234, 292);
+		   if (stCurrentLen > 0)
+		   {
+			for (int x = 0; x < stCurrentLen + 1; x++)
+			{
+			  stLast[x] = stCurrent[x];
+			}
+			stCurrent[0] = '\0';
+			stLast[stCurrentLen + 1] = '\0';
+			stCurrentLen1 = stCurrentLen;
+			stCurrentLen = 0;
+			myGLCD.setColor(0, 0, 0);
+			myGLCD.fillRect(0, 300, 239, 319);
+			myGLCD.setColor(0, 255, 0);
+			myGLCD.print(stLast, LEFT, 300);
+			break;
+		  }
+		  else
+		  {
+			myGLCD.setColor(0, 0, 0);
+			myGLCD.fillRect(0, 300, 239, 319);
+			myGLCD.setColor(255, 0, 0);
 			strcpy_P(buffer, (char*)pgm_read_word(&(table_message[4])));
-            myGLCD.print(buffer, CENTER, 300);                                  //"БУФФЕР ПУСТОЙ!"
-            delay(500);
-            myGLCD.print("                 ", CENTER, 300);
-            delay(500);
-            myGLCD.print(buffer, CENTER, 300);                                 //"БУФФЕР ПУСТОЙ!"
-            delay(500);
-            myGLCD.print("                 ", CENTER, 300);
-            myGLCD.setColor(0, 255, 0);
-          }
-        }
+			myGLCD.print(buffer, CENTER, 300);                                  //"БУФФЕР ПУСТОЙ!"
+			delay(500);
+			myGLCD.print("                 ", CENTER, 300);
+			delay(500);
+			myGLCD.print(buffer, CENTER, 300);                                 //"БУФФЕР ПУСТОЙ!"
+			delay(500);
+			myGLCD.print("                 ", CENTER, 300);
+			myGLCD.setColor(0, 255, 0);
+		  }
+		}
 	  }
 	}
   }
@@ -1343,14 +1343,14 @@ void klav_menu1()
 				if ((y >= 28) && (y <= 83))                                   // Button: 1
 				{
 				 waitForIt(5, 28, 234, 83);
-               	 myGLCD.clrScr();
- 				 set_adr_device();
+				 myGLCD.clrScr();
+				 set_adr_device();
 				 draw_menu1();
 				}
 				if ((y >= 86) && (y <= 141))                                // Button: 2
 				{
 				 waitForIt(5, 86, 234, 141);
-                 myGLCD.clrScr();
+				 myGLCD.clrScr();
 				 klav_Menu_Reset();
 //				 draw_menu1();
 				}
@@ -1395,8 +1395,8 @@ void klav_menu2()
 				if ((y >= 86) && (y <= 141))                                // Button: 2
 				{
 					waitForIt(5, 86, 234, 141);
-	                view_adr_device();                                      // Просмотр адресов устройств в памяти 
-  			        draw_menu2();
+					view_adr_device();                                      // Просмотр адресов устройств в памяти 
+					draw_menu2();
 				}
 				if ((y >= 144) && (y <= 199))                               // Button: 3
 				{
@@ -1504,7 +1504,7 @@ void klav_Menu_Reset()
 	drawMenuReset();
 	while (true)
 	{
-  		myGLCD.setColor(255, 255, 255);
+		myGLCD.setColor(255, 255, 255);
 		if (myTouch.dataAvailable())
 		{
 		  myTouch.read();
@@ -1515,7 +1515,7 @@ void klav_Menu_Reset()
 		   if ((x >= 5) && (x <= 94))                                   // Button: 1
 			{
 				N_KN = 1;
-	            count1=!count1;
+				count1=!count1;
 				if(count1)
 				{
 					waitForStartR(5, 5, 94, 90);
@@ -1529,7 +1529,7 @@ void klav_Menu_Reset()
 			if ((x >= 97) && (x <= 186))                                // Button: 3
 			{
 				N_KN = 3;
-			    count3=!count3;
+				count3=!count3;
 				if(count3)
 				{
 					waitForStartR(97, 5, 186, 90);
@@ -1547,7 +1547,7 @@ void klav_Menu_Reset()
 		   if ((x >= 5) && (x <= 94))                                   // Button: 2
 			{
 				N_KN = 2;
-		        count2=!count2;
+				count2=!count2;
 				if(count2)
 				{
 					waitForStartR(5, 93, 94, 178);
@@ -1561,7 +1561,7 @@ void klav_Menu_Reset()
 			if ((x >= 97) && (x <= 186))                                // Button: 4
 			{
 				N_KN = 4;
-		        count4=!count4;
+				count4=!count4;
 				if(count4)
 				{
 					waitForStartR(97, 93, 186, 178);
@@ -1607,7 +1607,7 @@ void klav_Menu_Reset()
 			if ((x >= 121) && (x <= 176))                               // Button: 7
 			{
 				N_KN = 7;
-		        count7=!count7;
+				count7=!count7;
 				if(count7)
 				{
 					waitForStartR(121, 183, 176, 243);
@@ -1621,7 +1621,7 @@ void klav_Menu_Reset()
 			if ((x >= 179) && (x <= 234))                               // Button: 8
 			{
 				N_KN = 8;
-	            count8=!count8;
+				count8=!count8;
 				if(count8)
 				{
 					waitForStartR(179, 183, 234, 243);
@@ -1729,7 +1729,7 @@ void waitForEnd(int x1, int y1, int x2, int y2)
 {
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (x1, y1, x2, y2);
-    myGLCD.setColor(0, 0, 255);
+	myGLCD.setColor(0, 0, 255);
 	myGLCD.drawRoundRect (x1+1, y1+1, x2-1, y2-1);
 	myGLCD.drawRoundRect (x1+2, y1+2, x2-2, y2-2);
 }
@@ -1745,7 +1745,7 @@ void waitForEndR(int x1, int y1, int x2, int y2)
 {
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (x1, y1, x2, y2);
-    myGLCD.setColor(0, 0, 255);
+	myGLCD.setColor(0, 0, 255);
 	myGLCD.drawRoundRect (x1+1, y1+1, x2-1, y2-1);
 	myGLCD.drawRoundRect (x1+2, y1+2, x2-2, y2-2);
 }
@@ -1754,11 +1754,11 @@ void updateStr(int val)
 {
   if (stCurrentLen < 15)
   {
-    stCurrent[stCurrentLen] = val;
-    stCurrent[stCurrentLen + 1] = '\0';
-    stCurrentLen++;
-    myGLCD.setColor(0, 255, 0);
-    myGLCD.print(stCurrent, LEFT, 300);
+	stCurrent[stCurrentLen] = val;
+	stCurrent[stCurrentLen + 1] = '\0';
+	stCurrentLen++;
+	myGLCD.setColor(0, 255, 0);
+	myGLCD.print(stCurrent, LEFT, 300);
 	myGLCD.printNumI(stCurrentLen, RIGHT, 300);
   }
   else
@@ -1766,16 +1766,16 @@ void updateStr(int val)
 	myGLCD.setColor(0, 0, 0);
 	myGLCD.fillRect(0, 300, 239, 319);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[3])));
-    myGLCD.setColor(255, 0, 0);
+	myGLCD.setColor(255, 0, 0);
 	myGLCD.print("               ", CENTER, 300);
-    myGLCD.print(buffer, CENTER, 300);                         // ПЕРЕПОЛНЕНИЕ!
-    delay(500);
-    myGLCD.print("               ", CENTER, 300);
-    delay(500);
-    myGLCD.print(buffer, CENTER, 300);                         // ПЕРЕПОЛНЕНИЕ!
-    delay(500);
-    myGLCD.print("               ", CENTER, 300);
-    myGLCD.setColor(0, 255, 0);
+	myGLCD.print(buffer, CENTER, 300);                         // ПЕРЕПОЛНЕНИЕ!
+	delay(500);
+	myGLCD.print("               ", CENTER, 300);
+	delay(500);
+	myGLCD.print(buffer, CENTER, 300);                         // ПЕРЕПОЛНЕНИЕ!
+	delay(500);
+	myGLCD.print("               ", CENTER, 300);
+	myGLCD.setColor(0, 255, 0);
   }
 }
 
@@ -1876,7 +1876,7 @@ void XBeeRead()
 
 void sl_XBee()                                              // формировать ответ  ИУ
  {
- 	funcType = (rx.getData()[0]);                           //copy the function type from the incoming query
+	funcType = (rx.getData()[0]);                           //copy the function type from the incoming query
 	field1	= (rx.getData()[1] << 8) | rx.getData()[2];     //copy field 1 from the incoming query
 	field2  = (rx.getData()[3] << 8) | rx.getData()[4];     //copy field 2 from the incoming query
 	switch(funcType)                                        //generate query response based on function type
@@ -2021,7 +2021,7 @@ void XBee_Setup()            //
 					return;
 				}
 			}
-	    }
+		}
 	}	
 } 
 void XBee_status()
@@ -2079,7 +2079,7 @@ void XBee_status()
 	myGLCD.print(buffer, LEFT, yXBee);
 	atRequest.setCommand(MYCmd);  
 	sendAtCommand();
-    delay(100);
+	delay(100);
 	XBee_data2 = (unsigned long&)info_XBee_data1;
 	myGLCD.setColor(VGA_YELLOW);
 	myGLCD.print(String(XBee_data2, HEX), RIGHT, yXBee);
@@ -2090,7 +2090,7 @@ void XBee_status()
 	myGLCD.print("OI", LEFT, yXBee);
 	atRequest.setCommand(OICmd);  
 	sendAtCommand();
-    delay(100);
+	delay(100);
 	XBee_data2 = (unsigned long&)info_XBee_data1;
 	myGLCD.setColor(VGA_YELLOW);
 	myGLCD.print(String(XBee_data2, HEX), RIGHT, yXBee);
@@ -2114,7 +2114,7 @@ void XBee_status()
 	myGLCD.print(buffer, LEFT, yXBee);
 	atRequest.setCommand(IDCmd);  
 	sendAtCommand();
-    delay(100);
+	delay(100);
 	XBee_data2 = (unsigned long&)info_XBee_data1;
 	myGLCD.setColor(VGA_YELLOW);
 	myGLCD.print(String(XBee_data2, HEX), RIGHT, yXBee);
@@ -2176,7 +2176,7 @@ void XBee_status()
 			XBee_data2 = 115200;
 			break;
 			default:
-           XBee_data2 = 000000;
+		   XBee_data2 = 000000;
 		}
 
 	myGLCD.print(String(XBee_data2), RIGHT, yXBee);
@@ -2198,7 +2198,7 @@ void XBee_status()
 	myGLCD.print(buffer, LEFT, yXBee);
 	atRequest.setCommand(TPCmd);                                        // Температура модуля
 	sendAtCommand();
-    delay(100);
+	delay(100);
 	XBee_data2 = (unsigned long&)info_XBee_data1;
 	myGLCD.setColor(VGA_YELLOW);
 	myGLCD.print(String(XBee_data2, DEC), RIGHT, yXBee);
@@ -2411,7 +2411,7 @@ void sendAtCommand()
 
   // wait up to 5 seconds for the status response
   if (xbee.readPacket(5000)) 
-    { 
+	{ 
 
 	// should be an AT command response
 	if (xbee.getResponse().getApiId() == AT_COMMAND_RESPONSE) 
@@ -2528,8 +2528,8 @@ void sendAtCommand_ar()
 			  } 
 		  else 
 			  {
-				    Serial.print("Command return error code: ");
-				    Serial.println(atResponse.getStatus(), HEX);
+					Serial.print("Command return error code: ");
+					Serial.println(atResponse.getStatus(), HEX);
 
 					myGLCD.setColor(255 , 0, 0);
 					myGLCD.fillRoundRect (278, 92, 318, 132);
@@ -2615,7 +2615,7 @@ void sendRemoteAtCommand()
   } else {
 	Serial.print("No response from radio3");  
   }
-}
+} 
 void testRemoteAtCommand()
  {
 	// sendRemoteAtCommand();
@@ -2656,10 +2656,10 @@ arRequestMod.clearCommandValue();
 }
 void read_HL_mem_XBee(int N_device )
  {
-    //Программа ввостановления данных ZigBee из памяти.
- 	byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
+	//Программа ввостановления данных ZigBee из памяти.
+	byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
 		y[3]= i2c_eeprom_read_byte( deviceaddress, 3+N_device+2);
-        i2c_eeprom_write_byte(deviceaddress, 3+adr_xbee_current_H, y[3]);    // Записать в память данные 
+		i2c_eeprom_write_byte(deviceaddress, 3+adr_xbee_current_H, y[3]);    // Записать в память данные 
 		y[2]= i2c_eeprom_read_byte( deviceaddress, 2+N_device+2);
 		i2c_eeprom_write_byte(deviceaddress, 2+adr_xbee_current_H, y[2]);    // Записать в память данные 
 		y[1]= i2c_eeprom_read_byte( deviceaddress, 1+N_device+2);
@@ -2669,19 +2669,19 @@ void read_HL_mem_XBee(int N_device )
 		XBee_Addr64_MS = (unsigned long&) y;  // Сложить восстановленные текущие данные
 
 
-	    //Чтение из памяти текущих данных младшего адреса координатора
+		//Чтение из памяти текущих данных младшего адреса координатора
 		y[3]= i2c_eeprom_read_byte( deviceaddress, 3+N_device+6);
-	    i2c_eeprom_write_byte(deviceaddress, 3+adr_xbee_current_L, y[3]);    // Записать в память данные 
+		i2c_eeprom_write_byte(deviceaddress, 3+adr_xbee_current_L, y[3]);    // Записать в память данные 
 		y[2]= i2c_eeprom_read_byte( deviceaddress, 2+N_device+6);
-	    i2c_eeprom_write_byte(deviceaddress, 2+adr_xbee_current_L, y[2]);    // Записать в память данные 
+		i2c_eeprom_write_byte(deviceaddress, 2+adr_xbee_current_L, y[2]);    // Записать в память данные 
 		y[1]= i2c_eeprom_read_byte( deviceaddress, 1+N_device+6);
 		i2c_eeprom_write_byte(deviceaddress, 1+adr_xbee_current_L, y[1]);    // Записать в память данные 
 		y[0]= i2c_eeprom_read_byte( deviceaddress, 0+N_device+6);
 		i2c_eeprom_write_byte(deviceaddress, adr_xbee_current_L, y[0]);    // Записать в память данные 
 		XBee_Addr64_LS = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
 		Serial.println(XBee_Addr64_MS, HEX); 
-        Serial.println(XBee_Addr64_LS, HEX); 
-	    addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);                                     // SH + SL Address of receiving XBee
+		Serial.println(XBee_Addr64_LS, HEX); 
+		addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);                                     // SH + SL Address of receiving XBee
 }
 void draw_view_adr_device()
 {
@@ -2712,7 +2712,7 @@ void draw_view_adr_device()
 	myGLCD.setBackColor(0, 0, 255);
 	myGLCD.print("   ", CENTER, 245);                                 //  Очистить
 	myGLCD.printNumI(n_page, CENTER, 245);                            // Завершить просмотр
-    myGLCD.setBackColor(0, 0, 0);
+	myGLCD.setBackColor(0, 0, 0);
 
 	myGLCD.setColor(0, 0, 255);                                        // Нарисовать прямоугольник для текста
 	myGLCD.fillRoundRect (158, 233, 238, 273);
@@ -2735,7 +2735,7 @@ void view_adr_device()
 	int n_page = 1;
 	int adr_device = 0;
 	draw_view_adr_device();
- 	while (myTouch.dataAvailable()) {}
+	while (myTouch.dataAvailable()) {}
 	view_page(n_page);
 
 	while (true)
@@ -2753,7 +2753,7 @@ void view_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(number_device, CENTER, 245);     // 
-                    myGLCD.setBackColor(0, 0, 0);
+					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
@@ -2768,7 +2768,7 @@ void view_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(number_device, CENTER, 245);     // 
-                    myGLCD.setBackColor(0, 0, 0);
+					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
@@ -2783,7 +2783,7 @@ void view_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(number_device, CENTER, 245);     // 
-                    myGLCD.setBackColor(0, 0, 0);
+					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
@@ -2795,16 +2795,16 @@ void view_adr_device()
 				{
 					if(n_page-1 < 42)
 					{
-                        number_device = ((n_page-1) * 6)+4;
+						number_device = ((n_page-1) * 6)+4;
 						waitForIt(1, 128, 239, 160);
 						myGLCD.setBackColor(0, 0, 255);
 						myGLCD.print("   ", CENTER, 245);                 //  Очистить
 						myGLCD.printNumI(number_device, CENTER, 245);     // 
 						myGLCD.setBackColor(0, 0, 0);
-					    adr_device = adr_start_baseHL + ((number_device-1) * 10);
+						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
-					    Serial.println(adr_device);
+						Serial.println(adr_device);
 						draw_view_adr_device();
 						view_page(n_page);
 					}
@@ -2822,9 +2822,9 @@ void view_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
-					    Serial.println(adr_device);
+						Serial.println(adr_device);
 						draw_view_adr_device();
-					    view_page(n_page);
+						view_page(n_page);
 					}
 				}
 			if ((y>=192) && (y<=224))                                  // Строка 6
@@ -2840,9 +2840,9 @@ void view_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
-					    Serial.println(adr_device);
+						Serial.println(adr_device);
 						draw_view_adr_device();
-					    view_page(n_page);
+						view_page(n_page);
 					}
 				}
 
@@ -2856,8 +2856,8 @@ void view_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
-                    myGLCD.setBackColor(0, 0, 0);
-	                view_page(n_page);
+					myGLCD.setBackColor(0, 0, 0);
+					view_page(n_page);
 				}
 			  if ((x>=87) && (x<=153))                                  // Выход
 				{
@@ -2866,17 +2866,17 @@ void view_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
-                    myGLCD.setBackColor(0, 0, 0);
-	                view_page(n_page);
+					myGLCD.setBackColor(0, 0, 0);
+					view_page(n_page);
 				}
 			  if ((x>=158) && (x<=238))                               // Выход
 				{
 					waitForIt(158, 233, 238, 273);
-                	n_page++;
+					n_page++;
 					if(n_page > 43) n_page = 43;
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
-	                myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
 					myGLCD.setBackColor(0, 0, 0);
 					view_page(n_page);
 				}
@@ -2928,7 +2928,7 @@ byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
 	y[0]= i2c_eeprom_read_byte( deviceaddress, 0+adr_xbee_current_H);
 	XBee_Addr64_MS = (unsigned long&) y;  // Сложить восстановленные текущие данные
 
-    //Чтение из памяти текущих данных младшего адреса координатора
+	//Чтение из памяти текущих данных младшего адреса координатора
 	y[3]= i2c_eeprom_read_byte( deviceaddress, 3+adr_xbee_current_L);
 	y[2]= i2c_eeprom_read_byte( deviceaddress, 2+adr_xbee_current_L);
 	y[1]= i2c_eeprom_read_byte( deviceaddress, 1+adr_xbee_current_L);
@@ -2946,7 +2946,7 @@ byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
 	y[0]= i2c_eeprom_read_byte( deviceaddress, 0+N_device+2);
 	XBee_Addr64_MS_tmp = (unsigned long&) y;  // Сложить восстановленные текущие данные
 
-    //Чтение из памяти текущих данных младшего адреса координатора
+	//Чтение из памяти текущих данных младшего адреса координатора
 	y[3]= i2c_eeprom_read_byte( deviceaddress, 3+N_device+6);
 	y[2]= i2c_eeprom_read_byte( deviceaddress, 2+N_device+6);
 	y[1]= i2c_eeprom_read_byte( deviceaddress, 1+N_device+6);
@@ -2960,7 +2960,7 @@ void set_adr_device()
 	int n_page = 1;
 	int adr_device = 0;
 	draw_view_adr_device();
- 	while (myTouch.dataAvailable()) {}
+	while (myTouch.dataAvailable()) {}
 	view_page(n_page);
 
 	while (true)
@@ -2978,7 +2978,7 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(number_device, CENTER, 245);     // 
-                    myGLCD.setBackColor(0, 0, 0);
+					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					read_HL_mem_XBee(adr_device);
 					Serial.println(adr_device);
@@ -2992,7 +2992,7 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(number_device, CENTER, 245);     // 
-                    myGLCD.setBackColor(0, 0, 0);
+					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					read_HL_mem_XBee(adr_device);
 					Serial.println(adr_device);
@@ -3006,7 +3006,7 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(number_device, CENTER, 245);     // 
-                    myGLCD.setBackColor(0, 0, 0);
+					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					read_HL_mem_XBee(adr_device);
 					Serial.println(adr_device);
@@ -3017,15 +3017,15 @@ void set_adr_device()
 				{
 					if(n_page-1 < 42)
 					{
-                        number_device = ((n_page-1) * 6)+4;
+						number_device = ((n_page-1) * 6)+4;
 						waitForIt(1, 128, 239, 160);
 						myGLCD.setBackColor(0, 0, 255);
 						myGLCD.print("   ", CENTER, 245);                 //  Очистить
 						myGLCD.printNumI(number_device, CENTER, 245);     // 
 						myGLCD.setBackColor(0, 0, 0);
-					    adr_device = adr_start_baseHL + ((number_device-1) * 10);
+						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						read_HL_mem_XBee(adr_device);
-					    Serial.println(adr_device);
+						Serial.println(adr_device);
 						draw_view_adr_device();
 						view_page(n_page);
 					}
@@ -3042,9 +3042,9 @@ void set_adr_device()
 						myGLCD.setBackColor(0, 0, 0);
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						read_HL_mem_XBee(adr_device);
-					    Serial.println(adr_device);
+						Serial.println(adr_device);
 						draw_view_adr_device();
-					    view_page(n_page);
+						view_page(n_page);
 					}
 				}
 			if ((y>=192) && (y<=224))                                  // Строка 6
@@ -3059,9 +3059,9 @@ void set_adr_device()
 						myGLCD.setBackColor(0, 0, 0);
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						read_HL_mem_XBee(adr_device);
-					    Serial.println(adr_device);
+						Serial.println(adr_device);
 						draw_view_adr_device();
-					    view_page(n_page);
+						view_page(n_page);
 					}
 				}
 
@@ -3075,8 +3075,8 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
-                    myGLCD.setBackColor(0, 0, 0);
-	                view_page(n_page);
+					myGLCD.setBackColor(0, 0, 0);
+					view_page(n_page);
 				}
 			  if ((x>=87) && (x<=153))                                  // Выход
 				{
@@ -3085,17 +3085,17 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
-                    myGLCD.setBackColor(0, 0, 0);
-	                view_page(n_page);
+					myGLCD.setBackColor(0, 0, 0);
+					view_page(n_page);
 				}
 			  if ((x>=158) && (x<=238))                               // Выход
 				{
 					waitForIt(158, 233, 238, 273);
-                	n_page++;
+					n_page++;
 					if(n_page > 43) n_page = 43;
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
-	                myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
 					myGLCD.setBackColor(0, 0, 0);
 					view_page(n_page);
 				}
@@ -3116,7 +3116,7 @@ void XBee_alarm()
 {
 	 word val;
 	 word i = 0;
-	 	payload[0] = 0x01;
+		payload[0] = 0x01;
 		//payload[1] = 0x00;
 		//payload[2] = 0x0A;
 		//payload[3] = 0x00;
@@ -3203,7 +3203,7 @@ void format_memory1()
 	int adr_xbee_h = 1000;
 	for (int ip = 0; ip < 256; ip++)
 		{
-          li1 = ip;                                     // преобразовать первую часть строки в значение HEX	
+		  li1 = ip;                                     // преобразовать первую часть строки в значение HEX	
 						
 		byte *m = (byte *)&li1;                                                       //Разложить данные старшего адреса координатора побайтно для записи в память
 		for (int i=0; i<4; i++)
@@ -3282,7 +3282,7 @@ void setup()
 		Serial.println("RTC failed");
 		while (1);
 	}
-    serial_print_date();                                   // Печать даты и времени
+	serial_print_date();                                   // Печать даты и времени
 	setup_pin();
 	Serial.print(F("FreeRam: "));
 	Serial.println(FreeRam());
