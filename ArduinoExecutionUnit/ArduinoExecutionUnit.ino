@@ -443,8 +443,10 @@ void set_pin()
 
 void setup()
 {
+
 	  Serial.begin(9600);
       SerialXBee.begin(9600);
+	  Serial.println("Start system");
 	  xbee.setSerial(SerialXBee);
 	  set_pin();
       flashLed(statusLed, 3, 50);
