@@ -95,11 +95,11 @@ uint8_t dow    = 2;
 uint8_t day    = 15;
 uint8_t month  = 3;
 uint16_t year  = 16;
-const char* str1[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-
+const char* str1[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+int oldsec     = 0;
 unsigned long timeF;
 int flag_time = 0;
-
+int x_delta = 8;                                     // Смещение тачскрина по Х в файле setTimeDate.ino
 
 RTC_DS1307 RTC;                                       // define the Real Time Clock object
 
@@ -173,6 +173,8 @@ const char  txt_Set_device[]                   PROGMEM = "\x89""o""\x99\x9F\xA0\
 const char  txt_null[]                         PROGMEM = "===========";                                         // "==============="
 const char  txt_reset_count[]                  PROGMEM = "C""\x96""poc c""\xA7""e""\xA4\xA7\x9D\x9F""a";        // Сброс счетчика
 const char  txt_reset_count1[]                 PROGMEM = "C""\x80""POC";                                        // Сброс
+const char  txt_set_date1[]                    PROGMEM = "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC";         // Установить
+const char  txt_set_date2[]                    PROGMEM = "\x82""a""\xA4""y ""\x9D"" ""\x97""pe""\xA1\xAF";      // Дату и время                                // Сброс
 
 
 char buffer[30];
@@ -211,12 +213,10 @@ const char* const table_message[] PROGMEM =
  txt_Set_device,                   // 30 "\x89""o""\x99\x9F\xA0\xAE\xA7\x9D\xA4\xAC"" ""\x86\x8A";                // Подключить ИУ
  txt_null,                         // 31 "===========";                                                           // "==============="
  txt_reset_count,                  // 32 "C""\x96""poc""\x9D\xA4\xAC"" c""\xA7""e""\xA4\xA7\x9D\x9F";             // Сброс счетчика
- txt_reset_count1                  // 33 "C""\x96""poc";                                                          // Сброс
-
-
-
-
-
+ txt_reset_count1,                 // 33 "C""\x96""poc";                                                          // Сброс
+ txt_set_date1,                    // 34 "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC";                           // Установить
+ txt_set_date2                     // 35 "\x82""a""\xA4""y ""\x9D"" ""\x97""pe""\xA1\xAF";      // Дату и время 
+ 
 };
 
 
@@ -357,7 +357,7 @@ void serial_print_date()                           // Печать даты и времени
   Serial.print(':');
   Serial.print(now.second(), DEC);
   Serial.print("  ");
-  Serial.println(str1[now.dayOfWeek() - 1]);
+  Serial.println(str1[now.dayOfWeek()]);
 }
 void clock_read()
 {
@@ -468,23 +468,38 @@ void drawGlavMenu()
 	myGLCD.setBackColor (0, 0, 0);
 }
 
-
-
 void klav_Glav_Menu()
 {
 	int x,y;
 	drawGlavMenu();
 	while (true)
 	{
-		test_power();
-		myGLCD.setColor(255, 255, 255);
-//		myGLCD.drawRoundRect (194, 70, 234, 110);
+		clock_read();
+		if (oldsec != second)
+		{
+			test_power();
+			if( second==0)
+			{
+				myGLCD.setColor(0, 0, 0);
+				myGLCD.fillRoundRect (80, 300, 108, 319);
+				myGLCD.fillRoundRect (200, 300, 239, 319);
+			}
+			myGLCD.setColor(255, 255, 255);
+			myGLCD.setBackColor (0, 0, 0);
+			myGLCD.setFont(SmallFont);
+			String print_data = String(day)+'/'+ String(month)+'/'+ String(year);
+			myGLCD.print(print_data,6, 303);                                           //Data
+			myGLCD.setFont(BigFont);
+			String print_time = String(hour)+':'+ String(minute)+':'+ String(second);
+			myGLCD.print(print_time,110, 300);                                         //Время
+			oldsec = second;
+		}
 
 		if(digitalRead(KN1) == false)
 		{
-			myGLCD.printNumI(1, 208, 51);
 			N_KN = 1;
 			waitForStart(5, 5, 94, 90);
+			myGLCD.printNumI(1, 208, 51);
 			payload[0] = 0x01;
 			//payload[1] = 0x00;
 			//payload[2] = 0x0A;
@@ -495,9 +510,9 @@ void klav_Glav_Menu()
 		}
 		if(digitalRead(KN2) == LOW)
 		{
-			myGLCD.printNumI(2, 208, 51);
 			N_KN = 2;
 			waitForStart(5, 93, 94, 178);
+			myGLCD.printNumI(2, 208, 51);
 			payload[0] = 0x02;
 			//payload[1] = 0x00;
 			//payload[2] = 0x0A;
@@ -507,9 +522,9 @@ void klav_Glav_Menu()
 		}
 		if(digitalRead(KN3) == LOW)
 		{
-			myGLCD.printNumI(3, 208, 51);
 			N_KN = 3;
 			waitForStart(97, 5, 186, 90);
+			myGLCD.printNumI(3, 208, 51);
 			payload[0] = 0x03;
 			//payload[1] = 0x00;
 			//payload[2] = 0x0A;
@@ -519,9 +534,9 @@ void klav_Glav_Menu()
 		}
 		if(digitalRead(KN4) == LOW)
 		{
-			myGLCD.printNumI(4, 208, 51);
 			N_KN = 4;
 			waitForStart(97, 93, 186, 178);
+			myGLCD.printNumI(4, 208, 51);
 			payload[0] = 4;
 			//payload[1] = 0x00;
 			//payload[2] = 0x0A;
@@ -531,10 +546,9 @@ void klav_Glav_Menu()
 		}
 		if(digitalRead(KN5) == false)
 		{
-
-			myGLCD.printNumI(5, 208, 51);
 			N_KN = 5;
 			waitForStart(5, 183, 60, 243);
+			myGLCD.printNumI(5, 208, 51);
 			payload[0] = 5;
 			//payload[1] = 0x00;
 			//payload[2] = 0x0A;
@@ -544,9 +558,9 @@ void klav_Glav_Menu()
 		}
 		if(digitalRead(KN6) == LOW)
 		{
-			myGLCD.printNumI(6, 208, 51);
 			N_KN = 6;
-			waitForStart(63, 183, 118, 243);;
+			waitForStart(63, 183, 118, 243);
+			myGLCD.printNumI(6, 208, 51);
 			payload[0] = 6;
 			//payload[1] = 0x00;
 			//payload[2] = 0x0A;
@@ -556,9 +570,9 @@ void klav_Glav_Menu()
 		}
 		if(digitalRead(KN7) == LOW)
 		{
-			myGLCD.printNumI(7, 208, 51);
 			N_KN = 7;
 			waitForStart(121, 183, 176, 243);
+			myGLCD.printNumI(7, 208, 51);
 			payload[0] = 7;
 			//payload[1] = 0x00;
 			//payload[2] = 0x0A;
@@ -568,9 +582,9 @@ void klav_Glav_Menu()
 		}
 		if(digitalRead(KN8) == LOW)
 		{
-			myGLCD.printNumI(8, 208, 51);
 			N_KN = 8;
 			waitForStart(179, 183, 234, 243);
+			myGLCD.printNumI(8, 208, 51);
 			payload[0] = 8;
 			//payload[1] = 0x00;
 			//payload[2] = 0x0A;
@@ -700,7 +714,7 @@ void klav_Glav_Menu()
 			  waitForIt(5, 248, 118, 293);
 			  klav_menu1();
 			}
-			if ((x >= 121) && (x <= 234))                              // Button: Меню 1
+			if ((x >= 121) && (x <= 234))                              // Button: Меню 2
 			{
 			  waitForIt(121, 248, 234, 293);
 			  klav_menu2();
@@ -1315,10 +1329,10 @@ void draw_menu2()
 	myGLCD.fillRoundRect (5, 202, 234, 257);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 202, 234, 257);
-	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[26])));
-	//myGLCD.print(buffer, CENTER, 212);  
-	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[25])));
-	//myGLCD.print(buffer, CENTER, 232);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[34])));
+	myGLCD.print(buffer, CENTER, 212);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[35])));
+	myGLCD.print(buffer, CENTER, 232);  
 
 	myGLCD.setColor(0, 0, 255);                    // 5   Выход         
 	myGLCD.fillRoundRect (5, 260, 234, 315);
@@ -1407,7 +1421,7 @@ void klav_menu2()
 				if ((y >= 202) && (y <= 257))                               // Button: 4
 				{
 					waitForIt(5, 202, 234, 257);
-		/*			XBee_Set_Network();*/
+					setClock();
 					draw_menu2();
 				}
 				if ((y >= 260) && (y <= 315))                               // Button:Выход
