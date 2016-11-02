@@ -72,9 +72,8 @@
 #include <SdFatUtil.h>
 #include <XBee.h>
 #include <EEPROM.h>
-#include <SPI.h>
-#include <SD.h>
-#include <OneWire.h>
+//#include <SD.h>
+//#include <OneWire.h>
 
 
 
@@ -145,8 +144,12 @@ int eeprom_clear = 0;
 int stCurrentLen_user=0;                  // Переменная  хранения длины введенной строки пароля пользователя
 int stCurrentLen_admin=0;                 // Переменная  хранения длины введенной строки пароля администратора
 
-
-
+// set up variables using the SD utility library functions:
+Sd2Card card;
+SdVolume volume;
+SdFile root;
+File myFile;
+const int chipSelect = 53;            // 
 //++++++++++++++++++++++++++++ Переменные для цифровой клавиатуры +++++++++++++++++++++++++++++
 int x, y, z;
 char stCurrent[20]    = "";                                       // Переменная хранения введенной строки
@@ -2149,13 +2152,13 @@ void system_clear_start()
 			 {
 			Serial.println("elektro.txt doesn't exist.");  
 		  }
-		 n_str_electro = 0; // Устанавливаем № строки 1
-		   // разбираем 
-			hi=highByte(n_str_electro);
-			low=lowByte(n_str_electro);
-			// тут мы эти hi,low можем сохранить EEPROM
-			i2c_eeprom_write_byte(deviceaddress,adr_n_str_electro, hi); 
-			i2c_eeprom_write_byte(deviceaddress,adr_n_str_electro+1, low); 
+		 //n_str_electro = 0; // Устанавливаем № строки 1
+		 //  // разбираем 
+			//hi=highByte(n_str_electro);
+			//low=lowByte(n_str_electro);
+			//// тут мы эти hi,low можем сохранить EEPROM
+			//i2c_eeprom_write_byte(deviceaddress,adr_n_str_electro, hi); 
+			//i2c_eeprom_write_byte(deviceaddress,adr_n_str_electro+1, low); 
 
 	// gaz.txt
 
@@ -2171,13 +2174,13 @@ void system_clear_start()
 			Serial.println("gaz.txt doesn't exist.");  
 		  }
 
-			   n_str_gaz = 0; // Устанавливаем № строки 1
-		   // разбираем 
-			hi=highByte(n_str_gaz);
-			low=lowByte(n_str_gaz);
+			//   n_str_gaz = 0; // Устанавливаем № строки 1
+		 //  // разбираем 
+			//hi=highByte(n_str_gaz);
+			//low=lowByte(n_str_gaz);
 			// тут мы эти hi,low можем сохранить EEPROM
-			i2c_eeprom_write_byte(deviceaddress,adr_n_str_gaz, hi); 
-			i2c_eeprom_write_byte(deviceaddress,adr_n_str_gaz+1, low); 
+			//i2c_eeprom_write_byte(deviceaddress,adr_n_str_gaz, hi); 
+			//i2c_eeprom_write_byte(deviceaddress,adr_n_str_gaz+1, low); 
 
 	 // colwater.txt
 			 Serial.println("Removing colwater.txt...");
@@ -2192,13 +2195,13 @@ void system_clear_start()
 			Serial.println("colwater.txt doesn't exist.");  
 		  }
 
-			   n_str_colwater = 0; // Устанавливаем № строки 1
+			   //n_str_colwater = 0; // Устанавливаем № строки 1
 		   // разбираем 
-			hi=highByte(n_str_colwater);
-			low=lowByte(n_str_colwater);
+		/*	hi=highByte(n_str_colwater);
+			low=lowByte(n_str_colwater);*/
 			// тут мы эти hi,low можем сохранить EEPROM
-			i2c_eeprom_write_byte(deviceaddress,adr_n_str_colwater, hi); 
-			i2c_eeprom_write_byte(deviceaddress,adr_n_str_colwater+1, low); 
+		/*	i2c_eeprom_write_byte(deviceaddress,adr_n_str_colwater, hi); 
+			i2c_eeprom_write_byte(deviceaddress,adr_n_str_colwater+1, low); */
 
 
   // hotwater.txt
@@ -2214,13 +2217,13 @@ void system_clear_start()
 			Serial.println("hotwater.txt doesn't exist.");  
 		  }
 
-			   n_str_hotwater = 0; // Устанавливаем № строки 1
+			   //n_str_hotwater = 0; // Устанавливаем № строки 1
 		   // разбираем 
-			hi=highByte(n_str_hotwater);
-			low=lowByte(n_str_hotwater);
-			// тут мы эти hi,low можем сохранить EEPROM
-			i2c_eeprom_write_byte(deviceaddress,adr_n_str_hotwater, hi); 
-			i2c_eeprom_write_byte(deviceaddress,adr_n_str_hotwater+1, low); 
+			//hi=highByte(n_str_hotwater);
+			//low=lowByte(n_str_hotwater);
+			//// тут мы эти hi,low можем сохранить EEPROM
+			//i2c_eeprom_write_byte(deviceaddress,adr_n_str_hotwater, hi); 
+			//i2c_eeprom_write_byte(deviceaddress,adr_n_str_hotwater+1, low); 
 			myGLCD.print("C\x96poc OK!", 100, 80);// "Сброс Ok!"
 		  delay (1000);
 		  break;
@@ -4050,6 +4053,78 @@ void read_memory1()
 		}
 
 }
+void InitializingSD()
+{
+
+  Serial.print("\nInitializing SD card...");
+  // On the Ethernet Shield, CS is pin 4. It's set as an output by default.
+  // Note that even if it's not used as the CS pin, the hardware SS pin 
+  // (10 on most Arduino boards, 53 on the Mega) must be left as an output 
+  // or the SD library functions will not work. 
+ 
+  // we'll use the initialization code from the utility libraries
+  // since we're just testing if the card is working!
+  if (!card.init(SPI_HALF_SPEED, chipSelect)) {
+	Serial.println("initialization failed. Things to check:");
+	Serial.println("* is a card is inserted?");
+	Serial.println("* Is your wiring correct?");
+	Serial.println("* did you change the chipSelect pin to match your shield or module?");
+	return;
+  } else {
+   Serial.println("Wiring is correct and a card is present."); 
+  }
+
+  // print the type of card
+  Serial.print("\nCard type: ");
+  switch(card.type()) {
+	case SD_CARD_TYPE_SD1:
+	  Serial.println("SD1");
+	  break;
+	case SD_CARD_TYPE_SD2:
+	  Serial.println("SD2");
+	  break;
+	case SD_CARD_TYPE_SDHC:
+	  Serial.println("SDHC");
+	  break;
+	default:
+	  Serial.println("Unknown");
+  }
+
+  // Now we will try to open the 'volume'/'partition' - it should be FAT16 or FAT32
+  if (!volume.init(card)) {
+	Serial.println("Could not find FAT16/FAT32 partition.\nMake sure you've formatted the card");
+	return;
+  }
+
+
+  // print the type and size of the first FAT-type volume
+  uint32_t volumesize;
+  Serial.print("\nVolume type is FAT");
+  Serial.println(volume.fatType(), DEC);
+  Serial.println();
+  
+  volumesize = volume.blocksPerCluster();    // clusters are collections of blocks
+  volumesize *= volume.clusterCount();       // we'll have a lot of clusters
+  volumesize *= 512;                            // SD card blocks are always 512 bytes
+  Serial.print("Volume size (bytes): ");
+  Serial.println(volumesize);
+  Serial.print("Volume size (Kbytes): ");
+  volumesize /= 1024;
+  Serial.println(volumesize);
+  Serial.print("Volume size (Mbytes): ");
+  volumesize /= 1024;
+  Serial.println(volumesize);
+	
+  Serial.println("\nFiles found on the card (name, date and size in bytes): ");
+  root.openRoot(volume);
+  
+  // list all files in the card with date and size
+  root.ls(LS_R | LS_DATE | LS_SIZE);
+}
+
+
+
+
 
 void setup_pin()
 {
@@ -4099,17 +4174,28 @@ void setup()
 		Serial.println("RTC failed");
 		while (1);
 	}
+	 SdFile::dateTimeCallback(dateTime); 
+
+
 	serial_print_date();                                   // Печать даты и времени
 	setup_pin();
 	Serial.print(F("FreeRam: "));
 	Serial.println(FreeRam());
 	restore_default_device();
+	//InitializingSD();
+
+	//if (!SD.begin(53))
+	//{
+	//	Serial.println("initialization failed ReadWrite!");
+	//}
+
+
 	//format_memory1();
 	//read_memory1();
 	//format_memory();
 	Serial.println(" ");                                   //
 	Serial.println("System initialization OK!.");          // Информация о завершении настройки
-	//pass_start();                                        // Пароль на входе
+	pass_start();                                        // Пароль на входе
 }
 void loop()
 {
