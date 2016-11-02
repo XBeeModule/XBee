@@ -249,7 +249,11 @@ char  txt_system_clear2[] = "Bc\xAF \xA1\xA2\xA5op\xA1""a""\xA6\xA1\xAF \x96y\x9
 char  txt_system_clear3[] = "\x8A\x82""A""\x88""EHA!"; // УДАЛЕНА 
 char  txt_n_user[] = "B\x97""e\x99\x9D\xA4""e N \xA3o\xA0\xAC\x9C."; // Введите № польз.
 char  txt_rep_user[] = "\x89o\x97\xA4op\x9D\xA4""e"" N \xA3o\xA0\xAC\x9C.  "; //Повторите № польз.
-
+char  txt_set_pass_user[] = "Ho\x97\xAB\x9E \xA3""apo\xA0\xAC \xA3o\xA0\xAC\x9C.";  //      "Новый пароль польз."
+char  txt_set_pass_admin[] = "Ho\x97\xAB\x9E \xA3""apo\xA0\xAC  a\x99\xA1\x9D\xA2.";// Новый пароль админ.
+char  txt_rep_pass_user[] = "\x89o\x97\xA4op \xA3""apo\xA0\xAC \xA3o\xA0\xAC\x9C."; //   "Повтор пароль польз."
+char  txt_err_pass_user1[] = "O\xA8\x9D\x96ka \x97\x97o\x99""a" ;//Ошибка ввода
+char  txt_rep_pass_admin[] = "\x89o\x97\xA4op \xA3""apo\xA0\xAC a\x99\xA1\x9D\xA2."; //   "Повтор пароль админ"
 
 
 char buffer[30];
@@ -1943,7 +1947,7 @@ void klav_menu3()
 						myGLCD.clrScr();
 						myGLCD.print(txt_pass_ok, RIGHT, 208);
 						delay (500);
-						//set_n_user_start();
+						set_n_user_start();
 					}
 				else
 					{
@@ -1980,7 +1984,7 @@ void klav_menu3()
 							myGLCD.clrScr();
 							myGLCD.print(txt_pass_ok, RIGHT, 208);
 							delay (500);
-							//set_pass_user_start();
+							set_pass_user_start();
 						}
 					else
 						{
@@ -2017,7 +2021,7 @@ void klav_menu3()
 								myGLCD.clrScr();
 								myGLCD.print(txt_pass_ok, RIGHT, 208);
 								delay (500);
-								//set_pass_admin_start();
+								set_pass_admin_start();
 							}
 						else
 							{
@@ -2040,8 +2044,183 @@ void klav_menu3()
 	}
  }
 
+void set_n_user_start()
+{
+	myGLCD.setFont(BigFont);
+	myGLCD.setBackColor(0, 0, 255);
+	myGLCD.clrScr();
+	drawButtons1();
+	// Вывод строки "Введите номер пользователя!"
+	myGLCD.setColor(255, 0, 0);
+	myGLCD.print(txt_n_user, CENTER, 280);// Введите номер пользователя!
+	delay(300);
+	myGLCD.print("                       ", CENTER, 280);
+	delay(300);
+	myGLCD.print(txt_n_user, CENTER, 280);// Введите номер пользователя!
+	klav123();
+	if (ret == 1)
+		{
+			ret = 0;
+			return;
+		}
+
+	strcpy(temp_stLast,stLast);
+
+	myGLCD.setColor(255, 0, 0);
+	myGLCD.print("                         ", CENTER, 280);
+	myGLCD.print(txt_rep_user, CENTER, 280);// Введите номер пользователя!
+	delay(300);
+	myGLCD.print("                         ", CENTER, 280);
+	delay(300);
+	myGLCD.print(txt_rep_user, CENTER, 280);// Введите номер пользователя!
+
+	klav123();
+	if (ret == 1)
+		{
+			ret = 0;
+			return;
+		}
+
+	if(strcmp(temp_stLast,stLast)==0)
+	{
+		stCurrentLen1 = i2c_eeprom_read_byte( deviceaddress,adr_stCurrentLen1);// Чтение номера пользователя
+			 
+		for (x=0; x<stCurrentLen1+1; x++)
+		{ 
+			i2c_eeprom_write_byte(deviceaddress, adr_n_user+x, stLast[x]);
+		}
+		i2c_eeprom_write_byte(deviceaddress, adr_n_user-2, stCurrentLen1);
+	
+	}
+	if(strcmp(temp_stLast,stLast)!=0)
+	{
+		myGLCD.print("                      ", CENTER, 280);
+		myGLCD.print(txt_err_pass_user, CENTER, 280);// Ошибка ввода!
+		delay(1500);
+	}
+
+}
+void set_pass_user_start()
+{
+	myGLCD.setFont(BigFont);
+	myGLCD.setBackColor(0, 0, 255);
+	myGLCD.clrScr();
+	drawButtons1();
+		// txt_set_pass_user  Вывод строки "Введите пароль пользователя!"
+	myGLCD.setColor(255, 0, 0);
+	myGLCD.print(txt_set_pass_user, CENTER, 280);     // Введите пароль пользователя!
+	delay(300);
+	myGLCD.print("                         ", CENTER, 280);
+	delay(300);
+	myGLCD.print(txt_set_pass_user, CENTER, 280);      // Введите пароль пользователя!
+	
+	klav123();
+	if (ret == 1)
+		{
+			ret = 0;
+			return;
+		}
+
+	//проверка верности пароля
+	 
+	strcpy(temp_stLast,stLast);
+
+		// txt_set_pass_user  Вывод строки "Введите пароль пользователя!"
+	myGLCD.setColor(255, 0, 0);
+	myGLCD.print(txt_rep_pass_user, CENTER, 280);// Повтор пароль пользователя!
+	delay(300);
+	myGLCD.print("                        ", CENTER, 280);
+	delay(300);
+	myGLCD.print(txt_rep_pass_user, CENTER, 280);// Повтор пароль пользователя!
+
+		klav123();
+		if (ret == 1)
+		{
+			ret = 0;
+			return;
+		}
+
+		if(strcmp(temp_stLast,stLast)==0)
+		{
+
+		for (x=0; x<stCurrentLen1+1; x++)
+		{
+			i2c_eeprom_write_byte(deviceaddress, adr_pass_user+x, stLast[x]);
+		}
+			i2c_eeprom_write_byte(deviceaddress, adr_pass_user-2, stCurrentLen1);
+			myGLCD.print("                      ", CENTER, 280);
+			myGLCD.print(txt_pass_ok, RIGHT, 208);
+			delay(1500);
+		}
+
+		if(strcmp(temp_stLast,stLast)!=0)
+		{
+			myGLCD.print("                      ", CENTER, 280);
+			myGLCD.print(txt_err_pass_user, CENTER, 280);// Ошибка ввода!
+			delay(1500);
+		}
 
 
+}
+
+void set_pass_admin_start()
+{
+	myGLCD.setFont(BigFont);
+	myGLCD.setBackColor(0, 0, 255);
+	myGLCD.clrScr();
+	drawButtons1();
+		// txt_set_pass_admin  Вывод строки "Введите пароль админ!"
+	myGLCD.setColor(255, 0, 0);
+	myGLCD.print(txt_set_pass_admin, CENTER, 280);// Введите пароль админ!
+	delay(300);
+	myGLCD.print("                       ", CENTER, 280);
+	delay(300);
+	myGLCD.print(txt_set_pass_admin, CENTER, 280);// Введите пароль админ!
+	//char* temp_stLast = "";
+	klav123();
+	if (ret == 1)
+		{
+			ret = 0;
+			return;
+		}
+	//проверка верности пароля
+	
+	strcpy(temp_stLast,stLast);
+
+// txt_set_pass_admin  Вывод строки "Введите пароль админ!"
+	myGLCD.setColor(255, 0, 0);
+	myGLCD.print(txt_rep_pass_admin, CENTER, 280);// Повтор пароль админ!
+	delay(300);
+	myGLCD.print("                       ", CENTER, 280);
+	delay(300);
+	myGLCD.print(txt_rep_pass_admin, CENTER, 280);// Повтор пароль админ!
+	klav123();
+
+			if (ret == 1)
+				{
+					ret = 0;
+					return;
+				}
+		if(strcmp(temp_stLast,stLast)==0)
+		{
+			for (x=0; x<stCurrentLen1+1; x++)
+		{
+					i2c_eeprom_write_byte(deviceaddress, adr_pass_admin+x, stLast[x]);
+		}
+			i2c_eeprom_write_byte(deviceaddress, adr_pass_admin-2, stCurrentLen1);
+			myGLCD.print("                       ", CENTER, 280);
+			myGLCD.print(txt_pass_ok, RIGHT, 208);
+			delay(1500);
+		}
+
+		else
+		{
+			myGLCD.print("                       ", CENTER, 280);
+			myGLCD.print(txt_err_pass_user, CENTER, 280);// Ошибка ввода!
+			delay(1500);
+		}
+
+}
 
 void drawMenuReset()
 {
