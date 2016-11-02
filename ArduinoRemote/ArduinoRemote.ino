@@ -72,7 +72,6 @@
 #include <SdFatUtil.h>
 #include <XBee.h>
 #include <EEPROM.h>
-//#include <SD.h>
 //#include <OneWire.h>
 
 
@@ -144,12 +143,6 @@ int eeprom_clear = 0;
 int stCurrentLen_user=0;                  // Переменная  хранения длины введенной строки пароля пользователя
 int stCurrentLen_admin=0;                 // Переменная  хранения длины введенной строки пароля администратора
 
-// set up variables using the SD utility library functions:
-Sd2Card card;
-SdVolume volume;
-SdFile root;
-File myFile;
-const int chipSelect = 53;            // 
 //++++++++++++++++++++++++++++ Переменные для цифровой клавиатуры +++++++++++++++++++++++++++++
 int x, y, z;
 char stCurrent[20]    = "";                                       // Переменная хранения введенной строки
@@ -256,9 +249,6 @@ char  txt_system_clear2[] = "Bc\xAF \xA1\xA2\xA5op\xA1""a""\xA6\xA1\xAF \x96y\x9
 char  txt_system_clear3[] = "\x8A\x82""A""\x88""EHA!"; // УДАЛЕНА 
 char  txt_n_user[] = "B\x97""e\x99\x9D\xA4""e N \xA3o\xA0\xAC\x9C."; // Введите № польз.
 char  txt_rep_user[] = "\x89o\x97\xA4op\x9D\xA4""e"" N \xA3o\xA0\xAC\x9C.  "; //Повторите № польз.
-
-
-
 
 
 
@@ -1905,65 +1895,65 @@ void klav_menu3()
 				{
 					waitForIt(5, 28, 234, 83);
 					pass_test_start();  // Нарисовать цифровую клавиатуру
-							klav123();          // Считать информацию с клавиатуры
-						if (ret == 1)        // Если "Возврат" - закончить
-							{
-							   goto bailout14;  // Перейти на окончание выполнения пункта меню
-							}
-				  //   else                 // Иначе выполнить пункт меню
-					   //   {
-							   pass_test();     // Проверить пароль
-					   //   }
-						if ( ( pass2 == 1) || ( pass3 == 1)) // если верно - выполнить пункт меню
-							{
-								myGLCD.clrScr();   // Очистить экран
-								myGLCD.print(txt_pass_ok, RIGHT, 208); 
-								delay (500);
-								eeprom_clear = 1; // Разрешить стереть информации
-								system_clear_start(); // если верно - выполнить пункт меню
-							}
-						else  // Пароль не верный - сообщить и закончить
-							{
-								txt_pass_no_all();
-							}
+					klav123();          // Считать информацию с клавиатуры
+					if (ret == 1)        // Если "Возврат" - закончить
+						{
+							goto bailout14;  // Перейти на окончание выполнения пункта меню
+						}
+				//   else                 // Иначе выполнить пункт меню
+					//   {
+							pass_test();     // Проверить пароль
+					//   }
+					if ( ( pass2 == 1) || ( pass3 == 1)) // если верно - выполнить пункт меню
+						{
+							myGLCD.clrScr();   // Очистить экран
+							myGLCD.print(txt_pass_ok, RIGHT, 208); 
+							delay (500);
+							eeprom_clear = 1; // Разрешить стереть информации
+					//		system_clear_start(); // если верно - выполнить пункт меню
+						}
+					else  // Пароль не верный - сообщить и закончить
+						{
+							txt_pass_no_all();
+						}
 
-							bailout14: // Восстановить пункты меню
-							/*myGLCD.clrScr();
-							myButtons.drawButtons();
-							print_up();
+						bailout14: // Восстановить пункты меню
+						/*myGLCD.clrScr();
+						myButtons.drawButtons();
+						print_up();
 */
 
-					       draw_menu3();
+					    draw_menu3();
 				}
 				if ((y >= 86) && (y <= 141))                                // Button: 2
 				{
 					waitForIt(5, 86, 234, 141);
-						 pass_test_start();
-						 klav123();
-						if (ret == 1)
-							{
-							   goto bailout24;
-							}
-						else
-						   {
-							   pass_test();
-						   }
-						if ( ( pass1 == 1)||( pass2 == 1) || ( pass3 == 1))
-						   {
-								myGLCD.clrScr();
-								myGLCD.print(txt_pass_ok, RIGHT, 208);
-								delay (500);
-							//	set_n_user_start();
-						   }
-						else
-						   {
-								txt_pass_no_all();
-						   }
+					pass_test_start();
+					klav123();
+				if (ret == 1)
+					{
+						goto bailout24;
+					}
+				else
+					{
+						pass_test();
+					}
+				if ( ( pass1 == 1)||( pass2 == 1) || ( pass3 == 1))
+					{
+						myGLCD.clrScr();
+						myGLCD.print(txt_pass_ok, RIGHT, 208);
+						delay (500);
+						//set_n_user_start();
+					}
+				else
+					{
+						txt_pass_no_all();
+					}
 
-							bailout24:
-					/*		myGLCD.clrScr();
-							myButtons.drawButtons();
-							print_up();
+					bailout24:
+			/*		myGLCD.clrScr();
+					myButtons.drawButtons();
+					print_up();
 */
 					draw_menu3();
 				}
@@ -1971,33 +1961,33 @@ void klav_menu3()
 				{
 					waitForIt(5, 144, 234, 199);
 					int  stCurrentLen_pass_user = i2c_eeprom_read_byte( deviceaddress,adr_pass_user-2);  //считать длину пароля  из памяти
-						if (stCurrentLen_pass_user == 0)
-							{ 
-								 pass1 = 1;
-								 goto pass_cross_user; 
-							}
-							 pass_test_start();
-							 klav123();
-						if (ret == 1)
-							{
-							   goto bailout34;
-							}
-						  pass_test();
-						  pass_cross_user:
+					if (stCurrentLen_pass_user == 0)
+						{ 
+								pass1 = 1;
+								goto pass_cross_user; 
+						}
+						pass_test_start();
+						klav123();
+					if (ret == 1)
+						{
+							goto bailout34;
+						}
+						pass_test();
+						pass_cross_user:
 
-						if ( ( pass1 == 1)||( pass2 == 1) || ( pass3 == 1))
-							{
-								myGLCD.clrScr();
-								myGLCD.print(txt_pass_ok, RIGHT, 208);
-								delay (500);
-								//set_pass_user_start();
-							}
-						else
-							{
-								txt_pass_no_all();
-							}
+					if ( ( pass1 == 1)||( pass2 == 1) || ( pass3 == 1))
+						{
+							myGLCD.clrScr();
+							myGLCD.print(txt_pass_ok, RIGHT, 208);
+							delay (500);
+							//set_pass_user_start();
+						}
+					else
+						{
+							txt_pass_no_all();
+						}
 
-							bailout34:
+						bailout34:
 					/*		myGLCD.clrScr();
 							myButtons.drawButtons();
 							print_up();*/
@@ -2049,193 +2039,6 @@ void klav_menu3()
 		}
 	}
  }
-
-
-void system_clear_start() 
-{
-	/*
-		if (ret == 1)
-			{
-				ret = 0;
-				return;
-			}
-	*/
-				myGLCD.setFont(BigFont);
-				myGLCD.setBackColor(0, 0, 0);
-				myGLCD.clrScr();
-			//	drawButtons1();
-			// txt_set_pass_user  Вывод строки "Введите пароль пользователя!"
-				myGLCD.setColor(255, 255, 255);
-		
-				myGLCD.print(txt_system_clear1, CENTER, 70);       // Внимание ! 
-				myGLCD.print(txt_system_clear2, CENTER, 100);      // Вся информация будет 
-				myGLCD.setColor(255, 0, 0);
-				myGLCD.print(txt_system_clear3, CENTER, 130);       // УДАЛЕНА
-
-				delay(500);
-				myGLCD.print("                        ", CENTER, 70);   
-				myGLCD.print("                        ", CENTER, 100);   
-				myGLCD.print("                        ", CENTER, 130); 
-				delay(500);
-				myGLCD.setColor(255, 255, 255);
-				myGLCD.print(txt_system_clear1, CENTER, 70);           // Внимание ! 
-				myGLCD.print(txt_system_clear2, CENTER, 100);          // Вся информация будет 
-				myGLCD.setColor(255, 0, 0);
-				myGLCD.print(txt_system_clear3, CENTER, 130);          // УДАЛЕНА
-
-				delay(3000);
-				myGLCD.clrScr();
-	
-				myGLCD.setBackColor(0, 0, 255);
-				myGLCD.setColor(0, 0, 255);
-				myGLCD.fillRoundRect (10, 130, 150, 180);
-				myGLCD.setColor(255, 255, 255);
-				myGLCD.drawRoundRect (10, 130, 150, 180);
-				myGLCD.print(txt_botton_otmena, 30, 147);//"Отмена"
-
-				myGLCD.setColor(0, 0, 255);
-				myGLCD.fillRoundRect (160, 130, 300, 180);
-				myGLCD.setColor(255, 255, 255);
-				myGLCD.drawRoundRect (160, 130, 300, 180);
-				myGLCD.print(txt_botton_clear, 190, 147);// "Сброс"
-
- while (true)
-  {
-	if (myTouch.dataAvailable())
-	{
-	  myTouch.read();
-	  x=myTouch.getX();
-	  y=myTouch.getY();
-
-		 
-	  if ((y>=130) && (y<=180))  // Upper row
-	  {
-		if ((x>=10) && (x<=150))  // Button: "Отмена"
-		{
-		  break;
-		}
-		if ((x>=160) && (x<=300))  // Button: "Сброс"
-		{
-				  myGLCD.setColor(0, 0, 255);
-				  myGLCD.fillRoundRect (0, 70, 319, 105);
-				  myGLCD.setColor(255, 255, 255);
-				  myGLCD.drawRoundRect (0, 70, 319, 105);
-			
-
-				  if (eeprom_clear == 1)
-
-					{	// write a 0 to all 512 bytes of the EEPROM
-					  for (int i = 0; i < 319; i++)
-					  {
-						i2c_eeprom_write_byte(deviceaddress,i, 0);
-						 myGLCD.print(">",i, 80);// "Сброс Ok!"
-						//delay (10);
-					  }
-					}
-				  else
-				  {
-					 for (int i = 0; i < 319; i++)
-					  {
-						 myGLCD.print("<",i, 80);// "Сброс Ok!"
-						//delay (10);
-					  }
-
-				  }
-			Serial.println("Removing elektro.txt...");
-  SD.remove("elektro.txt");
-
-  if (SD.exists("elektro.txt"))
-		  { 
-			Serial.println("elektro.txt exists.");
-		  }
-		  else 
-			 {
-			Serial.println("elektro.txt doesn't exist.");  
-		  }
-		 //n_str_electro = 0; // Устанавливаем № строки 1
-		 //  // разбираем 
-			//hi=highByte(n_str_electro);
-			//low=lowByte(n_str_electro);
-			//// тут мы эти hi,low можем сохранить EEPROM
-			//i2c_eeprom_write_byte(deviceaddress,adr_n_str_electro, hi); 
-			//i2c_eeprom_write_byte(deviceaddress,adr_n_str_electro+1, low); 
-
-	// gaz.txt
-
-			Serial.println("Removing gaz.txt...");
-			  SD.remove("gaz.txt");
-
-			  if (SD.exists("gaz.txt"))
-					  { 
-			Serial.println("gaz.txt exists.");
-		  }
-		  else 
-			 {
-			Serial.println("gaz.txt doesn't exist.");  
-		  }
-
-			//   n_str_gaz = 0; // Устанавливаем № строки 1
-		 //  // разбираем 
-			//hi=highByte(n_str_gaz);
-			//low=lowByte(n_str_gaz);
-			// тут мы эти hi,low можем сохранить EEPROM
-			//i2c_eeprom_write_byte(deviceaddress,adr_n_str_gaz, hi); 
-			//i2c_eeprom_write_byte(deviceaddress,adr_n_str_gaz+1, low); 
-
-	 // colwater.txt
-			 Serial.println("Removing colwater.txt...");
-			  SD.remove("colwater.txt");
-
-			  if (SD.exists("colwater.txt"))
-					  { 
-			Serial.println("colwater.txt exists.");
-		  }
-		  else 
-			 {
-			Serial.println("colwater.txt doesn't exist.");  
-		  }
-
-			   //n_str_colwater = 0; // Устанавливаем № строки 1
-		   // разбираем 
-		/*	hi=highByte(n_str_colwater);
-			low=lowByte(n_str_colwater);*/
-			// тут мы эти hi,low можем сохранить EEPROM
-		/*	i2c_eeprom_write_byte(deviceaddress,adr_n_str_colwater, hi); 
-			i2c_eeprom_write_byte(deviceaddress,adr_n_str_colwater+1, low); */
-
-
-  // hotwater.txt
-			 Serial.println("Removing hotwater.txt...");
-			  SD.remove("hotwater.txt");
-
-			  if (SD.exists("hotwater.txt"))
-					  { 
-			Serial.println("hotwater.txt exists.");
-		  }
-		  else 
-			 {
-			Serial.println("hotwater.txt doesn't exist.");  
-		  }
-
-			   //n_str_hotwater = 0; // Устанавливаем № строки 1
-		   // разбираем 
-			//hi=highByte(n_str_hotwater);
-			//low=lowByte(n_str_hotwater);
-			//// тут мы эти hi,low можем сохранить EEPROM
-			//i2c_eeprom_write_byte(deviceaddress,adr_n_str_hotwater, hi); 
-			//i2c_eeprom_write_byte(deviceaddress,adr_n_str_hotwater+1, low); 
-			myGLCD.print("C\x96poc OK!", 100, 80);// "Сброс Ok!"
-		  delay (1000);
-		  break;
-
-		}
-		 
-		}
-	  }
-	}
-	eeprom_clear = 0;
- }
-
 
 
 
@@ -4053,78 +3856,6 @@ void read_memory1()
 		}
 
 }
-void InitializingSD()
-{
-
-  Serial.print("\nInitializing SD card...");
-  // On the Ethernet Shield, CS is pin 4. It's set as an output by default.
-  // Note that even if it's not used as the CS pin, the hardware SS pin 
-  // (10 on most Arduino boards, 53 on the Mega) must be left as an output 
-  // or the SD library functions will not work. 
- 
-  // we'll use the initialization code from the utility libraries
-  // since we're just testing if the card is working!
-  if (!card.init(SPI_HALF_SPEED, chipSelect)) {
-	Serial.println("initialization failed. Things to check:");
-	Serial.println("* is a card is inserted?");
-	Serial.println("* Is your wiring correct?");
-	Serial.println("* did you change the chipSelect pin to match your shield or module?");
-	return;
-  } else {
-   Serial.println("Wiring is correct and a card is present."); 
-  }
-
-  // print the type of card
-  Serial.print("\nCard type: ");
-  switch(card.type()) {
-	case SD_CARD_TYPE_SD1:
-	  Serial.println("SD1");
-	  break;
-	case SD_CARD_TYPE_SD2:
-	  Serial.println("SD2");
-	  break;
-	case SD_CARD_TYPE_SDHC:
-	  Serial.println("SDHC");
-	  break;
-	default:
-	  Serial.println("Unknown");
-  }
-
-  // Now we will try to open the 'volume'/'partition' - it should be FAT16 or FAT32
-  if (!volume.init(card)) {
-	Serial.println("Could not find FAT16/FAT32 partition.\nMake sure you've formatted the card");
-	return;
-  }
-
-
-  // print the type and size of the first FAT-type volume
-  uint32_t volumesize;
-  Serial.print("\nVolume type is FAT");
-  Serial.println(volume.fatType(), DEC);
-  Serial.println();
-  
-  volumesize = volume.blocksPerCluster();    // clusters are collections of blocks
-  volumesize *= volume.clusterCount();       // we'll have a lot of clusters
-  volumesize *= 512;                            // SD card blocks are always 512 bytes
-  Serial.print("Volume size (bytes): ");
-  Serial.println(volumesize);
-  Serial.print("Volume size (Kbytes): ");
-  volumesize /= 1024;
-  Serial.println(volumesize);
-  Serial.print("Volume size (Mbytes): ");
-  volumesize /= 1024;
-  Serial.println(volumesize);
-	
-  Serial.println("\nFiles found on the card (name, date and size in bytes): ");
-  root.openRoot(volume);
-  
-  // list all files in the card with date and size
-  root.ls(LS_R | LS_DATE | LS_SIZE);
-}
-
-
-
-
 
 void setup_pin()
 {
@@ -4182,13 +3913,6 @@ void setup()
 	Serial.print(F("FreeRam: "));
 	Serial.println(FreeRam());
 	restore_default_device();
-	//InitializingSD();
-
-	//if (!SD.begin(53))
-	//{
-	//	Serial.println("initialization failed ReadWrite!");
-	//}
-
 
 	//format_memory1();
 	//read_memory1();
