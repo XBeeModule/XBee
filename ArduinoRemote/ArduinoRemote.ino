@@ -227,8 +227,8 @@ const char  txt_menu4_12[]                     PROGMEM = " ";                   
 const char  txt_menu4_21[]                     PROGMEM = "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC"" N";     // Установить N
 const char  txt_menu4_22[]                     PROGMEM = "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";// пользователя
 const char  txt_menu4_31[]                     PROGMEM = "\x89""apo\xA0\xAC";                                   // Пароль
-const char  txt_menu4_32[]                     PROGMEM = "";                                                    //
-const char  txt_menu4_41[]                     PROGMEM = "";                                                    //  
+const char  txt_menu4_32[]                     PROGMEM = "Me""\xA2\xAE";                                        // Меню
+const char  txt_menu4_41[]                     PROGMEM = "\xA5""a""\x9E\xA0""o""\x97";                          // файлов 
 const char  txt_menu4_42[]                     PROGMEM = "a""\x99\xA1\x9D\xA2\x9D""c""\xA4""pa""\xA4""opa";     // администратора
 
 
@@ -302,10 +302,95 @@ const char* const table_message[] PROGMEM =
  txt_menu4_21,                     // 40  "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC"" N";                      // Установить N
  txt_menu4_22,                     // 41 "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";                  // пользователя
  txt_menu4_31,                     // 42 "\x89""apo\xA0\xAC";                                                     // Пароль
- txt_menu4_32,                     // 43  
- txt_menu4_41,                     // 44         
+ txt_menu4_32,                     // 43 "Me""\xA2\xAE";                                                          // Меню 
+ txt_menu4_41,                     // 44 "\xA5""a""\x9E\xA0""o""\x97";                                            // файлов         
  txt_menu4_42                      // 45 "a""\x99\xA1\x9D\xA2\x9D""c""\xA4""pa""\xA4""opa";                       //  администратора
 };
+
+//++++++++++++++++++++++ Работа с файлами +++++++++++++++++++++++++++++++++++++++
+//#define chipSelect SS
+#define chipSelect 53                                             // Настройка выбора SD
+SdFat sd;
+File myFile;
+SdFile file;
+Sd2Card card;
+uint32_t cardSizeBlocks;
+uint16_t cardCapacityMB;
+
+// cache for SD block
+cache_t cache;
+ 
+//------------------------------------------------------------------------------
+// созданы переменные, использующие функции библиотеки SD utility library functions: +++++++++++++++
+// Change spiSpeed to SPI_FULL_SPEED for better performance
+// Use SPI_QUARTER_SPEED for even slower SPI bus speed
+const uint8_t spiSpeed = SPI_HALF_SPEED;
+
+
+//++++++++++++++++++++ Назначение имени файла ++++++++++++++++++++++++++++++++++++++++++++
+//const uint32_t FILE_BLOCK_COUNT = 256000;
+// log file base name.  Must be six characters or less.
+#define FILE_BASE_NAME "160101"
+const uint8_t BASE_NAME_SIZE = sizeof(FILE_BASE_NAME) - 1;
+char fileName[13]            = FILE_BASE_NAME "00.KAM";
+char fileName_p[13];
+char fileName_F[13];
+
+//*********************Работа с именем файла ******************************
+
+//byte file_name_count = 0;
+char str_day_file[3];
+char str_day_file0[3];
+char str_day_file10[3];
+char str_mon_file[3];
+char str_mon_file0[3];
+char str_mon_file10[3];
+char str_year_file[3];
+
+//char str0_1[10];
+char str1_1[10];
+char str2_1[10];
+
+
+
+
+
+
+
+
+
+void txt_pass_no_all();
+void pass_test_start();
+void pass_test();
+void drawButtons1();
+void klav123();
+void pass_start();
+
+void flashLed(int pin, int times, int wait);
+void dateTime(uint16_t* date, uint16_t* time);
+
+void serial_print_date();
+void clock_read();
+void set_time();
+void drawGlavMenu();
+void klav_Glav_Menu();
+void wiev_count(int num);
+void test_power();
+void drawButtons0_1();
+void drawButtonsExit();
+void drawButtonsXBee();
+void klav1();
+void klavXBee();
+
+void draw_menu1();
+void draw_menu2();
+void draw_menu3();
+void klav_menu1();
+void klav_menu2();
+void klav_menu3();
+
+
+
 
 
 
@@ -1759,6 +1844,52 @@ void draw_menu3()
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 86, 234, 141);	
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[40])));
+//	myGLCD.print(buffer, CENTER, 96);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[41])));
+//	myGLCD.print(buffer, CENTER, 116);  
+
+	myGLCD.setColor(0, 0, 255);                    // 3
+	myGLCD.fillRoundRect (5, 144, 234, 199);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 144, 234, 199);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[43])));
+	myGLCD.print(buffer, CENTER, 154);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[44])));
+	myGLCD.print(buffer, CENTER, 174);  
+
+	myGLCD.setColor(0, 0, 255);                    // 4
+	myGLCD.fillRoundRect (5, 202, 234, 257);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 202, 234, 257);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[34])));
+	myGLCD.print(buffer, CENTER, 212);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[42])));
+	myGLCD.print(buffer, CENTER, 232);  
+
+	myGLCD.setColor(0, 0, 255);                    // 5   Выход         
+	myGLCD.fillRoundRect (5, 260, 234, 315);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 260, 234, 315);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	myGLCD.print(buffer, CENTER, 280);         
+}
+void draw_menu4()
+{
+	myGLCD.clrScr();
+	myGLCD.setBackColor (0, 0, 255);
+	   
+	myGLCD.setColor(0, 0, 255);                    // 1   
+	myGLCD.fillRoundRect (5, 28, 234, 83);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 28, 234, 83);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[38]))); 
+	myGLCD.print(buffer, CENTER, 48);  
+
+	myGLCD.setColor(0, 0, 255);                    // 2   
+	myGLCD.fillRoundRect (5, 86, 234, 141);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 86, 234, 141);	
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[40])));
 	myGLCD.print(buffer, CENTER, 96);  
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[41])));
 	myGLCD.print(buffer, CENTER, 116);  
@@ -1788,6 +1919,7 @@ void draw_menu3()
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
 	myGLCD.print(buffer, CENTER, 280);         
 }
+
 void klav_menu1()
 {
 	int x,y;
@@ -1886,6 +2018,85 @@ void klav_menu3()
 {
 	int x,y;
 	draw_menu3();
+	while (true)
+	{
+		if (myTouch.dataAvailable())
+		{
+			myTouch.read();
+			x = myTouch.getX();
+			y = myTouch.getY();
+			if ((x >= 5) && (x <= 234))                                     // Первый ряд
+			{
+				if ((y >= 28) && (y <= 83))                                 // Button: 1
+				{
+					waitForIt(5, 28, 234, 83);
+					pass_test_start();  // Нарисовать цифровую клавиатуру
+					klav123();          // Считать информацию с клавиатуры
+					if (ret == 1)        // Если "Возврат" - закончить
+						{
+							goto bailout14;  // Перейти на окончание выполнения пункта меню
+						}
+				//   else                 // Иначе выполнить пункт меню
+					//   {
+							pass_test();     // Проверить пароль
+					//   }
+					if ( ( pass2 == 1) || ( pass3 == 1)) // если верно - выполнить пункт меню
+						{
+							myGLCD.clrScr();   // Очистить экран
+							myGLCD.print(txt_pass_ok, RIGHT, 208); 
+							delay (500);
+							eeprom_clear = 1; // Разрешить стереть информации
+					//		system_clear_start(); // если верно - выполнить пункт меню
+						}
+					else  // Пароль не верный - сообщить и закончить
+						{
+							txt_pass_no_all();
+						}
+
+						bailout14: // Восстановить пункты меню
+						/*myGLCD.clrScr();
+						myButtons.drawButtons();
+						print_up();
+*/
+
+					    draw_menu3();
+				}
+				if ((y >= 86) && (y <= 141))                                // Button: 2
+				{
+					waitForIt(5, 86, 234, 141);
+					myGLCD.clrScr();
+					delay (500);
+	
+					draw_menu3();
+				}
+				if ((y >= 144) && (y <= 199))                               // Button: 3
+				{
+					waitForIt(5, 144, 234, 199);
+					myGLCD.clrScr();
+					delay (500);
+			
+					draw_menu3();
+				}
+				if ((y >= 202) && (y <= 257))                               // Button: 4
+				{
+					waitForIt(5, 202, 234, 257);
+					myGLCD.clrScr();
+					klav_menu4();
+					draw_menu3();
+				}
+				if ((y >= 260) && (y <= 315))                               // Button:Выход
+				{
+					waitForIt(5, 260, 234, 315);
+					break;
+				}
+			}
+		}
+	}
+ }
+void klav_menu4()   // Меню установки паролей
+{
+	int x,y;
+	draw_menu4();
 	while (true)
 	{
 		if (myTouch.dataAvailable())
@@ -2032,7 +2243,7 @@ void klav_menu3()
 							//myGLCD.clrScr();
 							//myButtons.drawButtons();
 							//print_up();
-					draw_menu3();
+					draw_menu4();
 				}
 				if ((y >= 260) && (y <= 315))                               // Button:Выход
 				{
@@ -2043,6 +2254,8 @@ void klav_menu3()
 		}
 	}
  }
+
+
 
 void set_n_user_start()
 {
@@ -4036,6 +4249,299 @@ void read_memory1()
 
 }
 
+void FileOpen()
+{
+  Serial.println("FileOpen");
+  int temp_file_name = 0;
+  preob_num_str();
+  while (sd.exists(fileName)) 
+  {
+	if (fileName[BASE_NAME_SIZE + 1] != '9') 
+	{
+	  fileName[BASE_NAME_SIZE + 1]++;
+	}
+	else if (fileName[BASE_NAME_SIZE] != '9') 
+	{
+	  fileName[BASE_NAME_SIZE + 1] = '0';
+	  fileName[BASE_NAME_SIZE]++;
+	}
+	else 
+	{
+		//regBank.set(122,1);                              // Флаг ошибки  открытия файла
+	}
+  }
+
+ 
+  temp_file_name = ((fileName[BASE_NAME_SIZE]-48)*10) + (fileName[BASE_NAME_SIZE + 1]-48); // преобразование символьного номера файла в числа
+ // regBank.set(adr_reg_file_name,temp_file_name);      
+//  i2c_eeprom_write_byte(0x50, adr_file_name_count,temp_file_name);                 // при смене даты счетчик номера файла сбросить в "0"
+
+  if (!myFile.open(fileName, O_CREAT | O_WRITE | O_EXCL)) //sdError("file.open");
+  {
+	//regBank.set(122,1);                              // Флаг ошибки  открытия файла
+  }
+  else
+  {
+	Serial.print(fileName);
+	Serial.println(F("  Open Ok!"));
+
+	DateTime now = RTC.now();
+
+	//regBank.set(adr_Mic_Start_day , now.day());           // Время старта теста
+	//regBank.set(adr_Mic_Start_month, now.month());
+	//regBank.set(adr_Mic_Start_year, now.year());
+	//regBank.set(adr_Mic_Start_hour, now.hour());
+	//regBank.set(adr_Mic_Start_minute, now.minute());
+	//regBank.set(adr_Mic_Start_second, now.second());
+	//// Уточнить 			
+	//regBank.set(adr_Time_Test_day, 0); 
+	//regBank.set(adr_Time_Test_hour, 0); 
+	//regBank.set(adr_Time_Test_minute, 0); 
+	//regBank.set(adr_Time_Test_second, 0); 
+	myFile.println ("");
+	myFile.print ("Report of test module Audio-1 N ");
+	// Получить данные int из регистров
+	//int val_3 = regBank.get(40010);
+	//int val_2 = regBank.get(40011);
+	//int val_1 = regBank.get(40012);
+	//int val_0 = regBank.get(40013);
+	 
+	// подготовить для преобразования побитного чтения
+	 //byte *x3 = (byte *)&val_3;  
+	 //byte *x2 = (byte *)&val_2;
+	 //byte *x1 = (byte *)&val_1;
+	 //byte *x0 = (byte *)&val_0;
+
+	 // Записать число в виде младшего byte  в массив
+	//byte y[4];  
+	//	y[3]= x3[0];
+	//	y[2]= x2[0];
+	//	y[1]= x1[0];
+	//	y[0]= x0[0];
+
+ // unsigned long *yx = (unsigned long *)&y;
+
+ // number_audio = *yx;
+
+ // Serial.println(number_audio);
+
+	myFile.println ("");
+	myFile.println ("");
+	myFile.println ("");
+	myFile.print ("Start test   ");
+	file_print_date();
+	myFile.println ("");
+	myFile.println ("");
+                                 
+//	Serial.println(fileName);
+   }
+}
+void FileClose()
+{
+	//Serial.println(fileName);
+	myFile.println ("");
+	myFile.print ("Stop test   ");
+	file_print_date();
+	myFile.println ("");
+	myFile.close();
+
+	if (sd.exists(fileName))
+		{ 
+			Serial.println();
+			Serial.print(fileName);
+			Serial.println("  Close  OK!.");
+		}
+	else 
+		{
+			Serial.println();
+			Serial.print(fileName);
+			Serial.println(" doesn't exist.");  
+		}
+}
+void list_file()
+{
+ while (file.openNext(sd.vwd(), O_READ))
+  {
+	file.printName(&Serial);
+	Serial.write(' ');
+	file.printModifyDateTime(&Serial);
+	Serial.write(' ');
+	file.printFileSize(&Serial);
+	if (file.isDir()) {
+	  // Indicate a directory.
+	  Serial.write('/');
+	}
+	Serial.println();
+	file.close();
+  }
+}
+void load_list_files()
+{
+
+	if (!sd.begin(chipSelect)) 
+		{
+			Serial.println("initialization SD failed!");
+		}
+	else
+		{
+	
+		while (file.openNext(sd.vwd(), O_READ))
+		  {
+			file.printName(&Serial2);
+			Serial2.println();
+			file.printName(&Serial);
+			Serial.println();
+
+			file.close();
+		  } 
+		   Serial2.flush();
+		 }
+		delay(100);
+	//	Serial2.println("Files end");
+	//	Serial.println("Files end");
+// regBank.set(adr_control_command,0);
+}
+void file_name()
+{
+
+   preob_num_str();
+
+  while (sd.exists(fileName)) 
+  {
+	if (fileName[BASE_NAME_SIZE + 1] != '9') 
+	{
+	  fileName[BASE_NAME_SIZE + 1]++;
+	}
+	else if (fileName[BASE_NAME_SIZE] != '9') 
+	{
+	  fileName[BASE_NAME_SIZE + 1] = '0';
+	  fileName[BASE_NAME_SIZE]++;
+	}
+	else 
+	{
+		Serial.println("Can't create file name");
+//	  sdError("Can't create file name");
+	}
+  }
+  if (!myFile.open(fileName, O_CREAT | O_WRITE | O_EXCL)) //sdError("file.open");
+  {
+  }
+  Serial.print(F("Logging to: "));
+  Serial.println(fileName);
+  myFile.close();
+  Serial.println("done.");
+ } 
+void file_print_date()  //программа  записи даты в файл
+	{
+	  DateTime now = RTC.now();
+	  myFile.print(now.day(), DEC);
+	  myFile.print('/');
+	  myFile.print(now.month(), DEC);
+	  myFile.print('/');
+	  myFile.print(now.year(), DEC);//Serial display time
+	  myFile.print(' ');
+	  myFile.print(now.hour(), DEC);
+	  myFile.print(':');
+	  myFile.print(now.minute(), DEC);
+	  myFile.print(':');
+	  myFile.print(now.second(), DEC);
+  }
+void file_del_SD()
+{
+	if (!sd.begin(chipSelect)) 
+		{
+			//Serial.println("initialization SD failed!");
+			//regBank.set(125,false); 
+		}
+	else
+		{
+			  myFile = sd.open(fileName_F);
+				//myFile = sd.open("example.txt", FILE_WRITE);
+				//myFile.close();
+
+			  // Check to see if the file exists:
+			  if (sd.exists(fileName_F)) 
+			  {
+				 // regBank.set(125,true); 
+				  sd.remove(fileName_F);
+			   // Serial.println("example.txt exists.");
+			  }
+			  else 
+			  {
+			   // Serial.println("example.txt doesn't exist.");
+				//regBank.set(125,false); 
+			  }
+			}
+	delay(100);
+}
+void set_SD()
+{
+		if (!sd.begin(chipSelect)) 
+		{
+			//Serial.println("initialization SD failed!");
+		}
+	else
+		{
+			  myFile = sd.open("example.txt", FILE_WRITE);
+			  myFile.close();
+
+			  // Check to see if the file exists:
+			  if (sd.exists("example.txt")) 
+			  {
+				  sd.remove("example.txt");
+			   // Serial.println("example.txt exists.");
+			  }
+			  else 
+			  {
+			   // Serial.println("example.txt doesn't exist.");
+			  }
+			}
+
+	delay(100);
+}
+void preob_num_str() // Программа формирования имени файла, состоящего из текущей даты и счетчика файлов
+{
+	DateTime now = RTC.now();
+	day   = now.day();
+	month = now.month();
+	year  = now.year();
+	int year_temp = year-2000;
+
+	itoa (year_temp,str_year_file, 10);                                        // Преобразование даты год в строку ( 10 - десятичный формат) 
+
+	if (month <10)
+		{
+		   itoa (0,str_mon_file0, 10);                                         //  Преобразование даты месяц  в строку ( 10 - десятичный формат) 
+		   itoa (month,str_mon_file10, 10);                                    //  Преобразование числа в строку ( 10 - десятичный формат) 
+		   sprintf(str_mon_file, "%s%s", str_mon_file0, str_mon_file10);       // Сложение 2 строк
+		}
+	else
+		{
+		   itoa (month,str_mon_file, 10);                                      // Преобразование числа в строку ( 10 - десятичный формат) 
+		}
+	if (day <10)
+		{
+		   itoa (0,str_day_file0, 10);                                         // Преобразование числа в строку ( 10 - десятичный формат) 
+		   itoa (day,str_day_file10, 10);                                      // Преобразование числа в строку ( 10 - десятичный формат) 
+		   sprintf(str_day_file, "%s%s", str_day_file0, str_day_file10);       // Сложение 2 строк
+		}
+	else
+		{
+		itoa (day,str_day_file, 10);                                           // Преобразование числа в строку ( 10 - десятичный формат) 
+		}
+		 
+	sprintf(str1_1, "%s%s",str_year_file, str_mon_file);                         // Сложение 2 строк
+	sprintf(str2_1, "%s%s",str1_1, str_day_file);                                // Сложение 2 строк
+	sprintf(fileName, "%s%s", str2_1, "00.KAM");                                 // Получение имени файла в file_name
+	//Serial.println(fileName);
+	//regBank.set(adr_reg_temp_day, day);  
+	//regBank.set(adr_reg_temp_mon, month); 
+	//regBank.set(adr_reg_temp_year, year-2000); 
+	//char* strcpy(char* fileName_p, const char* fileName);
+	//Serial.println(fileName_p);
+}
+
+
 void setup_pin()
 {
 	pinMode(led_13, OUTPUT);                             //
@@ -4085,7 +4591,17 @@ void setup()
 		while (1);
 	}
 	 SdFile::dateTimeCallback(dateTime); 
+	pinMode(53, OUTPUT);                                          // Настройка выбора SD
+	if (!sd.begin(chipSelect)) 
+		{
+			Serial.println("initialization SD failed!");
+		}
+	else
+		{
+			Serial.println("initialization SD successfully.");
+		}
 
+	SdFile::dateTimeCallback(dateTime);                          // Настройка времени записи файла
 
 	serial_print_date();                                   // Печать даты и времени
 	setup_pin();
@@ -4098,7 +4614,7 @@ void setup()
 	//format_memory();
 	Serial.println(" ");                                   //
 	Serial.println("System initialization OK!.");          // Информация о завершении настройки
-	pass_start();                                        // Пароль на входе
+	//pass_start();                                        // Пароль на входе
 }
 void loop()
 {
