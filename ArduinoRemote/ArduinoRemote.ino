@@ -131,10 +131,9 @@ int x_delta = 8;                                     // Смещение тачскрина по Х 
 RTC_DS1307 RTC;                                       // define the Real Time Clock object
 //**************************** Пароль **********************************************************
 
-int  stCurrentLen_pass = 0;              // Длина вводимой строки
-char pass_super_admin[8] = {'1', '4', '0', '7','5','4','\0'}; // Пароль супер Админ.
-char pass_admin[20] ;                     //Строка с паролем Админ
-char pass_user[20];                       // Строка с паролем пользователя
+int  stCurrentLen_pass = 0;               // Длина вводимой строки
+char pass_admin[9] ;                      // Строка с паролем Админ
+char pass_user[9];                        // Строка с паролем пользователя
 int pass = 0;                             // Признак правильности введенного общего пароля
 int pass1 = 0;                            // Признак правильности введенного пароля пользователя
 int pass2 = 0;                            // Признак правильности введенного пароля Админ
@@ -142,6 +141,10 @@ int pass3 = 0;                            // Признак правильности введенного пар
 int eeprom_clear = 0;
 int stCurrentLen_user=0;                  // Переменная  хранения длины введенной строки пароля пользователя
 int stCurrentLen_admin=0;                 // Переменная  хранения длины введенной строки пароля администратора
+
+unsigned long var_klav123      = 0;       // Число введенное с клавиатуры         
+unsigned long pass_admin2      = 0;       // Пароль администратора
+unsigned long pass_super_admin = 140754;  // Пароль супер администратора
 
 //++++++++++++++++++++++++++++ Переменные для цифровой клавиатуры +++++++++++++++++++++++++++++
 int x, y, z;
@@ -156,7 +159,8 @@ int count_s           = 0;                                        // Счетчик вве
 
 int x_dev = 16;
 int y_dev = 16;
-//-------------------------------------------------------------------------------------------------
+int deltaY=10;
+//------------------------------------------------------------------------------------------------- 
 float power60 = 0;                       // Измерение источника питания 6,0 вольт
 float power50 = 0;                       // Измерение источника питания 5,0 вольт
 float power33 = 0;                       // Измерение источника питания 3,3 вольт
@@ -172,16 +176,18 @@ int adr_pass_user            = 8;         // Адрес пароля пользователя
 int adr_stCurrentLen1        = 92;        // Адрес указателя длины строки
 int adr_xbee_device_h        = 112;       // Адрес устройства старший
 int adr_xbee_device_l        = 116;       // Адрес устройства младший
-int adr_pass_admin           = 118;       // адрес пароля администратора
 int adr_xbee_network         = 120;       // Адрес сети
 int adr_xbee_current_H       = 124;       // Адрес текущего устройства старший
 int adr_xbee_current_L       = 128;       // Адрес текущего устройства младший
 int adr_n_user               = 140;       // Адрес хранения № номера пользователя
+int adr_pass_admin           = 990;       // Адрес пароля администратора
 
 int adr_start_baseHL         = 1000;      // Стартовый адрес базы данных номеров исполнительных устройств
 byte number_device           = 0;         // Номер исполнительного устройства. 
-
-
+int adr_start_user           = 2000;      // Стартовый адрес базы данных номеров пользователей
+byte number_user             = 0;         // Порядковый номер в списке пользователей. 
+long user_number = 0;
+long user_pass = 0;
 //----------------------------------------------------------------------
 
 const char  txt_botton_otmena[]                PROGMEM  = "O""\xA4\xA1""e""\xA2""a";                            // "Отмена"
@@ -223,37 +229,36 @@ const char  txt_set_date2[]                    PROGMEM = "\x82""a""\xA4""y ""\x9
 const char  txt_menu1_41[]                     PROGMEM = "Hac""\xA4""po""\x9E\x9F""a";                          // Настройка
 const char  txt_menu1_42[]                     PROGMEM = "c""\x9D""c""\xA4""e""\xA1\xAB";                       // системы
 const char  txt_menu4_11[]                     PROGMEM = "C\x96poc \x99""a""\xA2\xA2\xABx";                     // Сброс данных
-const char  txt_menu4_12[]                     PROGMEM = " ";                     //  
+const char  txt_menu4_12[]                     PROGMEM = "\x89""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAC";// Пользователь
 const char  txt_menu4_21[]                     PROGMEM = "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC"" N";     // Установить N
 const char  txt_menu4_22[]                     PROGMEM = "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";// пользователя
 const char  txt_menu4_31[]                     PROGMEM = "\x89""apo\xA0\xAC";                                   // Пароль
 const char  txt_menu4_32[]                     PROGMEM = "Me""\xA2\xAE";                                        // Меню
 const char  txt_menu4_41[]                     PROGMEM = "\xA5""a""\x9E\xA0""o""\x97";                          // файлов 
 const char  txt_menu4_42[]                     PROGMEM = "a""\x99\xA1\x9D\xA2\x9D""c""\xA4""pa""\xA4""opa";     // администратора
+const char  txt_Bxod[]                         PROGMEM = "BXO""\x82";                                           // ВХОД
+const char  txt_pass_adm[]                     PROGMEM = "B""\x97""e""\x99\x9D\xA4""e ""\xA3""apo""\xA0\xAC";   // Введите пароль
+const char  txt_pass_adm1[]                    PROGMEM = "\x89""o""\x97\xA4""op  ""\xA3""apo""\xA0\xAF";        // Повтор  пароля
+const char  txt_interval1[]                    PROGMEM = "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC";         // Установить 
+const char  txt_interval2[]                    PROGMEM = "\x9D\xA2\xA4""ep""\x97""a""\xA0";                     // "\x9D\xA2\xA4""ep""\x97""a""\xA0"
 
 
 
 
-
-
-
-char  txt9[6] = "B\x97o\x99"; //Ввод
-char  txt10[8] = "O""\xA4\xA1""e""\xA2""a"; //"Отмена"
+char  txt9[6] = "B\x97o\x99";                                                               // Ввод
+char  txt10[8] = "O""\xA4\xA1""e""\xA2""a";                                                 // "Отмена"
 char  txt11[4] = "RET";
-char  txt12[] = "B\x97""e\x99\x9D\xA4""e \xA3""apo\xA0\xAC!";//"Введите пароль"
-char  txt_pass_ok[] = "\xA3""apo\xA0\xAC OK!"; // Пароль ОК!
-char  txt_pass_no[] = "\xA3""apo\xA0\xAC NO!"; // Пароль NO!
-char  txt_botton_clear[] = "C\x96poc";         // Сброс
-char  txt_system_clear1[] = "B\xA2\x9D\xA1""a\xA2\x9D""e!"; //Внимание !  
+char  txt12[] = "B\x97""e\x99\x9D\xA4""e \xA3""apo\xA0\xAC!";                               // "Введите пароль"
+char  txt_pass_ok[] = "\xA3""apo\xA0\xAC OK!";                                              // Пароль ОК!
+char  txt_pass_no[] = "\xA3""apo\xA0\xAC NO!";                                              // Пароль NO!
+char  txt_botton_clear[] = "C\x96poc";                                                      // Сброс
+char  txt_system_clear1[] = "B\xA2\x9D\xA1""a\xA2\x9D""e!";                                 // Внимание !  
 char  txt_system_clear2[] = "Bc\xAF \xA1\xA2\xA5op\xA1""a""\xA6\xA1\xAF \x96y\x99""e\xA4";  // Вся информация будет 
-char  txt_system_clear3[] = "\x8A\x82""A""\x88""EHA!"; // УДАЛЕНА 
-char  txt_n_user[] = "B\x97""e\x99\x9D\xA4""e N \xA3o\xA0\xAC\x9C."; // Введите № польз.
-char  txt_rep_user[] = "\x89o\x97\xA4op\x9D\xA4""e"" N \xA3o\xA0\xAC\x9C.  "; //Повторите № польз.
-char  txt_set_pass_user[] = "Ho\x97\xAB\x9E \xA3""apo\xA0\xAC \xA3o\xA0\xAC\x9C.";  //      "Новый пароль польз."
-char  txt_set_pass_admin[] = "Ho\x97\xAB\x9E \xA3""apo\xA0\xAC  a\x99\xA1\x9D\xA2.";// Новый пароль админ.
-char  txt_rep_pass_user[] = "\x89o\x97\xA4op \xA3""apo\xA0\xAC \xA3o\xA0\xAC\x9C."; //   "Повтор пароль польз."
-char  txt_err_pass_user1[] = "O\xA8\x9D\x96ka \x97\x97o\x99""a" ;//Ошибка ввода
-char  txt_rep_pass_admin[] = "\x89o\x97\xA4op \xA3""apo\xA0\xAC a\x99\xA1\x9D\xA2."; //   "Повтор пароль админ"
+char  txt_system_clear3[] = "\x8A\x82""A""\x88""EHA!";                                      // УДАЛЕНА 
+char  txt_n_user[] = "B\x97""e\x99\x9D\xA4""e N \xA3o\xA0\xAC\x9C.";                        // Введите № польз.
+char  txt_rep_user[] = "\x89o\x97\xA4op\x9D\xA4""e"" N \xA3o\xA0\xAC\x9C.  ";               // Повторите № польз.
+char  txt_set_pass_user[] = "Ho\x97\xAB\x9E \xA3""apo\xA0\xAC \xA3o\xA0\xAC\x9C.";          // "Новый пароль польз."
+char  txt_rep_pass_user[] = "\x89o\x97\xA4op \xA3""apo\xA0\xAC \xA3o\xA0\xAC\x9C.";         // "Повтор пароль польз."
 
 
 char buffer[30];
@@ -298,13 +303,21 @@ const char* const table_message[] PROGMEM =
  txt_menu1_41,                     // 36 "Hac""\xA4""po""\x9E\x9F""a";                                            // Настройка
  txt_menu1_42,                     // 37 "c""\x9D""c""\xA4""e""\xA1\xAB";                                         // системы
  txt_menu4_11,                     // 38 "C\x96poc \x99""a""\xA2\xA2\xABx";                                       // Сброс данных
- txt_menu4_12,                     // 39 "C\x96poc \x99""a""\xA2\xA2\xABx";                                       // Сброс данных
+ txt_menu4_12,                     // 39  "\x89""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAC";//  Пользователь
  txt_menu4_21,                     // 40  "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC"" N";                      // Установить N
  txt_menu4_22,                     // 41 "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";                  // пользователя
  txt_menu4_31,                     // 42 "\x89""apo\xA0\xAC";                                                     // Пароль
  txt_menu4_32,                     // 43 "Me""\xA2\xAE";                                                          // Меню 
  txt_menu4_41,                     // 44 "\xA5""a""\x9E\xA0""o""\x97";                                            // файлов         
- txt_menu4_42                      // 45 "a""\x99\xA1\x9D\xA2\x9D""c""\xA4""pa""\xA4""opa";                       //  администратора
+ txt_menu4_42,                     // 45 "a""\x99\xA1\x9D\xA2\x9D""c""\xA4""pa""\xA4""opa";                       // администратора
+ txt_Bxod,                         // 46 "BXO""\x82";                                                             // ВХОД
+ txt_pass_adm,                     // 47 "B""\x97""e""\x99\x9D\xA4""e ""\xA3""apo""\xA0\xAC";                     // Введите пароль
+ txt_pass_adm1,                    // 48 "\x89""o""\x97\xA4""op  ""\xA3""apo""\xA0\xAF";                          // Повтор  пароля
+ txt_interval1,                    // 49 "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC";                           // Установить 
+ txt_interval2                     // 50 "\x9D\xA2\xA4""ep""\x97""a""\xA0";                                       // "\x9D\xA2\xA4""ep""\x97""a""\xA0"
+
+
+
 };
 
 //++++++++++++++++++++++ Работа с файлами +++++++++++++++++++++++++++++++++++++++
@@ -350,12 +363,6 @@ char str_year_file[3];
 //char str0_1[10];
 char str1_1[10];
 char str2_1[10];
-
-
-
-
-
-
 
 
 
@@ -497,7 +504,7 @@ void txt_pass_no_all()
 		myGLCD.clrScr();
 		myGLCD.setColor(255, 255, 255);
 		myGLCD.setBackColor(0, 0, 0);
-		myGLCD.print(txt_pass_no, RIGHT, 208);
+		myGLCD.print(txt_pass_no, RIGHT, 280);
 		delay (1000);
 }
 void pass_test_start() // Начало проверки пароля
@@ -515,106 +522,70 @@ void pass_test_start() // Начало проверки пароля
 		myGLCD.print(txt12, CENTER, 280);// Введите пароль!"
 
 }
-void pass_test()
+void pass_test()                  // Проверка паролей
 {
 	pass=0;
 	pass1=0;
 	pass2=0;
 	pass3=0;
+	// Проверка пароля пользователя
+	if(user_pass == var_klav123)
+	{
+		pass1 = 1;
+	}
+	else
+	{
+		pass1 = 0;
+	}
+
+	// Проверка пароля администратора 
+	EEPROM.get(adr_pass_admin,pass_admin2);	
+	if(pass_admin2 == var_klav123)
+	{
+		pass2 = 1;
+	}
+	else
+	{
+		pass2 = 0;
+	}
+
+	// Проверка пароля супер администратора 
+
+	if(pass_super_admin == var_klav123)
+	{
+		pass3 = 1;
+	}
+	else
+	{
+		pass3 = 0;
+	}
+	// Окончание проверки пароля супер администратора
 	
-			//считать пароль pass_user из памяти
-			int  stCurrentLen_pass_user = i2c_eeprom_read_byte( deviceaddress,adr_pass_user-2);  //считать длину пароля  из памяти
-			//	Serial.print("stCurrentLen_pass - ");// контроль пароля -удалить
-			//  Serial.println(stCurrentLen_pass);// контроль пароля -удалить
-			
-		// if ((stCurrentLen_pass == 0) stCurrentLen_pass_user = 1))
-			
-				for (int z=0; z<stCurrentLen_pass_user; z++)
-				{
-					pass_user[z] = i2c_eeprom_read_byte( deviceaddress,adr_pass_user+z);
-				}
-				pass_user[stCurrentLen_pass_user]  =  '\0';  
-	
-			// Проверка пароля пользователя
-				if(strcmp(pass_user,stLast)==0)
-				{
-					pass1 = 1;
-					//  pass2 = 0;
-					//  pass3 = 0;
-				}
-				if(strcmp(pass_user,stLast)!=0)
-				{
-					pass1 = 0;
-				}
-			// Окончание проверки пароля пользователя
-	
+	if (( pass1 == 1) || ( pass2 == 1)|| ( pass3 == 1))
 
-			//Восстановление длины строки пароля администратора
-			int stCurrentLen_pass_admin = i2c_eeprom_read_byte( deviceaddress,adr_pass_admin-2);  //считать длину пароля  из памяти
-			// Восстановление пароля администратора
-			for (int z=0; z<stCurrentLen_pass_admin; z++)
-			{
-				pass_admin[z] = i2c_eeprom_read_byte( deviceaddress,adr_pass_admin+z);
-			}
-			pass_admin[stCurrentLen_pass_admin]  =  '\0';  
+	{
+		pass = 1;
+	}
+	else
+	{
+		pass = 0;
+	}
 
-			// Проверка пароля администратора 
-				if(strcmp(pass_admin,stLast)==0)
-				{
-					//  pass1 = 0;
-					pass2 = 1;
-					// pass3 = 0;
-				}
-				if(strcmp(pass_admin,stLast)!=0)
-				{
-					pass2 = 0;
-				}
+	//Serial.print("pass1 - ");              // контроль пароля -удалить
+	//Serial.println(pass1);                 // контроль пароля -удалить
+	//Serial.print("pass2 - ");              // контроль пароля -удалить
+	//Serial.println(pass2);                 // контроль пароля -удалить
+	//Serial.print("pass3 - ");              // контроль пароля -удалить
+	//Serial.println(pass3);                 // контроль пароля -удалить
+	//Serial.print("pass_admin - ");         // контроль пароля -удалить
+	//Serial.println(pass_admin2);           // контроль пароля -удалить
+	//Serial.print("var_klav123 - ");        // контроль пароля -удалить
+	//Serial.println(var_klav123);           // контроль пароля -удалить
+	//Serial.print("pass_super_admin - ");   // контроль пароля -удалить
+	//Serial.println(pass_super_admin);      // контроль пароля -удалить
+	//Serial.print("ret - ");                // контроль пароля -удалить
+	//Serial.println(ret);                   // контроль пароля -удалить
 
-	// Окончание проверки пароля администратора
-
-		// Проверка пароля супер администратора 
-
-				if(strcmp(pass_super_admin,stLast)==0)
-				{
-					// pass1 = 0;
-					// pass2 = 0;
-					pass3 = 1;
-
-				}
-				if(strcmp(pass_super_admin,stLast)!=0)
-				{
-					pass3 = 0;
-				}
-
-				// Окончание проверки пароля супер администратора
-	
-			if (( pass1 == 1) || ( pass2 == 1)|| ( pass3 == 1))
-
-				{
-					pass = 1;
-				}
-				else
-				{
-					pass = 0;
-				}
-		  
-	//  }
-/*
-	Serial.print("pass1 - ");// контроль пароля -удалить
-	Serial.println(pass1);// контроль пароля -удалить
-	Serial.print("pass2 - ");// контроль пароля -удалить
-	Serial.println(pass2);// контроль пароля -удалить
-	Serial.print("pass3 - ");// контроль пароля -удалить
-	Serial.println(pass3);// контроль пароля -удалить
-	Serial.print("pass_admin - ");// контроль пароля -удалить
-	Serial.println(pass_admin);// контроль пароля -удалить
-	Serial.print("stLast - ");// контроль пароля -удалить
-	Serial.println(stLast);// контроль пароля -удалить
-	Serial.print("pass_super_admin - ");// контроль пароля -удалить
-	Serial.println(pass_super_admin);// контроль пароля -удалить
-	Serial.print("ret - ");// контроль пароля -удалить
-	Serial.println(ret);// контроль пароля -удалить
-*/
 }
 void drawButtons1() // Отображение цифровой клавиатуры
 {
@@ -715,7 +686,7 @@ void klav123() // ввод данных с цифровой клавиатуры
 			}
 			if ((x >= 121) && (x <= 234))                               // Button: "Ввод"
 			{
-			  waitForIt(121, 121, 234, 176);
+			   waitForIt(121, 121, 234, 176);
 			   if (stCurrentLen > 0)
 			   {
 				for (int x = 0; x < stCurrentLen + 1; x++)
@@ -729,7 +700,9 @@ void klav123() // ввод данных с цифровой клавиатуры
 				myGLCD.setColor(0, 0, 0);
 				myGLCD.fillRect(0, 300, 239, 319);
 				myGLCD.setColor(0, 255, 0);
-				myGLCD.print(stLast, LEFT, 300);
+				char **pointer;
+				var_klav123 = strtoul(stLast,pointer,10);
+ 			    myGLCD.print(stLast, LEFT, 300);
 				break;
 			  }
 			  else
@@ -763,18 +736,16 @@ void klav123() // ввод данных с цифровой клавиатуры
 			if ((x >= 121) && (x <= 234)) // Button: "Выход"
 			{
 			  waitForIt(121, 179, 234, 234);
-			 //myGLCD.clrScr();
-			  //myGLCD.setBackColor(VGA_BLACK);
-			  //ret = 1;
 			  stCurrent[0] = '\0';
 			  stCurrentLen = 0;
+			  ret = 1;
 			  break;
 			}
 		  }
 		}
 	  }
 } 
-void pass_start()
+void pass_start()                         // Ввод пароля при старте системы
 {
 	while(1) 
 	{
@@ -1762,8 +1733,10 @@ void draw_menu1()
 	myGLCD.fillRoundRect (5, 144, 234, 199);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 144, 234, 199);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[31])));
-	myGLCD.print(buffer, CENTER, 164);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[49])));                //
+	myGLCD.print(buffer, CENTER, 154);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[50])));
+	myGLCD.print(buffer, CENTER, 174);  
 
 	myGLCD.setColor(0, 0, 255);                    // 1
 	myGLCD.fillRoundRect (5, 202, 234, 257);
@@ -1873,7 +1846,7 @@ void draw_menu3()
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
 	myGLCD.print(buffer, CENTER, 280);         
 }
-void draw_menu4()
+void draw_menu4()                      // Меню установки паролей
 {
 	myGLCD.clrScr();
 	myGLCD.setBackColor (0, 0, 255);
@@ -2093,7 +2066,7 @@ void klav_menu3()
 		}
 	}
  }
-void klav_menu4()   // Меню установки паролей
+void klav_menu4()                                           // Меню установки паролей
 {
 	int x,y;
 	draw_menu4();
@@ -2104,30 +2077,28 @@ void klav_menu4()   // Меню установки паролей
 			myTouch.read();
 			x = myTouch.getX();
 			y = myTouch.getY();
-			if ((x >= 5) && (x <= 234))                                     // Первый ряд
+			if ((x >= 5) && (x <= 234))                              // Первый ряд
 			{
-				if ((y >= 28) && (y <= 83))                                 // Button: 1
+				if ((y >= 28) && (y <= 83))                          // Button: 1 Сброс данных
 				{
 					waitForIt(5, 28, 234, 83);
-					pass_test_start();  // Нарисовать цифровую клавиатуру
-					klav123();          // Считать информацию с клавиатуры
-					if (ret == 1)        // Если "Возврат" - закончить
+					pass_test_start();                               // Нарисовать цифровую клавиатуру
+					klav123();                                       // Считать информацию с клавиатуры
+					if (ret == 1)                                    // Если "Возврат" - закончить
 						{
-							goto bailout14;  // Перейти на окончание выполнения пункта меню
+							goto bailout14;                          // Перейти на окончание выполнения пункта меню
 						}
-				//   else                 // Иначе выполнить пункт меню
-					//   {
-							pass_test();     // Проверить пароль
-					//   }
-					if ( ( pass2 == 1) || ( pass3 == 1)) // если верно - выполнить пункт меню
+					pass_test();                                     // Проверить пароль
+
+					if ( ( pass2 == 1) || ( pass3 == 1))             // если верно - выполнить пункт меню
 						{
-							myGLCD.clrScr();   // Очистить экран
-							myGLCD.print(txt_pass_ok, RIGHT, 208); 
+							myGLCD.clrScr();                         // Очистить экран
+							myGLCD.print(txt_pass_ok, RIGHT, 280); 
 							delay (500);
-							eeprom_clear = 1; // Разрешить стереть информации
-					//		system_clear_start(); // если верно - выполнить пункт меню
+							eeprom_clear = 1;                        // Разрешить стереть информации
+					//		system_clear_start();                    // если верно - выполнить пункт меню
 						}
-					else  // Пароль не верный - сообщить и закончить
+					else                                             // Пароль не верный - сообщить и закончить
 						{
 							txt_pass_no_all();
 						}
@@ -2140,7 +2111,8 @@ void klav_menu4()   // Меню установки паролей
 
 					    draw_menu3();
 				}
-				if ((y >= 86) && (y <= 141))                                // Button: 2
+
+				if ((y >= 86) && (y <= 141))                         // Button: 2 Установить номер пользователя
 				{
 					waitForIt(5, 86, 234, 141);
 					pass_test_start();
@@ -2156,7 +2128,7 @@ void klav_menu4()   // Меню установки паролей
 				if ( ( pass1 == 1)||( pass2 == 1) || ( pass3 == 1))
 					{
 						myGLCD.clrScr();
-						myGLCD.print(txt_pass_ok, RIGHT, 208);
+						myGLCD.print(txt_pass_ok, RIGHT, 280);
 						delay (500);
 						set_n_user_start();
 					}
@@ -2172,28 +2144,29 @@ void klav_menu4()   // Меню установки паролей
 */
 					draw_menu3();
 				}
-				if ((y >= 144) && (y <= 199))                               // Button: 3
+				if ((y >= 144) && (y <= 199))                        // Button: 3   Пароль пользователя
 				{
 					waitForIt(5, 144, 234, 199);
-					int  stCurrentLen_pass_user = i2c_eeprom_read_byte( deviceaddress,adr_pass_user-2);  //считать длину пароля  из памяти
-					if (stCurrentLen_pass_user == 0)
-						{ 
-								pass1 = 1;
-								goto pass_cross_user; 
-						}
-						pass_test_start();
-						klav123();
-					if (ret == 1)
-						{
-							goto bailout34;
-						}
-						pass_test();
-						pass_cross_user:
+				long stCurrentLen_pass_admin = 0;
+				EEPROM.get(adr_pass_admin, stCurrentLen_pass_admin);	// Переделать
+					//if (stCurrentLen_pass_user == 0)
+					//	{ 
+					//			pass1 = 1;
+					//			goto pass_cross_user; 
+					//	}
+					//	pass_test_start();
+					//	klav123();
+					//if (ret == 1)
+					//	{
+					//		goto bailout34;
+					//	}
+					//	pass_test();
+					//	pass_cross_user:
 
 					if ( ( pass1 == 1)||( pass2 == 1) || ( pass3 == 1))
 						{
 							myGLCD.clrScr();
-							myGLCD.print(txt_pass_ok, RIGHT, 208);
+							myGLCD.print(txt_pass_ok, RIGHT, 280);
 							delay (500);
 							set_pass_user_start();
 						}
@@ -2208,53 +2181,53 @@ void klav_menu4()   // Меню установки паролей
 							print_up();*/
 					draw_menu3();
 				}
-				if ((y >= 202) && (y <= 257))                               // Button: 4
+				if ((y >= 202) && (y <= 257))                        // Button: 4
 				{
-					waitForIt(5, 202, 234, 257);
-						int stCurrentLen_pass_admin = i2c_eeprom_read_byte( deviceaddress,adr_pass_admin-2);
-						if (stCurrentLen_pass_admin == 0)
-							{  
-							   pass2 = 1;
-							   pass3 = 1;
-							   goto pass_cross_admin; 
-							}
-							pass_test_start();
-							klav123();
-						if (ret == 1)
-							 {
-							   goto bailout44;
-							 }
-							 pass_test();
-							 pass_cross_admin:
+				waitForIt(5, 202, 234, 257);
+				long stCurrentLen_pass_admin = 0;
+				EEPROM.get(adr_pass_admin, stCurrentLen_pass_admin);	
+				if (stCurrentLen_pass_admin == 0)
+					{  
+						pass2 = 1;
+						pass3 = 1;
+						goto pass_cross_admin;       // Пропустить проверку старого пароля
+					}
+					pass_test_start();               // Ввести надпись ввода пароля
+					klav123();                       // Ввести старый пароль
+				if (ret == 1)
+						{
+						goto bailout44;
+						}
+				pass_test();                         // Ввести предыдущий пароль
+				pass_cross_admin:            
 				  
-						if (( pass2 == 1) || ( pass3 == 1))
-							{
-								myGLCD.clrScr();
-								myGLCD.print(txt_pass_ok, RIGHT, 208);
-								delay (500);
-								set_pass_admin_start();
-							}
-						else
-							{
-								txt_pass_no_all();
-							}
+				if (( pass2 == 1) || ( pass3 == 1))
+					{
+						myGLCD.clrScr();
+						myGLCD.print(txt_pass_ok, RIGHT, 280);
+						delay (500);
+						set_pass_admin_start();
+					}
+				else
+					{
+						txt_pass_no_all();
+					}
 
-							bailout44:
-							//myGLCD.clrScr();
-							//myButtons.drawButtons();
-							//print_up();
-					draw_menu4();
-				}
-				if ((y >= 260) && (y <= 315))                               // Button:Выход
-				{
-					waitForIt(5, 260, 234, 315);
-					break;
-				}
+					bailout44:
+					//myGLCD.clrScr();
+					//myButtons.drawButtons();
+					//print_up();
+				    draw_menu4();
+			}
+			if ((y >= 260) && (y <= 315))                               // Button:Выход
+			{
+				waitForIt(5, 260, 234, 315);
+				break;
+			}
 			}
 		}
 	}
  }
-
 
 
 void set_n_user_start()
@@ -2384,55 +2357,65 @@ void set_pass_admin_start()
 	drawButtons1();
 		// txt_set_pass_admin  Вывод строки "Введите пароль админ!"
 	myGLCD.setColor(255, 0, 0);
-	myGLCD.print(txt_set_pass_admin, CENTER, 280);// Введите пароль админ!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[47])));     // Введите пароль
+	myGLCD.print(buffer, CENTER, 245);// Введите пароль админ!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[45])));     // администратора
+	myGLCD.print(buffer, CENTER, 260);// Введите пароль админ!
 	delay(300);
-	myGLCD.print("                       ", CENTER, 280);
+	myGLCD.print("                       ", CENTER, 245);
+	myGLCD.print("                       ", CENTER, 260);
 	delay(300);
-	myGLCD.print(txt_set_pass_admin, CENTER, 280);// Введите пароль админ!
-	//char* temp_stLast = "";
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[47])));     // Введите пароль
+	myGLCD.print(buffer, CENTER, 245);// Введите пароль админ!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[45])));     // администратора
+	myGLCD.print(buffer, CENTER, 260);// Введите пароль админ!
 	klav123();
-	if (ret == 1)
+	if (ret == 1)             // Сбросить признак введенного пароля
 		{
 			ret = 0;
-			return;
+			return;           // Выход из ввода пароля   
 		}
 	//проверка верности пароля
-	
-	strcpy(temp_stLast,stLast);
+	long var_klav123_temp = var_klav123;
 
-// txt_set_pass_admin  Вывод строки "Введите пароль админ!"
-	myGLCD.setColor(255, 0, 0);
-	myGLCD.print(txt_rep_pass_admin, CENTER, 280);// Повтор пароль админ!
+  	myGLCD.setColor(255, 0, 0);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[48])));     // Повторить пароль
+	myGLCD.print(buffer, CENTER, 245);// Введите пароль админ!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[45])));     // администратора
+	myGLCD.print(buffer, CENTER, 260);// Введите пароль админ!
 	delay(300);
-	myGLCD.print("                       ", CENTER, 280);
+	myGLCD.print("                       ", CENTER, 245);
+	myGLCD.print("                       ", CENTER, 260);
 	delay(300);
-	myGLCD.print(txt_rep_pass_admin, CENTER, 280);// Повтор пароль админ!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[48])));     // Повторить пароль
+	myGLCD.print(buffer, CENTER, 245);// Введите пароль админ!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[45])));     // администратора
+	myGLCD.print(buffer, CENTER, 260);// Введите пароль админ!
+	myGLCD.printNumI(var_klav123_temp, LEFT, 285); 
+	myGLCD.print("                       ", CENTER, 300);
+
 	klav123();
 
-			if (ret == 1)
-				{
-					ret = 0;
-					return;
-				}
-		if(strcmp(temp_stLast,stLast)==0)
+	if (ret == 1)             // Сбросить признак введенного пароля
 		{
-			for (x=0; x<stCurrentLen1+1; x++)
-		{
-					i2c_eeprom_write_byte(deviceaddress, adr_pass_admin+x, stLast[x]);
+			ret = 0;
+			return;            // Выход из ввода пароля  
 		}
-			i2c_eeprom_write_byte(deviceaddress, adr_pass_admin-2, stCurrentLen1);
-			myGLCD.print("                       ", CENTER, 280);
-			myGLCD.print(txt_pass_ok, RIGHT, 208);
+		myGLCD.setColor(255, 255, 255);
+		if(var_klav123_temp == var_klav123)
+		{
+			EEPROM.put(adr_pass_admin, var_klav123);	
+			myGLCD.print("                       ", CENTER, 260);
+			myGLCD.print(txt_pass_ok, CENTER, 260); 
 			delay(1500);
 		}
-
 		else
 		{
-			myGLCD.print("                       ", CENTER, 280);
-			myGLCD.print(txt_err_pass_user, CENTER, 280);// Ошибка ввода!
-			delay(1500);
+			strcpy_P(buffer, (char*)pgm_read_word(&(table_message[21])));     // Ошибка ввода!
+			myGLCD.print("                       ", CENTER, 260);
+			myGLCD.print(buffer, CENTER, 260);                                // Ошибка ввода!
+			delay(2000);
 		}
-
 }
 
 void drawMenuReset()
@@ -3358,7 +3341,7 @@ void XBee_SetH(int adr_xbee_h)
 			return;
 		}
 	strcpy(temp_stLast,stLast);
-	long int li1 = strtol(temp_stLast, NULL, 16);                                     // преобразовать первую часть строки в значение HEX	
+	long int li1 = strtol(temp_stLast, NULL, 16);                                 // преобразовать первую часть строки в значение HEX	
 	byte *m = (byte *)&li1;                                                       //Разложить данные старшего адреса координатора побайтно для записи в память
 	for (int i=0; i<4; i++)
 		{
@@ -3698,6 +3681,7 @@ void read_HL_mem_XBee(int N_device )
 		Serial.println(XBee_Addr64_LS, HEX); 
 		addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);                                     // SH + SL Address of receiving XBee
 }
+
 void draw_view_adr_device()
 {
 	int XBee_x, XBee_y, x, y;
@@ -3743,7 +3727,6 @@ void draw_view_adr_device()
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[19])));
 	myGLCD.print(buffer, CENTER, 290);                                // Завершить просмотр
 }
-
 void view_adr_device()
 {
 	int x, y;
@@ -3772,7 +3755,7 @@ void view_adr_device()
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
-					Serial.println(adr_device);
+				//	Serial.println(adr_device);
 					draw_view_adr_device();
 					view_page(n_page);
 				}
@@ -3787,7 +3770,7 @@ void view_adr_device()
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
-					Serial.println(adr_device);
+				//	Serial.println(adr_device);
 					draw_view_adr_device();
 					view_page(n_page);
 				}
@@ -3802,7 +3785,7 @@ void view_adr_device()
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
-					Serial.println(adr_device);
+					//Serial.println(adr_device);
 					draw_view_adr_device();
 					view_page(n_page);
 				}
@@ -3819,7 +3802,7 @@ void view_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
-						Serial.println(adr_device);
+					//	Serial.println(adr_device);
 						draw_view_adr_device();
 						view_page(n_page);
 					}
@@ -3837,7 +3820,7 @@ void view_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
-						Serial.println(adr_device);
+					//	Serial.println(adr_device);
 						draw_view_adr_device();
 						view_page(n_page);
 					}
@@ -3855,48 +3838,48 @@ void view_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
-						Serial.println(adr_device);
+						//Serial.println(adr_device);
 						draw_view_adr_device();
 						view_page(n_page);
 					}
 				}
 
-		if ((y>=233) && (y<=273))                                     // Upper row  
+		if ((y>=233) && (y<=273))                                     // Кнопки перелистывания списков
 			{
-			  if ((x>=2) && (x<=82))                                  // Выход
+			  if ((x>=2) && (x<=82))                                  //  Предыдущий лист
 				{
 					waitForIt(2, 233, 82, 273);
 					n_page--;
 					if(n_page <1) n_page = 1;
 					myGLCD.setBackColor(0, 0, 255);
-					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+					myGLCD.print("   ", CENTER, 245);                 // Очистить
 					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
 					myGLCD.setBackColor(0, 0, 0);
 					view_page(n_page);
 				}
-			  if ((x>=87) && (x<=153))                                  // Выход
+			  if ((x>=87) && (x<=153))                                // Перейти на первый лист
 				{
 					waitForIt(87, 233, 153, 273);
 					n_page = 1;
 					myGLCD.setBackColor(0, 0, 255);
-					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+					myGLCD.print("   ", CENTER, 245);                 // Очистить
 					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
 					myGLCD.setBackColor(0, 0, 0);
 					view_page(n_page);
 				}
-			  if ((x>=158) && (x<=238))                               // Выход
+			  if ((x>=158) && (x<=238))                               // Следующий лист
 				{
 					waitForIt(158, 233, 238, 273);
 					n_page++;
-					if(n_page > 43) n_page = 43;
+					if(n_page > 15) n_page = 15;
 					myGLCD.setBackColor(0, 0, 255);
-					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+					myGLCD.print("   ", CENTER, 245);                 // Очистить
 					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
 					myGLCD.setBackColor(0, 0, 0);
 					view_page(n_page);
 				}
 			}
-		if ((y>=278) && (y<=318))                                    // Upper row  
+		if ((y>=278) && (y<=318))                                    //  
 			{
 			if ((x>=2) && (x<=238))                                  // Выход
 				{
@@ -3922,7 +3905,7 @@ void view_page(int block_n)
 
 	for (int n_bl = 0; n_bl<n_bl_max; n_bl++)
 	{
-		Serial.println(adr_device);
+		//Serial.println(adr_device);
 		read_adr_device(adr_device);
 		myGLCD.printNumI(((block_n-1) * 6)+n_bl+1, 2, yXBee+8);  
 		myGLCD.print("HS", 60, yXBee);
@@ -3934,6 +3917,432 @@ void view_page(int block_n)
 		adr_device+=10;
 	}
 }
+
+void draw_view_adr_user()                                           // Отображает начальный лист пользователей
+{
+	int XBee_x, XBee_y, x, y;
+	int yXBee = 32;                                                  // Стартовая точка смещения строк текста
+	int yDelta = 16;                                                 // Дельта смещения вниз
+	int n_page = 1;
+	myGLCD.clrScr();                                                 // Очистить экран CENTER
+	myGLCD.setColor(0, 0, 255);
+	myGLCD.fillRoundRect (2, 2, 239, 25);                            // Нарисовать прямоугольник для текста
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (2, 2, 239, 25);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.setBackColor(0, 0, 255);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[39])));     // Пользователь
+	myGLCD.print(buffer, CENTER, 5);
+
+	myGLCD.setColor(0, 0, 255);                                        // Нарисовать прямоугольник для текста
+	myGLCD.fillRoundRect (2, 233, 82, 273);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (2, 233, 82, 273);
+	
+	myGLCD.setColor(0, 0, 255);                                        // Нарисовать прямоугольник для текста
+	myGLCD.fillRoundRect (87, 233, 153, 273);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (87, 233, 153, 273);
+	myGLCD.setBackColor(0, 0, 255);
+	myGLCD.print("   ", CENTER, 245);                                 //  Очистить
+	myGLCD.printNumI(n_page, CENTER, 245);                            // Завершить просмотр
+	myGLCD.setBackColor(0, 0, 0);
+
+	myGLCD.setColor(0, 0, 255);                                        // Нарисовать прямоугольник для текста
+	myGLCD.fillRoundRect (158, 233, 238, 273);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (158, 233, 238, 273);
+
+	myGLCD.setColor(0, 0, 255);                                        // Нарисовать прямоугольник для текста
+	myGLCD.fillRoundRect (2, 278, 238, 318);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (2, 278, 238, 318);
+	myGLCD.setBackColor(0, 0, 255);
+	myGLCD.setColor(255, 255, 255);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[46])));
+	myGLCD.print(buffer, CENTER, 290);                                // Завершить просмотр
+}
+void view_adr_user()                          // Выбор строки с номером пользователя
+{
+	int x, y;
+	int n_page = 1;
+	int adr_user = 0;
+	draw_view_adr_user();
+	while (myTouch.dataAvailable()) {}
+	view_page_user(n_page);
+
+	while (true)
+	{
+		if (myTouch.dataAvailable())
+		{
+				myTouch.read();
+				x=myTouch.getX();
+				y=myTouch.getY();
+
+			 if ((y>=32+deltaY) && (y<=64+deltaY))                                  // Строка 1
+				{
+					waitForIt(1, 32, 239, 64);
+					number_user = ((n_page-1) * 6)+1;
+					myGLCD.setBackColor(0, 0, 255);
+					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+					myGLCD.printNumI(number_user, CENTER, 245);     // 
+					myGLCD.setBackColor(0, 0, 0);
+					adr_user = adr_start_user + ((number_user-1) * 10);
+					EEPROM.get(adr_user, user_number);	                           // Восстановить номер пользователя
+					EEPROM.get(adr_user+4, user_pass);                            // Восстановить пароль пользователя
+					//Serial.println(adr_user);
+					//Serial.println(user_number);
+					//Serial.println(user_pass);
+
+				}
+			 if ((y>=64+deltaY) && (y<=96+deltaY))                                  // Строка 2
+				{
+					waitForIt(1, 64, 239, 96);
+					number_user = ((n_page-1) * 6)+2;
+					myGLCD.setBackColor(0, 0, 255);
+					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+					myGLCD.printNumI(number_user, CENTER, 245);     // 
+					myGLCD.setBackColor(0, 0, 0);
+					adr_user = adr_start_user + ((number_user-1) * 10);
+					EEPROM.get(adr_user, user_number);	                           // Восстановить номер пользователя
+					EEPROM.get(adr_user+4, user_pass);                            // Восстановить пароль пользователя
+					//Serial.println(adr_user);
+					//Serial.println(user_number);
+					//Serial.println(user_pass);
+				}
+			if ((y>=96+deltaY) && (y<=128+deltaY))                                  // Строка 3
+				{
+					waitForIt(1, 96, 239, 128);
+					number_user = ((n_page-1) * 6)+3;
+					myGLCD.setBackColor(0, 0, 255);
+					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+					myGLCD.printNumI(number_user, CENTER, 245);     // 
+					myGLCD.setBackColor(0, 0, 0);
+					adr_user = adr_start_user + ((number_user-1) * 10);
+					EEPROM.get(adr_user, user_number);	                           // Восстановить номер пользователя
+					EEPROM.get(adr_user+4, user_pass);                            // Восстановить пароль пользователя
+					//Serial.println(adr_user);
+					//Serial.println(user_number);
+					//Serial.println(user_pass);
+				}
+			if ((y>=128+deltaY) && (y<=160+deltaY))                                  // Строка 4
+				{
+					if(n_page-1 < 42)
+					{
+						number_user = ((n_page-1) * 6)+4;
+						waitForIt(1, 128, 239, 160);
+						myGLCD.setBackColor(0, 0, 255);
+						myGLCD.print("   ", CENTER, 245);                 //  Очистить
+						myGLCD.printNumI(number_user, CENTER, 245);     // 
+						myGLCD.setBackColor(0, 0, 0);
+						adr_user = adr_start_user + ((number_user-1) * 10);
+						EEPROM.get(adr_user, user_number);	                           // Восстановить номер пользователя
+						EEPROM.get(adr_user+4, user_pass);                            // Восстановить пароль пользователя
+						//Serial.println(adr_user);
+						//Serial.println(user_number);
+						//Serial.println(user_pass);
+					}
+				}
+			if ((y>=160+deltaY) && (y<=192+deltaY))                                  // Строка 5
+				{
+					if(n_page-1 < 42)
+					{
+						number_user = ((n_page-1) * 6)+5;
+						waitForIt(1, 160, 239, 192);
+						myGLCD.setBackColor(0, 0, 255);
+						myGLCD.print("   ", CENTER, 245);                 //  Очистить
+						myGLCD.printNumI(number_user, CENTER, 245);     // 
+						myGLCD.setBackColor(0, 0, 0);
+						adr_user = adr_start_user + ((number_user-1) * 10);
+						EEPROM.get(adr_user, user_number);	                           // Восстановить номер пользователя
+						EEPROM.get(adr_user+4, user_pass);                            // Восстановить пароль пользователя
+						//Serial.println(adr_user);
+						//Serial.println(user_number);
+						//Serial.println(user_pass);
+					}
+				}
+			if ((y>=192+deltaY) && (y<=224+deltaY))                                  // Строка 6
+				{
+					if(n_page-1 < 42)
+					{
+						number_user = ((n_page-1) * 6)+6;
+						waitForIt(1, 192, 239, 224);
+						myGLCD.setBackColor(0, 0, 255);
+						myGLCD.print("   ", CENTER, 245);                 //  Очистить
+						myGLCD.printNumI(number_user, CENTER, 245);     // 
+						myGLCD.setBackColor(0, 0, 0);
+						adr_user = adr_start_user + ((number_user-1) * 10);
+						EEPROM.get(adr_user, user_number);	                           // Восстановить номер пользователя
+						EEPROM.get(adr_user+4, user_pass);                            // Восстановить пароль пользователя
+						//Serial.println(adr_user);
+						//Serial.println(user_number);
+						//Serial.println(user_pass);
+					}
+				}
+
+		if ((y>=233+deltaY) && (y<=273+deltaY))                                     // Кнопки перелистывания списков
+			{
+			  if ((x>=2) && (x<=82))                                  //  Предыдущий лист
+				{
+					waitForIt(2, 233, 82, 273);
+					n_page--;
+					if(n_page <1) n_page = 1;
+					myGLCD.setBackColor(0, 0, 255);
+					myGLCD.print("   ", CENTER, 245);                 // Очистить
+					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+					myGLCD.setBackColor(0, 0, 0);
+					view_page_user(n_page);
+				}
+			  if ((x>=87) && (x<=153))                                // Перейти на первый лист
+				{
+					waitForIt(87, 233, 153, 273);
+					n_page = 1;
+					myGLCD.setBackColor(0, 0, 255);
+					myGLCD.print("   ", CENTER, 245);                 // Очистить
+					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+					myGLCD.setBackColor(0, 0, 0);
+					view_page_user(n_page);
+				}
+			  if ((x>=158) && (x<=238))                               // Следующий лист
+				{
+					waitForIt(158, 233, 238, 273);
+					n_page++;
+					if(n_page > 10) n_page = 10;
+					myGLCD.setBackColor(0, 0, 255);
+					myGLCD.print("   ", CENTER, 245);                 // Очистить
+					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+					myGLCD.setBackColor(0, 0, 0);
+					view_page_user(n_page);
+				}
+			}
+		if ((y>=278+deltaY) && (y<=318))                               //  
+			{
+			if ((x>=2) && (x<=238))                                    // Выход
+				{
+					waitForIt(2, 278, 238, 318);
+					return;
+				}
+			}
+		}
+	}			
+}
+void view_page_user(int block_n)                                     // Отображает одну страницу пользователя и пароля
+{
+	int User_x, User_y, x, y;
+	int yUser         = 32;                                                  // Стартовая точка смещения строк текста
+	int yDelta        = 16;                                                 // Дельта смещения вниз
+	int n_bl_max      = 6;                                                // Максимальное количество строк на экране
+	long user_numbert = 0; 
+    long user_passt   = 0; 
+	if(block_n == 43) n_bl_max = 4;
+	int adr_user = adr_start_user + ((block_n-1) * 10*6) ;
+
+	myGLCD.setColor(0, 0, 0);
+	myGLCD.fillRoundRect (1, 26, 240, 232);                            // Нарисовать прямоугольник для текста
+	myGLCD.setBackColor(0, 0, 0);
+	myGLCD.setColor(0, 255, 255);
+
+	for (int n_bl = 0; n_bl<n_bl_max; n_bl++)
+	{
+	//	Serial.println(adr_user);                                      // Адрес начала строки номера пользователя и пароля
+		EEPROM.get(adr_user, user_numbert );	                       // Восстановить номер пользователя
+		EEPROM.get(adr_user+4, user_passt );                           // Восстановить пароль пользователя
+		myGLCD.printNumI(((block_n-1) * 6)+n_bl+1, 2, yUser+8);  
+		myGLCD.print("User", 35, yUser);
+		myGLCD.printNumI(user_numbert, RIGHT, yUser);                  //
+		yUser = yUser + yDelta;                                        // Форматирование текста, смещение  вниз
+		//myGLCD.print("Pass", 35, yUser);
+		myGLCD.print("********", RIGHT, yUser);
+		//myGLCD.printNumI(user_passt, RIGHT, yUser);
+		yUser = yUser + yDelta; 
+		adr_user+=10;
+	}
+}
+
+void set_number_user(int adr_user)  // Проработать позже 
+{
+	lenStr = 8;
+	int _adr_user = adr_user;
+	klavXBee();
+	if (ret == 1)
+		{
+			ret = 0;
+			return;
+		}
+	strcpy(temp_stLast,stLast);
+	long int li1 = strtol(temp_stLast, NULL, 16);                                 // преобразовать первую часть строки в значение HEX	
+	byte *m = (byte *)&li1;                                                       //Разложить данные старшего адреса координатора побайтно для записи в память
+	for (int i=0; i<4; i++)
+		{
+		//	i2c_eeprom_write_byte(deviceaddress, i+_adr_xbee_h+2, m[i]);          // Записать в память данные старшего адреса координатора
+		}
+}
+
+//
+//
+//void set_adr_user()
+//{
+//	int x, y;
+//	int n_page = 1;
+//	int adr_device = 0;
+//	draw_view_adr_device();
+//	while (myTouch.dataAvailable()) {}
+//	view_page(n_page);
+//
+//	while (true)
+//	{
+//		if (myTouch.dataAvailable())
+//		{
+//				myTouch.read();
+//				x=myTouch.getX();
+//				y=myTouch.getY();
+//
+//			 if ((y>=32) && (y<=64))                                  // Строка 1
+//				{
+//					waitForIt(1, 32, 239, 64);
+//					number_device = ((n_page-1) * 6)+1;
+//					myGLCD.setBackColor(0, 0, 255);
+//					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+//					myGLCD.printNumI(number_device, CENTER, 245);     // 
+//					myGLCD.setBackColor(0, 0, 0);
+//					adr_device = adr_start_baseHL + ((number_device-1) * 10);
+//					read_HL_mem_XBee(adr_device);
+//					Serial.println(adr_device);
+//					draw_view_adr_device();
+//					view_page(n_page);
+//				}
+//			 if ((y>=64) && (y<=96))                                  // Строка 2
+//				{
+//					waitForIt(1, 64, 239, 96);
+//					number_device = ((n_page-1) * 6)+2;
+//					myGLCD.setBackColor(0, 0, 255);
+//					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+//					myGLCD.printNumI(number_device, CENTER, 245);     // 
+//					myGLCD.setBackColor(0, 0, 0);
+//					adr_device = adr_start_baseHL + ((number_device-1) * 10);
+//					read_HL_mem_XBee(adr_device);
+//					Serial.println(adr_device);
+//					draw_view_adr_device();
+//					view_page(n_page);
+//				}
+//			if ((y>=96) && (y<=128))                                  // Строка 3
+//				{
+//					waitForIt(1, 96, 239, 128);
+//					number_device = ((n_page-1) * 6)+3;
+//					myGLCD.setBackColor(0, 0, 255);
+//					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+//					myGLCD.printNumI(number_device, CENTER, 245);     // 
+//					myGLCD.setBackColor(0, 0, 0);
+//					adr_device = adr_start_baseHL + ((number_device-1) * 10);
+//					read_HL_mem_XBee(adr_device);
+//					Serial.println(adr_device);
+//					draw_view_adr_device();
+//					view_page(n_page);
+//				}
+//			if ((y>=128) && (y<=160))                                  // Строка 4
+//				{
+//					if(n_page-1 < 42)
+//					{
+//						number_device = ((n_page-1) * 6)+4;
+//						waitForIt(1, 128, 239, 160);
+//						myGLCD.setBackColor(0, 0, 255);
+//						myGLCD.print("   ", CENTER, 245);                 //  Очистить
+//						myGLCD.printNumI(number_device, CENTER, 245);     // 
+//						myGLCD.setBackColor(0, 0, 0);
+//						adr_device = adr_start_baseHL + ((number_device-1) * 10);
+//						read_HL_mem_XBee(adr_device);
+//						Serial.println(adr_device);
+//						draw_view_adr_device();
+//						view_page(n_page);
+//					}
+//				}
+//			if ((y>=160) && (y<=192))                                  // Строка 5
+//				{
+//					if(n_page-1 < 42)
+//					{
+//						number_device = ((n_page-1) * 6)+5;
+//						waitForIt(1, 160, 239, 192);
+//						myGLCD.setBackColor(0, 0, 255);
+//						myGLCD.print("   ", CENTER, 245);                 //  Очистить
+//						myGLCD.printNumI(number_device, CENTER, 245);     // 
+//						myGLCD.setBackColor(0, 0, 0);
+//						adr_device = adr_start_baseHL + ((number_device-1) * 10);
+//						read_HL_mem_XBee(adr_device);
+//						Serial.println(adr_device);
+//						draw_view_adr_device();
+//						view_page(n_page);
+//					}
+//				}
+//			if ((y>=192) && (y<=224))                                  // Строка 6
+//				{
+//					if(n_page-1 < 42)
+//					{
+//						number_device = ((n_page-1) * 6)+6;
+//						waitForIt(1, 192, 239, 224);
+//						myGLCD.setBackColor(0, 0, 255);
+//						myGLCD.print("   ", CENTER, 245);                 //  Очистить
+//						myGLCD.printNumI(number_device, CENTER, 245);     // 
+//						myGLCD.setBackColor(0, 0, 0);
+//						adr_device = adr_start_baseHL + ((number_device-1) * 10);
+//						read_HL_mem_XBee(adr_device);
+//						Serial.println(adr_device);
+//						draw_view_adr_device();
+//						view_page(n_page);
+//					}
+//				}
+//
+//		if ((y>=233) && (y<=273))                                     // Upper row  
+//			{
+//			  if ((x>=2) && (x<=82))                                  // Выход
+//				{
+//					waitForIt(2, 233, 82, 273);
+//					n_page--;
+//					if(n_page <1) n_page = 1;
+//					myGLCD.setBackColor(0, 0, 255);
+//					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+//					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+//					myGLCD.setBackColor(0, 0, 0);
+//					view_page(n_page);
+//				}
+//			  if ((x>=87) && (x<=153))                                  // Выход
+//				{
+//					waitForIt(87, 233, 153, 273);
+//					n_page = 1;
+//					myGLCD.setBackColor(0, 0, 255);
+//					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+//					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+//					myGLCD.setBackColor(0, 0, 0);
+//					view_page(n_page);
+//				}
+//			  if ((x>=158) && (x<=238))                               // Выход
+//				{
+//					waitForIt(158, 233, 238, 273);
+//					n_page++;
+//					if(n_page > 43) n_page = 43;
+//					myGLCD.setBackColor(0, 0, 255);
+//					myGLCD.print("   ", CENTER, 245);                 //  Очистить
+//					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+//					myGLCD.setBackColor(0, 0, 0);
+//					view_page(n_page);
+//				}
+//			}
+//		if ((y>=278) && (y<=318))                                    // Upper row  
+//			{
+//			if ((x>=2) && (x<=238))                                  // Выход
+//				{
+//					waitForIt(2, 278, 238, 318);
+//					return;
+//				}
+//			}
+//		}
+//	}			
+//}
+//
+
+
+
+
+
 void restore_default_device()
 {
 byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
@@ -3996,7 +4405,6 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					read_HL_mem_XBee(adr_device);
-					Serial.println(adr_device);
 					draw_view_adr_device();
 					view_page(n_page);
 				}
@@ -4010,7 +4418,6 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					read_HL_mem_XBee(adr_device);
-					Serial.println(adr_device);
 					draw_view_adr_device();
 					view_page(n_page);
 				}
@@ -4190,9 +4597,8 @@ void i2c_eeprom_write_byte( int deviceaddress, unsigned int eeaddress, byte data
 }
 void format_memory()
 {
-	   if (int x = i2c_eeprom_read_byte(deviceaddress,510) != 5)
-
-		  {	// write a 0 to all 500 bytes of the EEPROM
+	   if (int x = i2c_eeprom_read_byte(deviceaddress,0) != 55)
+		  {	// write a 0 to all 4096 bytes of the EEPROM
 			myGLCD.setColor(255, 255, 255);
 			myGLCD.print("Format!",CENTER, 80);// "Format!"
 			//delay (500);
@@ -4201,13 +4607,33 @@ void format_memory()
 				{
 				  i2c_eeprom_write_byte(deviceaddress,i, 0);
 				}
-			i2c_eeprom_write_byte(deviceaddress,510, 5); 
+			i2c_eeprom_write_byte(deviceaddress,0, 55); 
 			myGLCD.clrScr();
 			myGLCD.setColor(255, 255, 255);
 			myGLCD.print("Format OK!",CENTER, 80);// "Format Ok!"
 			delay (500);
 			myGLCD.clrScr();
 		  }
+
+	   	 if (int x = EEPROM.read(0) != 55)
+		  {	
+			myGLCD.setColor(255, 255, 255);
+			myGLCD.print("Format EEPROM!",CENTER, 80);// "Format!"
+			//delay (500);
+			//myGLCD.clrScr();
+			for (int i = 0; i < 1023; i++)
+				{
+				  EEPROM.write(i,0);
+				}
+			EEPROM.write(0,55); 
+			myGLCD.clrScr();
+			myGLCD.setColor(255, 255, 255);
+			myGLCD.print("EEPROM OK!",CENTER, 80);// "Format Ok!"
+			delay (500);
+			myGLCD.clrScr();
+		  }
+
+
 }
 
 void format_memory1()
@@ -4611,10 +5037,15 @@ void setup()
 
 	//format_memory1();
 	//read_memory1();
-	//format_memory();
+	format_memory();
 	Serial.println(" ");                                   //
 	Serial.println("System initialization OK!.");          // Информация о завершении настройки
-	//pass_start();                                        // Пароль на входе
+	//EEPROM.put(adr_start_user, user_number);	 
+	//EEPROM.put(adr_start_user+4, user_pass);
+	//EEPROM.put(adr_start_user+10, user_number);	 
+	//EEPROM.put(adr_start_user+14, user_pass);
+	view_adr_user();                                      // Выбор пользователя
+	pass_start();                                         // Пароль на входе
 }
 void loop()
 {
