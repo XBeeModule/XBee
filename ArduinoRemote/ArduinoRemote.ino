@@ -98,6 +98,21 @@ bool count6 = false;
 bool count7 = false;
 bool count8 = false;
 
+int countKN1 = 0;
+int countKN2 = 0;
+int countKN3 = 0;
+int countKN4 = 0;
+int countKN5 = 0;
+int countKN6 = 0;
+int countKN7 = 0;
+int countKN8 = 0;
+
+int stat_rele1 = 0;       // Текущее состояние реле
+int stat_rele2 = 0;       // Текущее состояние реле
+int stat_rele3 = 0;       // Текущее состояние реле
+int stat_rele4 = 0;       // Текущее состояние реле
+
+
 //********************* Настройка монитора ***********************************
 UTFT          myGLCD(ITDB24E_8, 38, 39, 40, 41);        // Дисплей 2.4" !! Внимание! Изменены настройки UTouchCD.h
 UTouch        myTouch(6, 5, 4, 3, 2);                   // Standard Arduino Mega/Due shield            : 6,5,4,3,2
@@ -160,6 +175,9 @@ int count_s           = 0;                                        // Счетчик вве
 int x_dev = 16;
 int y_dev = 16;
 int deltaY=10;
+
+int number_menu = 0;
+
 //------------------------------------------------------------------------------------------------- 
 float power60 = 0;                       // Измерение источника питания 6,0 вольт
 float power50 = 0;                       // Измерение источника питания 5,0 вольт
@@ -240,7 +258,12 @@ const char  txt_Bxod[]                         PROGMEM = "BXO""\x82";           
 const char  txt_pass_adm[]                     PROGMEM = "B""\x97""e""\x99\x9D\xA4""e ""\xA3""apo""\xA0\xAC";   // Введите пароль
 const char  txt_pass_adm1[]                    PROGMEM = "\x89""o""\x97\xA4""op  ""\xA3""apo""\xA0\xAF";        // Повтор  пароля
 const char  txt_interval1[]                    PROGMEM = "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC";         // Установить 
-const char  txt_interval2[]                    PROGMEM = "\x9D\xA2\xA4""ep""\x97""a""\xA0";                     // "\x9D\xA2\xA4""ep""\x97""a""\xA0"
+const char  txt_interval2[]                    PROGMEM = "\x9D\xA2\xA4""ep""\x97""a""\xA0\xAB";                 // интервалы
+const char  txt_interval3[]                    PROGMEM = "\x86\xA2\xA4""ep""\x97""a""\xA0 ms";                  // Интервал
+const char  txt_intervalM1[]                   PROGMEM = "\xA1""o""\xA4""op 1";                                 // мотор 1
+const char  txt_intervalM2[]                   PROGMEM = "\xA1""o""\xA4""op 2";                                 // мотор 2
+const char  txt_time1[]                        PROGMEM = "time 1";                                              // 
+const char  txt_time2[]                        PROGMEM = "time 2";                                              // 
 
 
 
@@ -314,7 +337,13 @@ const char* const table_message[] PROGMEM =
  txt_pass_adm,                     // 47 "B""\x97""e""\x99\x9D\xA4""e ""\xA3""apo""\xA0\xAC";                     // Введите пароль
  txt_pass_adm1,                    // 48 "\x89""o""\x97\xA4""op  ""\xA3""apo""\xA0\xAF";                          // Повтор  пароля
  txt_interval1,                    // 49 "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC";                           // Установить 
- txt_interval2                     // 50 "\x9D\xA2\xA4""ep""\x97""a""\xA0";                                       // "\x9D\xA2\xA4""ep""\x97""a""\xA0"
+ txt_interval2,                    // 50 "\x9D\xA2\xA4""ep""\x97""a""\xA0";                                       //  интервалы
+ txt_interval3,                    // 51 "\x86\xA2\xA4""ep""\x97""a""\xA0";                                       // Интервал
+ txt_intervalM1,                   // 52 "\xA1""o""\xA4""op 1";                                                   // мотор 1
+ txt_intervalM2,                   // 53 "\xA1""o""\xA4""op 2";                                                   // мотор 2
+ txt_time1,                        // 54 "time 1";                                                                // 
+ txt_time2                         // 55 "time 2";                                                                // 
+
 
 
 
@@ -419,8 +448,8 @@ uint8_t payload[30] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 int XBee_Addr16;                            //16-разрядный адрес
 int Len_XBee = 0;
-unsigned char info_XBee_data[10];
-unsigned char info_XBee_data1[10];
+unsigned char info_XBee_data[40];
+unsigned char info_XBee_data1[40];
 char* simbol_ascii[2];
 char   cmd;
 
@@ -850,6 +879,7 @@ void drawGlavMenu()
 {
 	myGLCD.clrScr();
 	myGLCD.setBackColor( 0, 0, 255);
+	number_menu =0;
 
 	myGLCD.setColor(0, 0, 255);                       //1
 	myGLCD.fillRoundRect (5, 5, 94, 90);
@@ -959,11 +989,6 @@ void klav_Glav_Menu()
 			waitForStart(5, 5, 94, 90);
 			myGLCD.printNumI(1, 208, 51);
 			payload[0] = 0x01;
-			//payload[1] = 0x00;
-			//payload[2] = 0x0A;
-			//payload[3] = 0x00;
-			//payload[4] = 0x1F;
-
 			XBeeWrite();
 		}
 		if(digitalRead(KN2) == LOW)
@@ -972,10 +997,6 @@ void klav_Glav_Menu()
 			waitForStart(5, 93, 94, 178);
 			myGLCD.printNumI(2, 208, 51);
 			payload[0] = 0x02;
-			//payload[1] = 0x00;
-			//payload[2] = 0x0A;
-			//payload[3] = 0x00;
-			//payload[4] = 0x1F;
 			XBeeWrite();
 		}
 		if(digitalRead(KN3) == LOW)
@@ -984,10 +1005,6 @@ void klav_Glav_Menu()
 			waitForStart(97, 5, 186, 90);
 			myGLCD.printNumI(3, 208, 51);
 			payload[0] = 0x03;
-			//payload[1] = 0x00;
-			//payload[2] = 0x0A;
-			//payload[3] = 0x00;
-			//payload[4] = 0x1F;
 			XBeeWrite();
 		}
 		if(digitalRead(KN4) == LOW)
@@ -996,10 +1013,6 @@ void klav_Glav_Menu()
 			waitForStart(97, 93, 186, 178);
 			myGLCD.printNumI(4, 208, 51);
 			payload[0] = 4;
-			//payload[1] = 0x00;
-			//payload[2] = 0x0A;
-			//payload[3] = 0x00;
-			//payload[4] = 0x1F;
 			XBeeWrite();
 		}
 		if(digitalRead(KN5) == false)
@@ -1008,10 +1021,6 @@ void klav_Glav_Menu()
 			waitForStart(5, 183, 60, 243);
 			myGLCD.printNumI(5, 208, 51);
 			payload[0] = 5;
-			//payload[1] = 0x00;
-			//payload[2] = 0x0A;
-			//payload[3] = 0x00;
-			//payload[4] = 0x1F;
 			XBeeWrite();
 		}
 		if(digitalRead(KN6) == LOW)
@@ -1020,10 +1029,6 @@ void klav_Glav_Menu()
 			waitForStart(63, 183, 118, 243);
 			myGLCD.printNumI(6, 208, 51);
 			payload[0] = 6;
-			//payload[1] = 0x00;
-			//payload[2] = 0x0A;
-			//payload[3] = 0x00;
-			//payload[4] = 0x1F;
 			XBeeWrite();
 		}
 		if(digitalRead(KN7) == LOW)
@@ -1032,10 +1037,6 @@ void klav_Glav_Menu()
 			waitForStart(121, 183, 176, 243);
 			myGLCD.printNumI(7, 208, 51);
 			payload[0] = 7;
-			//payload[1] = 0x00;
-			//payload[2] = 0x0A;
-			//payload[3] = 0x00;
-			//payload[4] = 0x1F;
 			XBeeWrite();
 		}
 		if(digitalRead(KN8) == LOW)
@@ -1044,10 +1045,6 @@ void klav_Glav_Menu()
 			waitForStart(179, 183, 234, 243);
 			myGLCD.printNumI(8, 208, 51);
 			payload[0] = 8;
-			//payload[1] = 0x00;
-			//payload[2] = 0x0A;
-			//payload[3] = 0x00;
-			//payload[4] = 0x1F;
 			XBeeWrite(); 
 		}
 
@@ -1180,7 +1177,7 @@ void klav_Glav_Menu()
 		  }
 		}
 	XBeeRead();
-	wiev_count(N_KN);
+	//wiev_count(N_KN);
 	//XBeeRead();
 	//myGLCD.setColor(255, 255, 255);
 	//myGLCD.setBackColor( 0, 0, 255);
@@ -1195,48 +1192,43 @@ void klav_Glav_Menu()
 	//myGLCD.printNumI(8, 199, 205+10 ); 
 	}
 }
-void wiev_count(int num)
-{
-//	XBeeRead();
-	myGLCD.setColor(255, 255, 255);
-	myGLCD.setBackColor( 0, 0, 255);
-
-
-//	Serial.println(rx.getData()[11],HEX);
-
-	switch(num)                                        //generate query response based on function type
-	{
-	case 1:
-		myGLCD.printNumI(rx.getData()[11], 10+33, 10+40); 
-		break;
-	case 2:
-		myGLCD.printNumI(rx.getData()[11], 10+33, 10+40); 
-		break;
-	case 3:
-		myGLCD.printNumI(rx.getData()[13], 102+33, 10+40);    
-		break;
-	case 4:
-		myGLCD.printNumI(rx.getData()[13], 102+33, 10+40);     
-		break;
-	case 5:
-		myGLCD.printNumI(rx.getData()[15], 25 , 205+10 );   
-		break;
-	case 6:
-		myGLCD.printNumI(rx.getData()[16], 83 , 205+10 ); 
-		break;
-	case 7:
-		myGLCD.printNumI(rx.getData()[17], 141, 205+10 );       
-		break;
-	case 8:
-		myGLCD.printNumI(rx.getData()[18], 199, 205+10 ); 
-		break;
-	default:
-		break;
-	}
-
-
-
-}
+//void wiev_count(int num)
+//{
+//	myGLCD.setColor(255, 255, 255);
+//	myGLCD.setBackColor( 0, 0, 255);
+//	switch(num)                                        //generate query response based on function type
+//	{
+//	case 1:
+//		myGLCD.printNumI(rx.getData()[11], 10+33, 10+40); 
+//		break;
+//	case 2:
+//		myGLCD.printNumI(rx.getData()[11], 10+33, 10+40); 
+//		break;
+//	case 3:
+//		myGLCD.printNumI(rx.getData()[13], 102+33, 10+40);    
+//		break;
+//	case 4:
+//		myGLCD.printNumI(rx.getData()[13], 102+33, 10+40);     
+//		break;
+//	case 5:
+//		myGLCD.printNumI(rx.getData()[15], 25 , 205+10 );   
+//		break;
+//	case 6:
+//		myGLCD.printNumI(rx.getData()[16], 83 , 205+10 ); 
+//		break;
+//	case 7:
+//		myGLCD.printNumI(rx.getData()[17], 141, 205+10 );       
+//		break;
+//	case 8:
+//		myGLCD.printNumI(rx.getData()[18], 199, 205+10 ); 
+//		break;
+//	default:
+//		break;
+//	}
+//
+//
+//
+//}
 void test_power()
 {
   currentTime = millis();                           // считываем время, прошедшее с момента запуска программы
@@ -1712,9 +1704,9 @@ void klavXBee()
 
 void draw_menu1()
 {
+	number_menu = 1;
 	myGLCD.clrScr();
 	myGLCD.setBackColor (0, 0, 255);
-
 	myGLCD.setColor(0, 0, 255);                    // 1
 	myGLCD.fillRoundRect (5, 28, 234, 83);
 	myGLCD.setColor(255, 255, 255);
@@ -1758,7 +1750,7 @@ void draw_menu2()
 {
 	myGLCD.clrScr();
 	myGLCD.setBackColor (0, 0, 255);
-	   
+	number_menu = 2;  
 	myGLCD.setColor(0, 0, 255);                    // 1  ИНФО XBee
 	myGLCD.fillRoundRect (5, 28, 234, 83);
 	myGLCD.setColor(255, 255, 255);
@@ -1802,6 +1794,7 @@ void draw_menu2()
 }
 void draw_menu3()
 {
+    number_menu = 3;                               // Настройка системы
 	myGLCD.clrScr();
 	myGLCD.setBackColor (0, 0, 255);
 	   
@@ -1848,6 +1841,7 @@ void draw_menu3()
 }
 void draw_menu4()                      // Меню установки паролей
 {
+	number_menu = 4;
 	myGLCD.clrScr();
 	myGLCD.setBackColor (0, 0, 255);
 	   
@@ -1892,6 +1886,55 @@ void draw_menu4()                      // Меню установки паролей
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
 	myGLCD.print(buffer, CENTER, 280);         
 }
+void draw_menu5()                      // Меню установки интервалов
+{
+	number_menu = 5;
+	myGLCD.clrScr();
+	myGLCD.setBackColor (0, 0, 255);
+	   
+	myGLCD.setColor(0, 0, 255);                    // 1   
+	myGLCD.fillRoundRect (5, 28, 234, 83);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 28, 234, 83);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51]))); 
+	myGLCD.print(buffer, CENTER, 38);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[52]))); 
+	myGLCD.print(buffer, CENTER, 58);  
+
+	myGLCD.setColor(0, 0, 255);                    // 2   
+	myGLCD.fillRoundRect (5, 86, 234, 141);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 86, 234, 141);	
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51])));
+	myGLCD.print(buffer, CENTER, 96);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[53])));
+	myGLCD.print(buffer, CENTER, 116);  
+
+	myGLCD.setColor(0, 0, 255);                    // 3
+	myGLCD.fillRoundRect (5, 144, 234, 199);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 144, 234, 199);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51])));
+	myGLCD.print(buffer, CENTER, 154);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[54])));
+	myGLCD.print(buffer, CENTER, 174);  
+
+	myGLCD.setColor(0, 0, 255);                    // 4
+	myGLCD.fillRoundRect (5, 202, 234, 257);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 202, 234, 257);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51])));
+	myGLCD.print(buffer, CENTER, 212);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[54])));
+	myGLCD.print(buffer, CENTER, 232);  
+
+	myGLCD.setColor(0, 0, 255);                    // 5   Выход         
+	myGLCD.fillRoundRect (5, 260, 234, 315);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 260, 234, 315);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	myGLCD.print(buffer, CENTER, 280);         
+}
 
 void klav_menu1()
 {
@@ -1904,31 +1947,90 @@ void klav_menu1()
 			myTouch.read();
 			x = myTouch.getX();
 			y = myTouch.getY();
-			if ((x >= 5) && (x <= 234))                                  // Первый ряд
+			if ((x >= 5) && (x <= 234))                              // Первый ряд
 			{
-				if ((y >= 28) && (y <= 83))                                   // Button: 1
+				if ((y >= 28) && (y <= 83))                          // Button: 1
 				{
-				 waitForIt(5, 28, 234, 83);
+				 waitForIt(5, 28, 234, 83);                          // Выбор ИУ
 				 myGLCD.clrScr();
 				 set_adr_device();
 				 draw_menu1();
 				}
-				if ((y >= 86) && (y <= 141))                                // Button: 2
+				if ((y >= 86) && (y <= 141))                         // Button: 2
 				{
-				 waitForIt(5, 86, 234, 141);
-				 myGLCD.clrScr();
-				 klav_Menu_Reset();
-//				 draw_menu1();
+					waitForIt(5, 86, 234, 141);                      // Сброс счетчиков
+
+					pass_test_start();                               // Нарисовать цифровую клавиатуру
+					klav123();                                       // Считать информацию с клавиатуры
+					if (ret == 1)                                    // Если "Возврат" - закончить
+						{
+							goto bailout11;                          // Перейти на окончание выполнения пункта меню
+						}
+								pass_test();                         // Проверить пароль
+					if ( ( pass2 == 1) || ( pass3 == 1))             // если верно - выполнить пункт меню
+						{
+							myGLCD.clrScr();                         // Очистить экран
+							myGLCD.print(txt_pass_ok, RIGHT, 208); 
+							delay (500);
+							klav_Menu_Reset();                       // если верно - выполнить пункт меню
+						}
+					else                                             // Пароль не верный - сообщить и закончить
+						{
+							txt_pass_no_all();
+						}
+
+						bailout11:                                   // Восстановить пункты меню
+						draw_menu1();
 				}
-				if ((y >= 144) && (y <= 199))                               // Button: 3
+				if ((y >= 144) && (y <= 199))                        // Button: 3
 				{
-				waitForIt(5, 144, 234, 199);
- 
+					waitForIt(5, 144, 234, 199);
+ 					myGLCD.clrScr();                                 // Установить интервалы
+					pass_test_start();                               // Нарисовать цифровую клавиатуру
+					klav123();                                       // Считать информацию с клавиатуры
+					if (ret == 1)                                    // Если "Возврат" - закончить
+						{
+							goto bailout12;                          // Перейти на окончание выполнения пункта меню
+						}
+								pass_test();                         // Проверить пароль
+					if ( ( pass2 == 1) || ( pass3 == 1))             // если верно - выполнить пункт меню
+						{
+							myGLCD.clrScr();                         // Очистить экран
+							myGLCD.print(txt_pass_ok, RIGHT, 208); 
+							delay (500);
+							klav_menu5();                            // если верно - выполнить пункт меню
+						}
+					else                                             // Пароль не верный - сообщить и закончить
+						{
+							txt_pass_no_all();
+						}
+
+					bailout12:    
+					draw_menu1();
 				}
-				if ((y >= 202) && (y <= 257))                               // Button: 4
+				if ((y >= 202) && (y <= 257))                        // Button: 4  Настройка системы
 				{
-				waitForIt(5, 202, 234, 257);
-					klav_menu3();
+					waitForIt(5, 202, 234, 257);                     // Настройка системы
+					pass_test_start();                               // Нарисовать цифровую клавиатуру
+					klav123();                                       // Считать информацию с клавиатуры
+					if (ret == 1)                                    // Если "Возврат" - закончить
+						{
+							goto bailout13;                          // Перейти на окончание выполнения пункта меню
+						}
+								pass_test();                         // Проверить пароль
+					if ( ( pass2 == 1) || ( pass3 == 1))             // если верно - выполнить пункт меню
+						{
+							myGLCD.clrScr();                         // Очистить экран
+							myGLCD.print(txt_pass_ok, RIGHT, 208); 
+							delay (500);
+							klav_menu3();                            // если верно - выполнить пункт меню
+						}
+					else                                             // Пароль не верный - сообщить и закончить
+						{
+							txt_pass_no_all();
+						}
+
+					bailout13:    
 					draw_menu1();
 				}
 				if ((y >= 260) && (y <= 315))                               // Button: 5
@@ -1989,7 +2091,7 @@ void klav_menu2()
 }
 void klav_menu3()
 {
-	int x,y;
+	int x,y;                                                                // Настройка системы
 	draw_menu3();
 	while (true)
 	{
@@ -2000,49 +2102,21 @@ void klav_menu3()
 			y = myTouch.getY();
 			if ((x >= 5) && (x <= 234))                                     // Первый ряд
 			{
-				if ((y >= 28) && (y <= 83))                                 // Button: 1
+				if ((y >= 28) && (y <= 83))                                 // Button: 1   Меню  Сброс данных
 				{
 					waitForIt(5, 28, 234, 83);
-					pass_test_start();  // Нарисовать цифровую клавиатуру
-					klav123();          // Считать информацию с клавиатуры
-					if (ret == 1)        // Если "Возврат" - закончить
-						{
-							goto bailout14;  // Перейти на окончание выполнения пункта меню
-						}
-				//   else                 // Иначе выполнить пункт меню
-					//   {
-							pass_test();     // Проверить пароль
-					//   }
-					if ( ( pass2 == 1) || ( pass3 == 1)) // если верно - выполнить пункт меню
-						{
-							myGLCD.clrScr();   // Очистить экран
-							myGLCD.print(txt_pass_ok, RIGHT, 208); 
-							delay (500);
-							eeprom_clear = 1; // Разрешить стереть информации
-					//		system_clear_start(); // если верно - выполнить пункт меню
-						}
-					else  // Пароль не верный - сообщить и закончить
-						{
-							txt_pass_no_all();
-						}
 
-						bailout14: // Восстановить пункты меню
-						/*myGLCD.clrScr();
-						myButtons.drawButtons();
-						print_up();
-*/
 
-					    draw_menu3();
+					draw_menu3();
 				}
-				if ((y >= 86) && (y <= 141))                                // Button: 2
+				if ((y >= 86) && (y <= 141))                                // Button: 2   Меню 
 				{
 					waitForIt(5, 86, 234, 141);
-					myGLCD.clrScr();
-					delay (500);
+
 	
 					draw_menu3();
 				}
-				if ((y >= 144) && (y <= 199))                               // Button: 3
+				if ((y >= 144) && (y <= 199))                               // Button: 3  Меню файлов
 				{
 					waitForIt(5, 144, 234, 199);
 					myGLCD.clrScr();
@@ -2050,7 +2124,7 @@ void klav_menu3()
 			
 					draw_menu3();
 				}
-				if ((y >= 202) && (y <= 257))                               // Button: 4
+				if ((y >= 202) && (y <= 257))                               // Button: 4   Установить пароль
 				{
 					waitForIt(5, 202, 234, 257);
 					myGLCD.clrScr();
@@ -2228,7 +2302,57 @@ void klav_menu4()                                           // Меню установки па
 		}
 	}
  }
+void klav_menu5()                                                    //  Меню установки интервалов
+{
+	int x,y;
+	draw_menu5();
+	while (true)
+	{
+		if (myTouch.dataAvailable())
+		{
+			myTouch.read();
+			x = myTouch.getX();
+			y = myTouch.getY();
+			if ((x >= 5) && (x <= 234))                              // Первый ряд
+			{
+				if ((y >= 28) && (y <= 83))                          // Button: 1  
+				{
+					waitForIt(5, 28, 234, 83);
+					set_interval(1);
+				//	bailout51: // Восстановить пункты меню
+					draw_menu5();
+				}
 
+				if ((y >= 86) && (y <= 141))                         // Button: 2  
+				{
+					waitForIt(5, 86, 234, 141);
+					set_interval(2);
+					//bailout52:
+					draw_menu5();
+				}
+				if ((y >= 144) && (y <= 199))                        // Button: 3    
+				{
+					waitForIt(5, 144, 234, 199);
+					set_interval(3);
+                 /*   bailout53:*/
+   					draw_menu5();
+				}
+				if ((y >= 202) && (y <= 257))                        // Button: 4
+				{
+					waitForIt(5, 202, 234, 257);
+					set_interval(4);
+					/*bailout54:*/
+					draw_menu5();
+			}
+			if ((y >= 260) && (y <= 315))                          // Button:Выход
+			{
+				waitForIt(5, 260, 234, 315);
+				break;
+			}
+			}
+		}
+	}
+ }
 
 void set_n_user_start()
 {
@@ -2349,6 +2473,49 @@ void set_pass_user_start()
 
 }
 
+void interval_start() // Начало установки интервалов
+{  
+		myGLCD.setFont(BigFont);
+		myGLCD.setBackColor(0, 0, 255);
+		myGLCD.clrScr();
+		drawButtons1();
+			// Вывод строки "Введите пароль!"
+		//myGLCD.setColor(255, 0, 0);
+		//myGLCD.print(txt12, CENTER, 280);// Введите пароль!"
+		//delay(300);
+		//myGLCD.print("                   ", CENTER, 280);
+		//delay(300);
+		//myGLCD.print(txt12, CENTER, 280);// Введите пароль!"
+
+}
+void set_interval(int adr_interval)
+{
+	myGLCD.clrScr();                                 // Установить интервалы
+	interval_start();                                // Нарисовать цифровую клавиатуру
+	//		Вывод строки "Введите интервал ms"
+	myGLCD.setColor(255, 255, 255);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[49])));
+	myGLCD.print(buffer, CENTER, 250);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51])));
+	myGLCD.print(buffer, CENTER, 270);  
+	delay(300);
+	myGLCD.print("                   ", CENTER, 250);
+	myGLCD.print("                   ", CENTER, 270);
+	delay(300);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[49])));
+	myGLCD.print(buffer, CENTER, 250);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51])));
+	myGLCD.print(buffer, CENTER, 270);  
+	klav123();                                       // Считать информацию с клавиатуры
+	if (ret == 1)                                    // Если "Возврат" - закончить
+		{
+			return;                                  // Перейти на окончание выполнения пункта меню
+		}
+
+
+
+
+}
 void set_pass_admin_start()
 {
 	myGLCD.setFont(BigFont);
@@ -2636,65 +2803,102 @@ void klav_Menu_Reset()
 			if ((x >= 5) && (x <= 118))                                // Button: Выход
 			{
 			  waitForIt(5, 248, 118, 293);
-			  draw_menu1();
 			  break;
 			}
 			if ((x >= 121) && (x <= 234))                              // Button: Сброс
 			{
 				waitForIt(121, 248, 234, 293);
 	
-				if(count1)
+				if(count1)                      // Сброс счетчика 1
+				{
+					payload[11] = 0x01;
+					waitForEndR(5, 5, 94, 90); 
+				}
+				else
 				{
 					payload[11] = 0x00;
 					waitForEndR(5, 5, 94, 90); 
 				}
 
-				if(count2)
+				if(count2)                      // Сброс счетчика 2
+				{
+					payload[12] = 0x01;
+					waitForEndR(5, 93, 94, 178);
+				}
+				else
 				{
 					payload[12] = 0x00;
 					waitForEndR(5, 93, 94, 178);
 				}
 
-				if(count3)
+				if(count3)                      // Сброс счетчика 3
+				{
+					payload[13] = 0x01;
+					waitForEnd(97, 5, 186, 90);
+				}
+				else
 				{
 					payload[13] = 0x00;
 					waitForEnd(97, 5, 186, 90);
 				}
 
-				if(count4)
+				if(count4)                      // Сброс счетчика 4
+				{
+					payload[14] = 0x01;
+					waitForEndR(97, 93, 186, 178);
+				}
+				else
 				{
 					payload[14] = 0x00;
 					waitForEndR(97, 93, 186, 178);
 				}
-
-				if(count5)
+				if(count5)                      // Сброс счетчика 5
+				{
+					payload[15] = 0x01;
+					waitForEndR(5, 183, 60, 243);
+				}
+				else
 				{
 					payload[15] = 0x00;
 					waitForEndR(5, 183, 60, 243);
 				}
 
-				if(count6)
+				if(count6)                      // Сброс счетчика 6
+				{
+					payload[16] = 0x01;
+					waitForEndR(63, 183, 118, 243);
+				}
+				else
 				{
 					payload[16] = 0x00;
 					waitForEndR(63, 183, 118, 243);
 				}
 
-				if(count7)
+				if(count7)                      // Сброс счетчика 7
+				{
+					payload[17] = 0x01;
+					waitForEndR(121, 183, 176, 243);
+				}
+				else
 				{
 					payload[17] = 0x00;
 					waitForEndR(121, 183, 176, 243);
 				}
 
-				if(count8)
+				if(count8)                      // Сброс счетчика 8
+				{
+					payload[18] = 0x01;
+					waitForEndR(179, 183, 234, 243);
+				}
+				else
 				{
 					payload[18] = 0x00;
 					waitForEndR(179, 183, 234, 243);
 				}
 
 				payload[0] = 12; 
+
 				XBeeWrite();
-				//delay(1000);
-				draw_menu1();
 				break;
 			}
 		  }
@@ -2778,34 +2982,37 @@ void updateStr(int val)
 
 void XBeeRead() 
 {
-  xbee.readPacket();                                          // Получить пакет
-	if (xbee.getResponse().isAvailable())                     //Проверить наличие данных
+  xbee.readPacket();                                                // Получить пакет
+	if (xbee.getResponse().isAvailable())                           //Проверить наличие данных
 	  {
-	  if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) 			// получен zb rx packet
+	  if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) 		    // получен zb rx packet
 		  {
-			xbee.getResponse().getZBRxResponse(rx);           // Теперь заполнить наш класс ZB гх  пакет rx заполнен
-			if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED)     // отправитель получил  ответ ACK
+			xbee.getResponse().getZBRxResponse(rx);                 // Теперь заполнить наш класс ZB гх  пакет rx заполнен
+			if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED)           // отправитель получил  ответ ACK
 				{
-					// Serial.println("packet acknowledged");
+				    Serial.println("packet acknowledged");          // пакет признал
+					//  !! Уточнить, может нужно сравнить адрес отправителя.
+					Serial.print("checksum is ");
+					Serial.println(rx.getChecksum(), HEX);          // Контрольная сумма
+					Serial.print("All packet length is ");
+					Serial.println(rx.getPacketLength(), DEC);      // Длина пакета общего пакета
+					Serial.print("Data packet length is ");
+					Serial.println(rx.getDataLength(), DEC);        // Длина пакета пакета данных
+
+					for (int i = 0; i < rx.getDataLength(); i++)    // Считать информацию длина пакета  в rx.getDataLength()
+					{
+						Serial.print("payload [");                   //
+						Serial.print(i, DEC);                        //
+						Serial.print("] is ");                       //
+						Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
+					}
+
+					info_module();                                  // Вывести параметры модуля на экран.
 				} 
 			else 
 				{
-				   Serial.println("packet not acknowledged");
+				   Serial.println("packet not acknowledged");        // пакет не признал
 				}
-				//Serial.print("checksum is ");
-				//Serial.println(rx.getChecksum(), HEX);    // Контрольная сумма
-				//Serial.print("All packet length is ");
-				//Serial.println(rx.getPacketLength(), DEC); // Длина пакета общего пакета
-				//Serial.print("Data packet length is ");
-				//Serial.println(rx.getDataLength(), DEC); // Длина пакета пакета данных
-
-				//for (int i = 0; i < rx.getDataLength(); i++)       // Считать информацию длина пакета  в rx.getDataLength()
-				//{
-				//	Serial.print("payload [");                   //
-				//	Serial.print(i, DEC);                        //
-				//	Serial.print("] is ");                       //
-				//	Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
-				//}
 
 				int x_back = rx.getData()[0];
 
@@ -2859,51 +3066,200 @@ void XBeeRead()
 				Serial.println(XBee_Addr16,HEX);
 */
 				addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);
-
 		   }
-	//  sl_XBee();
 	  } 
 
 	 else if (xbee.getResponse().isError())                           //  Ошибка приема
 		{
 		   Serial.print("error code:");
-		   Serial.println(xbee.getResponse().getErrorCode());       // Код ошибки xbee.getResponse().getErrorCode()
+		   Serial.println(xbee.getResponse().getErrorCode());         // Код ошибки xbee.getResponse().getErrorCode()
 		}
 }
+void info_module()
+{
+	//byte hi=highByte(value);
+	//byte low=lowByte(value);
 
-void sl_XBee()                                              // формировать ответ  ИУ
- {
-	funcType = (rx.getData()[0]);                           //copy the function type from the incoming query
-	field1	= (rx.getData()[1] << 8) | rx.getData()[2];     //copy field 1 from the incoming query
-	field2  = (rx.getData()[3] << 8) | rx.getData()[4];     //copy field 2 from the incoming query
-	switch(funcType)                                        //generate query response based on function type
+	//// тут мы эти hi,low можем сохраить, прочитать из eePROM
+
+	//int value2=(hi<<8) | low; // собираем как "настоящие программеры"
+	//int value3=word(hi,low); // или собираем как "ардуинщики"
+	int delta_x = 0;
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.setBackColor( 0, 0, 255);
+
+	countKN1 = (rx.getData()[1]<<8) | rx.getData()[2];         // Счетчик нажатий кнопки №1
+	countKN2 = (rx.getData()[3]<<8) | rx.getData()[4];         // Счетчик нажатий кнопки №2
+	countKN3 = (rx.getData()[5]<<8) | rx.getData()[6];         // Счетчик нажатий кнопки №3
+	countKN4 = (rx.getData()[7]<<8) | rx.getData()[8];         // Счетчик нажатий кнопки №4
+	countKN5 = (rx.getData()[9]<<8) | rx.getData()[10];        // Счетчик нажатий кнопки №5
+	countKN6 = (rx.getData()[11]<<8) | rx.getData()[12];       // Счетчик нажатий кнопки №6
+	countKN7 = (rx.getData()[13]<<8) | rx.getData()[14];       // Счетчик нажатий кнопки №7
+	countKN8 = (rx.getData()[15]<<8) | rx.getData()[16];       // Счетчик нажатий кнопки №8
+
+	if(number_menu == 0)
+	{
+
+		if(rx.getData()[26] != stat_rele1)
 		{
-		case 1:
+			stat_rele1 = rx.getData()[26];
+			if(rx.getData()[26] == 0)   // Отображение состояния реле №1
+			{
+				myGLCD.setColor(0, 0, 255);                    //1
+				myGLCD.fillRoundRect (5, 183, 60, 243);
+				myGLCD.setColor(255, 255, 255);
+				myGLCD.drawRoundRect (5, 183, 60, 243);
 
-			break;
-		case 2:
 
-			break;
-		case 3:
+				myGLCD.printNumI(5, 25-x_dev, 205-y_dev);  
 
-			break;
-		case 4:
+				if(countKN5 < 10) delta_x = 0;
+				else if(countKN5 > 9 && countKN5 < 100) delta_x = -8;
+				else if(countKN5 > 99) delta_x = -16;
+				myGLCD.printNumI(countKN5, 25+delta_x, 205+10);  
+			}
+			else
+			{
+				myGLCD.setColor(0, 255, 0);                    //1
+				myGLCD.fillRoundRect (5, 183, 60, 243);
+				myGLCD.setColor(255, 255, 255);
+				myGLCD.drawRoundRect (5, 183, 60, 243);
+	/*			myGLCD.setColor(255, 0, 0);
+				myGLCD.setBackColor( 0, 255, 0);*/
+				myGLCD.printNumI(5, 25-x_dev, 205-y_dev);  
+	/*			if(countKN5 < 10) delta_x = 0;
+				else if(countKN5 > 9 && countKN5 < 100) delta_x = -8;
+				else if(countKN5 > 99) delta_x = -16;
+				myGLCD.printNumI(countKN5, 25+delta_x, 205+10); 
+				myGLCD.setColor(255, 255, 255);
+				myGLCD.setBackColor( 0, 0, 255);*/
 
-			break;
-		case 5:
-
-			break;
-		case 6:
-
-			break;
-		default:
-			return;
-			break;
+			}
 		}
-	//XBeeWrite();
- }
+
+		if(rx.getData()[27] != stat_rele2)
+		{
+			stat_rele2 = rx.getData()[27];
+			if(rx.getData()[27] == 0)   // Отображение состояния реле №2
+			{
+				myGLCD.setColor(0, 0, 255);                    //2
+				myGLCD.fillRoundRect (63, 183, 118, 243);
+				myGLCD.setColor(255, 255, 255);
+				myGLCD.drawRoundRect (63, 183, 118, 243);
+				myGLCD.printNumI(6, 83-x_dev, 205-y_dev);                   //"2"
+			}
+			else
+			{
+				myGLCD.setColor(0, 255, 0);                    //2
+				myGLCD.fillRoundRect (63, 183, 118, 243);
+				myGLCD.setColor(255, 255, 255);
+				myGLCD.drawRoundRect (63, 183, 118, 243);
+				myGLCD.printNumI(6, 83-x_dev, 205-y_dev);                   //"2"
+			}
+		}
+
+		if(rx.getData()[28] != stat_rele3)
+		{
+			 stat_rele3 = rx.getData()[28];
+			if(rx.getData()[28] == 0)   // Отображение состояния реле №3
+			{
+				myGLCD.setColor(0, 0, 255);                    //3
+				myGLCD.fillRoundRect (121, 183, 176, 243);
+				myGLCD.setColor(255, 255, 255);
+				myGLCD.drawRoundRect (121, 183, 176, 243);
+				myGLCD.printNumI(7, 141-x_dev, 205-y_dev);                  //"3"
+			}
+			else
+			{
+				myGLCD.setColor(0, 255, 0);                    //3
+				myGLCD.fillRoundRect (121, 183, 176, 243);
+				myGLCD.setColor(255, 255, 255);
+				myGLCD.drawRoundRect (121, 183, 176, 243);
+				myGLCD.printNumI(7, 141-x_dev, 205-y_dev);                  //"3"
+			}
+		}
+		if(rx.getData()[29] != stat_rele4)
+		{
+			 stat_rele4 = rx.getData()[29];
+	    	if(rx.getData()[29] == 0)   // Отображение состояния реле №4
+			{
+				myGLCD.setColor(0, 0, 255);                      //4
+				myGLCD.fillRoundRect (179, 183, 234, 243);
+				myGLCD.setColor(255, 255, 255);
+				myGLCD.drawRoundRect (179, 183, 234, 243);
+				myGLCD.printNumI(8, 199-x_dev, 205-y_dev);                  //"4"
+			}
+			else
+			{
+				myGLCD.setColor(0, 255, 0);                      //4
+				myGLCD.fillRoundRect (179, 183, 234, 243);
+				myGLCD.setColor(255, 255, 255);
+				myGLCD.drawRoundRect (179, 183, 234, 243);
+				myGLCD.printNumI(8, 199-x_dev, 205-y_dev);                  //"4"
+			}
+		}
+	
+	
+		if(countKN1 < 10) delta_x = 0;
+		else if(countKN1 > 9 && countKN1 < 100) delta_x = -8;
+		else if(countKN1 > 99) delta_x = -16;
+		myGLCD.printNumI(countKN1, 43+delta_x, 10+40);
+		
+		if(countKN2 < 10) delta_x = 0;
+		else if(countKN2 > 9 && countKN2 < 100) delta_x = -8;
+		else if(countKN2 > 99) delta_x = -16;
+		myGLCD.printNumI(countKN2, 43+delta_x, 10+130); 
+	
+		if(countKN3 < 10) delta_x = 0;
+		else if(countKN3 > 9 && countKN3 < 100) delta_x = -8;
+		else if(countKN3 > 99) delta_x = -16;
+		myGLCD.printNumI(countKN3, 135+delta_x, 10+40);  
+		
+		if(countKN4 < 10) delta_x = 0;
+		else if(countKN4 > 9 && countKN4 < 100) delta_x = -8;
+		else if(countKN4 > 99) delta_x = -16;
+		myGLCD.printNumI(countKN4, 135+delta_x, 10+130);     
+	
+		if(countKN5 < 10) delta_x = 0;
+		else if(countKN5 > 9 && countKN5 < 100) delta_x = -8;
+		else if(countKN5 > 99) delta_x = -16;
+		myGLCD.printNumI(countKN5, 25+delta_x, 205+10);  
+		
+		if(countKN6 < 10) delta_x = 0;
+		else if(countKN6 > 9 && countKN6 < 100) delta_x = -8;
+		else if(countKN6 > 99) delta_x = -16;
+		myGLCD.printNumI(countKN6, 83+delta_x , 205+10); 
+		
+		if(countKN7 < 10) delta_x = 0;
+		else if(countKN7 > 9 && countKN7 < 100) delta_x = -8;
+		else if(countKN7 > 99) delta_x = -16;
+		myGLCD.printNumI(countKN7, 141+delta_x, 205+10);  
+		
+		if(countKN8 < 10) delta_x = 0;
+		else if(countKN8 > 9 && countKN8 < 100) delta_x = -8;
+		else if(countKN8 > 99) delta_x = -16;
+		myGLCD.printNumI(countKN8, 199+delta_x, 205+10); 
+
+		int count1_2 = countKN1-countKN2;
+		myGLCD.print("   ", 19, 70);
+		if(count1_2< 0) delta_x = -24;
+		else if(count1_2 >= 0 && count1_2 < 10) delta_x = 0;
+		else if(count1_2 > 9 && count1_2 < 100) delta_x = -8;
+		else if(count1_2 > 99) delta_x = -16;
+		myGLCD.printNumI(count1_2 , 43+delta_x, 10+60);
+		
+		count1_2 = countKN3-countKN4;
+		myGLCD.print("   ", 19, 70);
+		if(count1_2< 0) delta_x = -24;
+   		else if(count1_2 >= 0 && count1_2 < 10) delta_x = 0;
+		else if(count1_2 > 9 && count1_2 < 100) delta_x = -8;
+		else if(count1_2 > 99) delta_x = -16;
+		myGLCD.printNumI(count1_2 , 135+delta_x, 10+60);
+	}
+}
 void XBeeWrite()
 {
+	int i10;
 	zbTx = ZBTxRequest(addr64, payload, sizeof(payload));  
 	xbee.send(zbTx); 
 	if (xbee.readPacket(700))                                               //  После отправки запроса TX, мы ожидаем ответ статуса
@@ -2947,7 +3303,7 @@ void XBeeWrite()
 		myGLCD.setColor(0, 0, 0);
 		myGLCD.fillRoundRect (195, 71, 233, 109);
 		myGLCD.setColor(255, 255, 255);
-		
+		XBeeRead();                                         // Получить ответ от ИУ с параметрами.
 		switch(N_KN)                                        //generate query response based on function type
 		{
 		case 1:
@@ -3426,9 +3782,9 @@ void sendAtCommand()
 					if (atResponse.getValueLength() > 0) 
 						{
 							Len_XBee = atResponse.getValueLength();
-						//  Serial.print("Command value length is ");
-						//  Serial.println(atResponse.getValueLength(), DEC);
-						//  Serial.print("Command value: ");
+						  Serial.print("Command value length is ");
+						  Serial.println(atResponse.getValueLength(), DEC);
+						  Serial.print("Command value: ");
 							int i11=Len_XBee-1;
 							info_XBee_data1[0] = 0;
 							info_XBee_data1[1] = 0;
@@ -3438,11 +3794,10 @@ void sendAtCommand()
 						  for (i10 = 0; i10 < atResponse.getValueLength(); i10++) 
 							  {
 								info_XBee_data[i10] = atResponse.getValue()[i10];
-								//Serial.print(info_ZigBee_data[i10], HEX);
+								Serial.print(info_XBee_data[i10], HEX);
 								info_XBee_data1[i11] = info_XBee_data[i10];
 								i11--;
 							  }
-				
 						 // Serial.println("");
 						}
 			  } 
@@ -3516,7 +3871,7 @@ void sendAtCommand_ar()
 						  for (i10 = 0; i10 < atResponse.getValueLength(); i10++) 
 							  {
 								info_XBee_data[i10] = atResponse.getValue()[i10];
-								//Serial.print(info_ZigBee_data[i10], HEX);
+								Serial.print(info_XBee_data[i10], HEX);
 								info_XBee_data1[i11] = info_XBee_data[i10];
 								i11--;
 							  }
@@ -3535,7 +3890,7 @@ void sendAtCommand_ar()
 					myGLCD.drawRoundRect (278, 92, 318, 132);
 					myGLCD.setBackColor(0, 0, 0);
 					delay(200); 
-					XBee_alarm();
+					//XBee_alarm();
 					delay(1000);
 					myGLCD.setColor(0, 0, 0);
 					myGLCD.fillRoundRect (278, 92, 318, 132);
@@ -4151,7 +4506,7 @@ void view_page_user(int block_n)                                     // Отобража
 		myGLCD.print("User", 35, yUser);
 		myGLCD.printNumI(user_numbert, RIGHT, yUser);                  //
 		yUser = yUser + yDelta;                                        // Форматирование текста, смещение  вниз
-		//myGLCD.print("Pass", 35, yUser);
+		myGLCD.print("Pass", 35, yUser);
 		myGLCD.print("********", RIGHT, yUser);
 		//myGLCD.printNumI(user_passt, RIGHT, yUser);
 		yUser = yUser + yDelta; 
@@ -4534,42 +4889,6 @@ void set_adr_device()
 	}			
 }
 
-void XBee_alarm()
-{
-	 word val;
-	 word i = 0;
-		payload[0] = 0x01;
-		//payload[1] = 0x00;
-		//payload[2] = 0x0A;
-		//payload[3] = 0x00;
-		//payload[4] = 0x1F;
-	 //funcType = 9;
-	 //clock_read();
-	 //payload[0] = funcType;
-	 //payload[1] = 0;//i2c_eeprom_read_byte( deviceaddress,adr_level_war_gaz_max+1);
-	 //payload[2] = 0;//i2c_eeprom_read_byte( deviceaddress,adr_level_war_gaz_max);
-
-	 //for (int i_xbee = 0;i_xbee<20;i_xbee++)
-	 //{
-  //  	 payload[3+i_xbee] = i2c_eeprom_read_byte( deviceaddress,adr_n_user+i_xbee);
-	 //}
-
-	 //payload[23] = date;
-	 //payload[24] = mon;
-	 //byte *x = (byte *)&year;     //Разложить данные  побайтно для записи в память
-	 //payload[25] = x[0];
-	 //payload[26] = x[1];
-	 //payload[27] = hour;
-	 //payload[28] = min;
-	 //stCurrentLen_telef = i2c_eeprom_read_byte( deviceaddress,adr_n_telef-2);// Чтение номера пользователя
-		//			
-		//	for (int z=0; z<stCurrentLen_telef; z++)
-		//		{
-		//			payload[29+z] = i2c_eeprom_read_byte( deviceaddress,adr_n_telef+z);
-		//		} 
-	 XBeeWrite();
-
-} 
 
 byte i2c_eeprom_read_byte( int deviceaddress, unsigned int eeaddress )
 {
@@ -4634,29 +4953,6 @@ void format_memory()
 		  }
 
 
-}
-
-void format_memory1()
-{
-	int a = 1000;
-	int xp = 0;
-	long int li1 = 0;   
-	int adr_xbee_h = 1000;
-	for (int ip = 0; ip < 256; ip++)
-		{
-		  li1 = ip;                                     // преобразовать первую часть строки в значение HEX	
-						
-		byte *m = (byte *)&li1;                                                       //Разложить данные старшего адреса координатора побайтно для записи в память
-		for (int i=0; i<4; i++)
-			{
-				i2c_eeprom_write_byte(deviceaddress, i+adr_xbee_h+2, m[i]); // Записать в память данные старшего адреса координатора
-				i2c_eeprom_write_byte(deviceaddress, i+adr_xbee_h+6, m[i]); // Записать в память данные старшего адреса координатора
-			}
-
-			//i2c_eeprom_write_byte(deviceaddress,a, i);
-				Serial.println(adr_xbee_h);
-				adr_xbee_h += 10;
-		}
 }
 
 void read_memory1()
@@ -5035,8 +5331,6 @@ void setup()
 	Serial.println(FreeRam());
 	restore_default_device();
 
-	//format_memory1();
-	//read_memory1();
 	format_memory();
 	Serial.println(" ");                                   //
 	Serial.println("System initialization OK!.");          // Информация о завершении настройки
@@ -5044,8 +5338,9 @@ void setup()
 	//EEPROM.put(adr_start_user+4, user_pass);
 	//EEPROM.put(adr_start_user+10, user_number);	 
 	//EEPROM.put(adr_start_user+14, user_pass);
-	view_adr_user();                                      // Выбор пользователя
-	pass_start();                                         // Пароль на входе
+	
+	//view_adr_user();                                      // Выбор пользователя
+	//pass_start();                                         // Пароль на входе
 }
 void loop()
 {

@@ -363,6 +363,7 @@ void run_KN1_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
   delay(val);
   digitalWrite(M1_1, LOW);             // Мотор 1-
   digitalWrite(M1_2, LOW);             // Мотор 1+ 
+  increase_counter(1, address_count1); // Певый параметр DataXBee[], Счетчик 
 }
 void run_KN2_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации   в XBee
 {
@@ -376,6 +377,7 @@ void run_KN2_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
   delay(val);
   digitalWrite(M1_1, LOW);             // Мотор 1-
   digitalWrite(M1_2, LOW);             // Мотор 1+ 
+  increase_counter(3, address_count2); // Певый параметр DataXBee[], Счетчик 
 }
 void run_KN3_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации   в XBee
 {
@@ -389,6 +391,7 @@ void run_KN3_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
   delay(val);
   digitalWrite(M2_1, LOW);             // Мотор 2-
   digitalWrite(M2_2, LOW);             // Мотор 2+ 
+  increase_counter(5, address_count3); // Певый параметр DataXBee[], Счетчик 
 }
 void run_KN4_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации  в XBee
 {
@@ -402,6 +405,7 @@ void run_KN4_StatusXBee(byte funcType, word startreg, word numregs) // Вывод инф
   delay(val);
   digitalWrite(M2_1, LOW);             // Мотор 2-
   digitalWrite(M2_2, LOW);             // Мотор 2+ 
+  increase_counter(7, address_count4); // Певый параметр DataXBee[], Счетчик 
 }
 void run_KN5_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации  в XBee
 {
@@ -470,10 +474,6 @@ void motor1_set_time1_StatusXBee(byte funcType, word startreg, word numregs) // 
 	flashLed(dataLed, 1, 150);
 	payload[0] = funcType;
 	EEPROM.put(address_timeMotor1, startreg); 
-	//byte hi=highByte(startreg);
-	//byte low=lowByte(startreg);
-	//EEPROM.write(address_timeMotor1, hi);
-	//EEPROM.write(address_timeMotor1+1, low);
 }
 void motor2_set_time1_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации  в XBee
 {
@@ -489,28 +489,37 @@ void motor2_set_time1_StatusXBee(byte funcType, word startreg, word numregs) // 
 
 void reset_count()
 {
-   if(rx.getData()[11]==0) EEPROM.put(address_count1, 0);   
-   if(rx.getData()[12]==0) EEPROM.put(address_count2, 0);
-   if(rx.getData()[13]==0) EEPROM.put(address_count3, 0);
-   if(rx.getData()[14]==0) EEPROM.put(address_count4, 0);
-   if(rx.getData()[15]==0) EEPROM.put(address_count5, 0);
-   if(rx.getData()[16]==0) EEPROM.put(address_count6, 0);
-   if(rx.getData()[17]==0) EEPROM.put(address_count7, 0);
-   if(rx.getData()[18]==0) EEPROM.put(address_count8, 0);
+	//Serial.println(rx.getData()[11]);
+	//Serial.println(rx.getData()[12]);
+	//Serial.println(rx.getData()[13]);
+	//Serial.println(rx.getData()[14]);
+	//Serial.println(rx.getData()[15]);
+	//Serial.println(rx.getData()[16]);
+	//Serial.println(rx.getData()[17]);
+	//Serial.println(rx.getData()[18]);
+
+   if(rx.getData()[11]!=0) EEPROM.put(address_count1, 0);   
+   if(rx.getData()[12]!=0) EEPROM.put(address_count2, 0);
+   if(rx.getData()[13]!=0) EEPROM.put(address_count3, 0);
+   if(rx.getData()[14]!=0) EEPROM.put(address_count4, 0);
+   if(rx.getData()[15]!=0) EEPROM.put(address_count5, 0);
+   if(rx.getData()[16]!=0) EEPROM.put(address_count6, 0);
+   if(rx.getData()[17]!=0) EEPROM.put(address_count7, 0);
+   if(rx.getData()[18]!=0) EEPROM.put(address_count8, 0);
 }
-void increase_counter(int kn, int adr_count)
+void increase_counter(int dataXBee, int adr_count)
 {
 	int count;
 	EEPROM.get(adr_count, count);                      //Получить из EEPROM показания счетчика
 	count++;
-	if(count >=32767) count = 32767;
+	if(count >=999) count = 999;
 	EEPROM.put(adr_count, count);                      //Записать в EEPROM показания счетчика
 
 	byte hi=highByte(count);
     byte low=lowByte(count);
 
-	payload[kn] = hi;
-	payload[kn+1] = low;
+	payload[dataXBee] = hi;
+	payload[dataXBee+1] = low;
 }
 
 void set_count(int kn, int adr_count)
