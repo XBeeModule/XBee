@@ -55,6 +55,45 @@
 В меню настроек - возможность администрировать  функции каждой кнопки (поставил галочку - работает, не поставил - не работает).
 
 
+КАРТА МЕНЮ
+
+Выбор пользователя
+Ввод пароля
+
+МЕНЮ 1                                  (klav_menu1()
+        1 - Подключить ИУ        
+		    - Выбор устройства
+		2 - Сменить пользователя        (resetFunc())
+
+		3 - ==============
+		   
+		4 - Настройка системы           (klav_menu3())
+		  	- Вести пароль
+				1- Сброс счетчика        (klav_Menu_Reset())
+				   - Выбрать кнопки, на которых необходимо сбросить счетчики
+				2- Установить интервалы  (klav_menu5())
+				   1 - Интервал ms мотор 1
+				   2 - Интервал ms мотор 2
+				   3 - Интервал ms time 1
+				   4 - Интервал ms time 2
+				   5 - Выход
+                3 - Блокировка кнопок
+
+				4 - Установить пароль
+				  1 - Сброс данныч ХХХХ
+				  2 - Установить № пользователя
+				  3 - Пароль пользователя
+				  4 - Пароль администратора
+				  5 - Выход
+		5 - Выход
+МЕНЮ 2                          (klav_menu2()
+
+
+
+
+
+
+
 
 
 */
@@ -240,7 +279,7 @@ const char  txt_view_device1[]                 PROGMEM = "A\x99""peca";         
 const char  txt_view_device2[]                 PROGMEM = "yc""\xA4""po""\x9E""c""\xA4\x97";                     // устройств
 const char  txt_Set_device[]                   PROGMEM = "\x89""o""\x99\x9F\xA0\xAE\xA7\x9D\xA4\xAC"" ""\x86\x8A"; // Подключить ИУ
 const char  txt_null[]                         PROGMEM = "===========";                                         // "==============="
-const char  txt_reset_count[]                  PROGMEM = "C""\x96""poc c""\xA7""e""\xA4\xA7\x9D\x9F""a";        // Сброс счетчика
+const char  txt_reset_count[]                  PROGMEM = "C""\x96""poc";                                        // Сброс счетчика
 const char  txt_reset_count1[]                 PROGMEM = "C""\x80""POC";                                        // Сброс
 const char  txt_set_date1[]                    PROGMEM = "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC";         // Установить
 const char  txt_set_date2[]                    PROGMEM = "\x82""a""\xA4""y ""\x9D"" ""\x97""pe""\xA1\xAF";      // Дату и время 
@@ -264,6 +303,11 @@ const char  txt_intervalM1[]                   PROGMEM = "\xA1""o""\xA4""op 1"; 
 const char  txt_intervalM2[]                   PROGMEM = "\xA1""o""\xA4""op 2";                                 // мотор 2
 const char  txt_time1[]                        PROGMEM = "time 1";                                              // 
 const char  txt_time2[]                        PROGMEM = "time 2";                                              // 
+const char  txt__reset_count3[]                PROGMEM = "c""\xA7""e""\xA4\xA7\x9D\x9F""o""\x97";               // счетчиков
+const char  txt__reset_user1[]                 PROGMEM = "C""\xA1""e""\xA2\x9D\xA4\xAC";                        // Сменить
+const char  txt__reset_user2[]                 PROGMEM = "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";// пользователя
+const char  txt__blockKNa[]                    PROGMEM = "\x80\xA0""o""\x9F\x9D""po""\x97\x9F""a";              // Блокировка
+const char  txt__blockKNb[]                    PROGMEM = "\x9F\xA2""o""\xA3""o""\x9F";                          // кнопок
 
 
 
@@ -319,7 +363,7 @@ const char* const table_message[] PROGMEM =
  txt_view_device2,                 // 29 "yc""\xA4""po""\x9E""c""\xA4\x97";                                       // устройств
  txt_Set_device,                   // 30 "\x89""o""\x99\x9F\xA0\xAE\xA7\x9D\xA4\xAC"" ""\x86\x8A";                // Подключить ИУ
  txt_null,                         // 31 "===========";                                                           // "==============="
- txt_reset_count,                  // 32 "C""\x96""poc""\x9D\xA4\xAC"" c""\xA7""e""\xA4\xA7\x9D\x9F";             // Сброс счетчика
+ txt_reset_count,                  // 32 "C""\x96""poc" ;                                                         // Сброс 
  txt_reset_count1,                 // 33 "C""\x96""poc";                                                          // Сброс
  txt_set_date1,                    // 34 "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC";                           // Установить
  txt_set_date2,                    // 35 "\x82""a""\xA4""y ""\x9D"" ""\x97""pe""\xA1\xAF";                        // Дату и время 
@@ -342,7 +386,13 @@ const char* const table_message[] PROGMEM =
  txt_intervalM1,                   // 52 "\xA1""o""\xA4""op 1";                                                   // мотор 1
  txt_intervalM2,                   // 53 "\xA1""o""\xA4""op 2";                                                   // мотор 2
  txt_time1,                        // 54 "time 1";                                                                // 
- txt_time2                         // 55 "time 2";                                                                // 
+ txt_time2,                        // 55 "time 2";                                                                // 
+ txt__reset_count3,                // 56 "c""\xA7""e""\xA4\xA7\x9D\x9F""o""\x97";                                 // счетчиков
+ txt__reset_user1,                 // 57 "C""\xA1""e""\xA2\x9D\xA4\xAC";                                          // Сменить
+ txt__reset_user2,                 // 58 "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";                  // пользователя
+ txt__blockKNa,                    // 59 "\x80\xA0""o""\x9F\x9D""po""\x97\x9F""a";                                // Блокировка
+ txt__blockKNb                     // 60 "\x9F\xA2""o""\xA3""o""\x9F";                                            // кнопок
+
 
 
 
@@ -526,7 +576,7 @@ byte *_msg, _len;
 word _baud, _crc;
 
 //-----------------------------------------------------------------------------------------------
-
+void(* resetFunc) (void) = 0;                         // объявляем функцию reset
 //---------------  пароль --------------------------
 void txt_pass_no_all()
 {
@@ -543,7 +593,7 @@ void pass_test_start() // Начало проверки пароля
 		myGLCD.clrScr();
 		drawButtons1();
 			// Вывод строки "Введите пароль!"
-		myGLCD.setColor(255, 0, 0);
+		myGLCD.setColor(VGA_YELLOW);
 		myGLCD.print(txt12, CENTER, 280);// Введите пароль!"
 		delay(300);
 		myGLCD.print("                   ", CENTER, 280);
@@ -1711,40 +1761,42 @@ void draw_menu1()
 	myGLCD.fillRoundRect (5, 28, 234, 83);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 28, 234, 83);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[30])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[30])));    // Подключить ИУ
 	myGLCD.print(buffer, CENTER, 48);  
 
-	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.setColor(0, 0, 255);                    // 2
 	myGLCD.fillRoundRect (5, 86, 234, 141);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 86, 234, 141);	
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[32])));
-	myGLCD.print(buffer, CENTER, 106);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[57])));  // Сменить
+	myGLCD.print(buffer, CENTER, 96);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[58])));  // пользователя
+	myGLCD.print(buffer, CENTER, 116);  
 
-	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.setColor(0, 0, 255);                    // 3
 	myGLCD.fillRoundRect (5, 144, 234, 199);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 144, 234, 199);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[49])));                //
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[31])));    // ==============
 	myGLCD.print(buffer, CENTER, 154);  
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[50])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[31])));    // ==============
 	myGLCD.print(buffer, CENTER, 174);  
 
-	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.setColor(0, 0, 255);                    // 4
 	myGLCD.fillRoundRect (5, 202, 234, 257);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 202, 234, 257);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[36])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[36])));    // Настройка 
 	myGLCD.print(buffer, CENTER, 212);  
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[37])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[37])));    // системы
 	myGLCD.print(buffer, CENTER, 232);  
 
-	myGLCD.setColor(0, 0, 255);                    // 1
+	myGLCD.setColor(0, 0, 255);                    // 5
 	myGLCD.fillRoundRect (5, 260, 234, 315);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 260, 234, 315);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
-	myGLCD.print(buffer, CENTER, 280);                                   // "Выход"
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));     // "Выход"
+	myGLCD.print(buffer, CENTER, 280);                                 
 }
 void draw_menu2()
 {
@@ -1794,45 +1846,47 @@ void draw_menu2()
 }
 void draw_menu3()
 {
-    number_menu = 3;                               // Настройка системы
+    number_menu = 3;                                               // Настройка системы
 	myGLCD.clrScr();
 	myGLCD.setBackColor (0, 0, 255);
 	   
-	myGLCD.setColor(0, 0, 255);                    // 1   
+	myGLCD.setColor(0, 0, 255);                                    // 1   
 	myGLCD.fillRoundRect (5, 28, 234, 83);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 28, 234, 83);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[38]))); 
-	myGLCD.print(buffer, CENTER, 48);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[32])));  // Сброс
+	myGLCD.print(buffer, CENTER, 38);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[56])));  // счетчиков
+	myGLCD.print(buffer, CENTER, 58);  
 
-	myGLCD.setColor(0, 0, 255);                    // 2   
+	myGLCD.setColor(0, 0, 255);                                    // 2   
 	myGLCD.fillRoundRect (5, 86, 234, 141);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 86, 234, 141);	
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[40])));
-//	myGLCD.print(buffer, CENTER, 96);  
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[41])));
-//	myGLCD.print(buffer, CENTER, 116);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[49])));  // Установить
+	myGLCD.print(buffer, CENTER, 96);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[50])));  // Интервалы
+	myGLCD.print(buffer, CENTER, 116);  
 
-	myGLCD.setColor(0, 0, 255);                    // 3
+	myGLCD.setColor(0, 0, 255);                                    // 3 
 	myGLCD.fillRoundRect (5, 144, 234, 199);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 144, 234, 199);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[43])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[59]))); // Блокировка
 	myGLCD.print(buffer, CENTER, 154);  
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[44])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[60]))); // кнопок
 	myGLCD.print(buffer, CENTER, 174);  
 
-	myGLCD.setColor(0, 0, 255);                    // 4
+	myGLCD.setColor(0, 0, 255);                                    // 4 
 	myGLCD.fillRoundRect (5, 202, 234, 257);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 202, 234, 257);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[34])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[34])));  // Установить
 	myGLCD.print(buffer, CENTER, 212);  
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[42])));
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[42])));  // пароль
 	myGLCD.print(buffer, CENTER, 232);  
 
-	myGLCD.setColor(0, 0, 255);                    // 5   Выход         
+	myGLCD.setColor(0, 0, 255);                                   // 5   Выход         
 	myGLCD.fillRoundRect (5, 260, 234, 315);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 260, 234, 315);
@@ -1958,54 +2012,33 @@ void klav_menu1()
 				}
 				if ((y >= 86) && (y <= 141))                         // Button: 2
 				{
-					waitForIt(5, 86, 234, 141);                      // Сброс счетчиков
-
-					pass_test_start();                               // Нарисовать цифровую клавиатуру
-					klav123();                                       // Считать информацию с клавиатуры
-					if (ret == 1)                                    // Если "Возврат" - закончить
-						{
-							goto bailout11;                          // Перейти на окончание выполнения пункта меню
-						}
-								pass_test();                         // Проверить пароль
-					if ( ( pass2 == 1) || ( pass3 == 1))             // если верно - выполнить пункт меню
-						{
-							myGLCD.clrScr();                         // Очистить экран
-							myGLCD.print(txt_pass_ok, RIGHT, 208); 
-							delay (500);
-							klav_Menu_Reset();                       // если верно - выполнить пункт меню
-						}
-					else                                             // Пароль не верный - сообщить и закончить
-						{
-							txt_pass_no_all();
-						}
-
-						bailout11:                                   // Восстановить пункты меню
-						draw_menu1();
+					waitForIt(5, 86, 234, 141);                      //  
+					resetFunc();                                    // вызываем reset для смены пользователя
 				}
 				if ((y >= 144) && (y <= 199))                        // Button: 3
 				{
 					waitForIt(5, 144, 234, 199);
- 					myGLCD.clrScr();                                 // Установить интервалы
-					pass_test_start();                               // Нарисовать цифровую клавиатуру
-					klav123();                                       // Считать информацию с клавиатуры
-					if (ret == 1)                                    // Если "Возврат" - закончить
-						{
-							goto bailout12;                          // Перейти на окончание выполнения пункта меню
-						}
-								pass_test();                         // Проверить пароль
-					if ( ( pass2 == 1) || ( pass3 == 1))             // если верно - выполнить пункт меню
-						{
-							myGLCD.clrScr();                         // Очистить экран
-							myGLCD.print(txt_pass_ok, RIGHT, 208); 
-							delay (500);
-							klav_menu5();                            // если верно - выполнить пункт меню
-						}
-					else                                             // Пароль не верный - сообщить и закончить
-						{
-							txt_pass_no_all();
-						}
+ 				//	myGLCD.clrScr();                                 // Установить интервалы
+					//pass_test_start();                               // Нарисовать цифровую клавиатуру
+					//klav123();                                       // Считать информацию с клавиатуры
+					//if (ret == 1)                                    // Если "Возврат" - закончить
+					//	{
+					//		goto bailout12;                          // Перейти на окончание выполнения пункта меню
+					//	}
+					//			pass_test();                         // Проверить пароль
+					//if ( ( pass2 == 1) || ( pass3 == 1))             // если верно - выполнить пункт меню
+					//	{
+					//		myGLCD.clrScr();                         // Очистить экран
+					//		myGLCD.print(txt_pass_ok, RIGHT, 208); 
+					//		delay (500);
+					//		klav_menu5();                            // если верно - выполнить пункт меню
+					//	}
+					//else                                             // Пароль не верный - сообщить и закончить
+					//	{
+					//		txt_pass_no_all();
+					//	}
 
-					bailout12:    
+					//bailout12:    
 					draw_menu1();
 				}
 				if ((y >= 202) && (y <= 257))                        // Button: 4  Настройка системы
@@ -2023,7 +2056,7 @@ void klav_menu1()
 							myGLCD.clrScr();                         // Очистить экран
 							myGLCD.print(txt_pass_ok, RIGHT, 208); 
 							delay (500);
-							klav_menu3();                            // если верно - выполнить пункт меню
+							klav_menu3();                            // "Настройка системы"
 						}
 					else                                             // Пароль не верный - сообщить и закончить
 						{
@@ -2105,15 +2138,13 @@ void klav_menu3()
 				if ((y >= 28) && (y <= 83))                                 // Button: 1   Меню  Сброс данных
 				{
 					waitForIt(5, 28, 234, 83);
-
-
+					klav_Menu_Reset();                                      // Сброс счетчиков  
 					draw_menu3();
 				}
 				if ((y >= 86) && (y <= 141))                                // Button: 2   Меню 
 				{
 					waitForIt(5, 86, 234, 141);
-
-	
+					klav_menu5();                                          // Установить интервалы
 					draw_menu3();
 				}
 				if ((y >= 144) && (y <= 199))                               // Button: 3  Меню файлов
@@ -2121,7 +2152,7 @@ void klav_menu3()
 					waitForIt(5, 144, 234, 199);
 					myGLCD.clrScr();
 					delay (500);
-			
+
 					draw_menu3();
 				}
 				if ((y >= 202) && (y <= 257))                               // Button: 4   Установить пароль
@@ -2479,7 +2510,7 @@ void interval_start() // Начало установки интервалов
 		myGLCD.setBackColor(0, 0, 255);
 		myGLCD.clrScr();
 		drawButtons1();
-			// Вывод строки "Введите пароль!"
+		// Вывод строки "Введите пароль!"
 		//myGLCD.setColor(255, 0, 0);
 		//myGLCD.print(txt12, CENTER, 280);// Введите пароль!"
 		//delay(300);
@@ -2492,7 +2523,7 @@ void set_interval(int adr_interval)
 {
 	myGLCD.clrScr();                                 // Установить интервалы
 	interval_start();                                // Нарисовать цифровую клавиатуру
-	//		Вывод строки "Введите интервал ms"
+	                                                 //	Вывод строки "Введите интервал ms"
 	myGLCD.setColor(255, 255, 255);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[49])));
 	myGLCD.print(buffer, CENTER, 250);  
@@ -2512,8 +2543,32 @@ void set_interval(int adr_interval)
 			return;                                  // Перейти на окончание выполнения пункта меню
 		}
 
+	byte hi=highByte(var_klav123);
+    byte low=lowByte(var_klav123);
+	payload[1] = hi;
+	payload[2] = low;
 
+	switch (adr_interval) 
+	{
+		case 1:
+			payload[0] = 0x0D;
+ 		  break;
+		case 2:
+			payload[0] = 0x0E;
+		  break;
+		case 3:
+			payload[0] = 0x09;
+		  break;
+		case 4:
+			payload[0] = 0x0A;
+		  break;
+		default:
+		   break;
+		  // выполняется, если не выбрана ни одна альтернатива
+		  // default необязателен
+	}
 
+		XBeeWrite();
 
 }
 void set_pass_admin_start()
@@ -5288,6 +5343,12 @@ void setup_pin()
 }
 void setup()
 {
+	myGLCD.InitLCD(0);
+	myGLCD.clrScr();
+	myGLCD.setFont(BigFont);
+	myGLCD.print("\x85""A""\x81""P""\x8A\x85""KA", CENTER, 140);       // ЗАГРУЗКА
+	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[52]))); 
+	myGLCD.print("C""\x86""CTEM""\x91", CENTER, 170);                  // СИСТЕМЫ
 	Serial.begin(9600);                                    // Подключение к USB ПК
 //	Serial1.begin(115200);                                 // Подключение к
 	Serial2.begin(9600);                                 // Подключение к
@@ -5296,11 +5357,8 @@ void setup()
 	Serial.println(" ");
 	Serial.println(" ***** Start system  *****");
 	Serial.println(" ");
-	myGLCD.InitLCD(0);
-	myGLCD.clrScr();
-	myGLCD.setFont(BigFont);
 	myTouch.InitTouch(0);
-	delay(1000);
+	delay(500);
 	//myTouch.setPrecision(PREC_MEDIUM);
 	myTouch.setPrecision(PREC_HI);
 	//myTouch.setPrecision(PREC_EXTREME);
@@ -5325,7 +5383,7 @@ void setup()
 
 	SdFile::dateTimeCallback(dateTime);                          // Настройка времени записи файла
 
-	serial_print_date();                                   // Печать даты и времени
+	serial_print_date();                                         // Печать даты и времени
 	setup_pin();
 	Serial.print(F("FreeRam: "));
 	Serial.println(FreeRam());
@@ -5339,8 +5397,8 @@ void setup()
 	//EEPROM.put(adr_start_user+10, user_number);	 
 	//EEPROM.put(adr_start_user+14, user_pass);
 	
-	//view_adr_user();                                      // Выбор пользователя
-	//pass_start();                                         // Пароль на входе
+	view_adr_user();                                      // Выбор пользователя
+	pass_start();                                         // Пароль на входе
 }
 void loop()
 {
