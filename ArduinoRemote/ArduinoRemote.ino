@@ -977,6 +977,7 @@ void drawGlavMenu()
        myGLCD.setBackColor( 0, 0, 255);
 	   myGLCD.setColor(0, 0, 255);                       //1
 	}
+
 	myGLCD.fillRoundRect (5, 5, 94, 90);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 5,94, 90);
@@ -1084,7 +1085,7 @@ void drawGlavMenu()
 	else
 	{
 	   myGLCD.setColor(0, 0, 255); 
-	   myGLCD.setBackColor( 0, 0, 255);//8
+	   myGLCD.setBackColor( 0, 0, 255);                          //8
 	}
 	myGLCD.fillRoundRect (179, 183, 234, 243);
 	myGLCD.setColor(255, 255, 255);
@@ -1140,17 +1141,12 @@ void klav_Glav_Menu()
 		if(digitalRead(KN1) == false)
 		{
 			N_KN = 1;
-			if(blockKN1)
-			{
-				myGLCD.setBackColor( VGA_BLACK);
-				myGLCD.setColor(VGA_BLACK);     
-			}
-			else
+			if(!blockKN1)
 			{
 				waitForStart(5, 5, 94, 90);
-				myGLCD.setBackColor( 0, 0, 255);
-				myGLCD.setColor(0, 0, 255);                       //1
-				myGLCD.printNumI(1, 208, 51);
+			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
+				myGLCD.printNumI(1, 208, 51);                      //1
 				payload[0] = 0x01;
 				XBeeWrite();
 			}
@@ -1158,17 +1154,12 @@ void klav_Glav_Menu()
 		if(digitalRead(KN2) == LOW)
 		{
 			N_KN = 2;
-			if(blockKN2)
-			{
-				myGLCD.setBackColor( VGA_BLACK);
-				myGLCD.setColor(VGA_BLACK);     
-			}
-			else
+			if(!blockKN2)
 			{
 				waitForStart(5, 93, 94, 178);
-				myGLCD.setBackColor( 0, 0, 255);
-				myGLCD.setColor(0, 0, 255);                       //1
-				myGLCD.printNumI(2, 208, 51);
+			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+				myGLCD.setColor(VGA_WHITE);                        // Цвет текста    
+				myGLCD.printNumI(2, 208, 51);                      // 2
 				payload[0] = 0x02;
 				XBeeWrite();
 			}
@@ -1176,17 +1167,12 @@ void klav_Glav_Menu()
 		if(digitalRead(KN3) == LOW)
 		{
 			N_KN = 3;
-			if(blockKN3)
-			{
-				myGLCD.setBackColor( VGA_BLACK);
-				myGLCD.setColor(VGA_BLACK);     
-			}
-			else
+			if(!blockKN3)
 			{
 				waitForStart(97, 5, 186, 90);
-				myGLCD.setBackColor( 0, 0, 255);
-				myGLCD.setColor(0, 0, 255);                       //1
-				myGLCD.printNumI(3, 208, 51);
+			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
+				myGLCD.printNumI(3, 208, 51);                      // 3
 				payload[0] = 0x03;
 				XBeeWrite();
 			}
@@ -1194,17 +1180,12 @@ void klav_Glav_Menu()
 		if(digitalRead(KN4) == LOW)
 		{
 			N_KN = 4;
-			if(blockKN4)
-			{
-				myGLCD.setBackColor( VGA_BLACK);
-				myGLCD.setColor(VGA_BLACK);     
-			}
-			else
+			if(!blockKN4)
 			{
 				waitForStart(97, 93, 186, 178);
-				myGLCD.setBackColor( 0, 0, 255);
-				myGLCD.setColor(0, 0, 255);                       //1
-				myGLCD.printNumI(4, 208, 51);
+			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
+				myGLCD.printNumI(4, 208, 51);                      // 4
 				payload[0] = 4;
 				XBeeWrite();
 			}
@@ -1212,17 +1193,12 @@ void klav_Glav_Menu()
 		if(digitalRead(KN5) == false)
 		{
 			N_KN = 5;
-			if(blockKN5)
-			{
-				myGLCD.setBackColor( VGA_BLACK);
-				myGLCD.setColor(VGA_BLACK);     
-			}
-			else
+			if(!blockKN5)
 			{
 				waitForStart(5, 183, 60, 243);
-				myGLCD.setBackColor( 0, 0, 255);
-				myGLCD.setColor(0, 0, 255);                       //1
-				myGLCD.printNumI(5, 208, 51);
+			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
+				myGLCD.printNumI(5, 208, 51);                      // 5
 				payload[0] = 5;
 				XBeeWrite();
 			}
@@ -1230,17 +1206,12 @@ void klav_Glav_Menu()
 		if(digitalRead(KN6) == LOW)
 		{
 			N_KN = 6;
-			if(blockKN6)
-			{
-				myGLCD.setBackColor( VGA_BLACK);
-				myGLCD.setColor(VGA_BLACK);     
-			}
-			else
+			if(!blockKN6)
 			{
 				waitForStart(63, 183, 118, 243);
-				myGLCD.setBackColor( 0, 0, 255);
-				myGLCD.setColor(0, 0, 255);                       //1
-				myGLCD.printNumI(6, 208, 51);
+			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
+				myGLCD.printNumI(6, 208, 51);                      // 6
 				payload[0] = 6;
 				XBeeWrite();
 			}
@@ -1248,17 +1219,12 @@ void klav_Glav_Menu()
 		if(digitalRead(KN7) == LOW)
 		{
 			N_KN = 7;
-			if(blockKN7)
-			{
-				myGLCD.setBackColor( VGA_BLACK);
-				myGLCD.setColor(VGA_BLACK);     
-			}
-			else
+			if(!blockKN7)
 			{
 				waitForStart(121, 183, 176, 243);
-				myGLCD.setBackColor( 0, 0, 255);
-				myGLCD.setColor(0, 0, 255);                       //1
-				myGLCD.printNumI(7, 208, 51);
+			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
+				myGLCD.printNumI(7, 208, 51);                      // 7
 				payload[0] = 7;
 				XBeeWrite();
 			}
@@ -1266,17 +1232,12 @@ void klav_Glav_Menu()
 		if(digitalRead(KN8) == LOW)
 		{
 			N_KN = 8;
-			if(blockKN8)
-			{
-				myGLCD.setBackColor( VGA_BLACK);
-				myGLCD.setColor(VGA_BLACK);     
-			}
-			else
+			if(!blockKN8)
 			{
 				waitForStart(179, 183, 234, 243);
-				myGLCD.setBackColor( 0, 0, 255);
-				myGLCD.setColor(0, 0, 255);                       //1
-				myGLCD.printNumI(8, 208, 51);
+			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
+				myGLCD.printNumI(8, 208, 51);                      // 8
 				payload[0] = 8;
 				XBeeWrite();
 			}
@@ -1290,39 +1251,27 @@ void klav_Glav_Menu()
 
 		  if ((y >= 5) && (y <= 90))                                    // Первый ряд
 		  {
-		   if ((x >= 5) && (x <= 94))                                   // Button: 1
+		   if ((x >= 5+x_delta+6) && (x <= 94+x_delta+6))                                   // Button: 1
 			{
-				if(blockKN1)
-				{
-					waitForIt(5, 5, 94, 90);
-					myGLCD.setBackColor( VGA_BLACK);
-					myGLCD.setColor(VGA_BLACK);     
-				}
-				else
+				if(!blockKN1)
 				{
 					waitForStart(5, 5, 94, 90);
-					myGLCD.setBackColor( 0, 0, 255);
-					myGLCD.setColor(0, 0, 255);                       //1
-					N_KN = 1;
+					myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+					myGLCD.setColor(VGA_WHITE);                        // Цвет текста      
+					N_KN = 1;                                          // 1
 					myGLCD.printNumI(1, 208, 51);
 					payload[0] = 1;
 					XBeeWrite();
 				}
 			}
-			if ((x >= 97) && (x <= 186))                                // Button: 3
+			if ((x >= 97+x_delta+6) && (x <= 186+x_delta+6))                                // Button: 3
 			{
-				if(blockKN3)
-				{
-					waitForIt(97, 5, 186, 90);
-					myGLCD.setBackColor( VGA_BLACK);
-					myGLCD.setColor(VGA_BLACK);     
-				}
-				else
+				if(!blockKN3)
 				{
 					waitForStart(97, 5, 186, 90);
-					myGLCD.setBackColor( 0, 0, 255);
-					myGLCD.setColor(0, 0, 255);                       //1
-					N_KN = 3;
+                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+					N_KN = 3;                                          // 3
 					myGLCD.printNumI(3, 208, 51);
 					payload[0] = 3;
 					XBeeWrite();
@@ -1330,41 +1279,29 @@ void klav_Glav_Menu()
 			}
 		  }
 	 
-		  if ((y >= 93) && (y <= 178))                                    // Первый ряд
+		  if ((y >= 93) && (y <= 178))                                  // Первый ряд
 		  {
-		   if ((x >= 5) && (x <= 94))                                   // Button: 2
+		   if ((x >= 5+x_delta+6) && (x <= 94+x_delta+6))                                   // Button: 2
 			{
-				if(blockKN2)
-				{
-					waitForIt(5, 93, 94, 178);
-					myGLCD.setBackColor( VGA_BLACK);
-					myGLCD.setColor(VGA_BLACK);     
-				}
-				else
+				if(!blockKN2)
 				{
 					waitForStart(5, 93, 94, 178);
-					myGLCD.setBackColor( 0, 0, 255);
-					myGLCD.setColor(0, 0, 255);                       //1
-					N_KN = 2;
+                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+					N_KN = 2;                                          // 2
 					myGLCD.printNumI(2, 208, 51);
 					payload[0] = 2;
 					XBeeWrite();
 				}
 			}
-			if ((x >= 97) && (x <= 186))                              // Button: 4
+			if ((x >= 97+x_delta+6) && (x <= 186+x_delta+6))                              // Button: 4
 			{
-				if(blockKN4)
-				{
-					waitForIt(97, 93, 186, 178);
-					myGLCD.setBackColor( VGA_BLACK);
-					myGLCD.setColor(VGA_BLACK);     
-				}
-				else
+				if(!blockKN4)
 				{
 					waitForStart(97, 93, 186, 178);
-					myGLCD.setBackColor( 0, 0, 255);
-					myGLCD.setColor(0, 0, 255);                       //1
-					N_KN = 4;
+                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+					N_KN = 4;                                          // 
 					myGLCD.printNumI(4, 208, 51);
 					payload[0] = 4;
 					XBeeWrite();
@@ -1374,77 +1311,53 @@ void klav_Glav_Menu()
 	 
 		  if ((y >= 183) && (y <= 243))                                    //  ряд
 		  {
-		   if ((x >= 5) && (x <= 60))                                   // Button: 5
+		   if ((x >= 5+x_delta+6) && (x <= 60+x_delta+6))                                   // Button: 5
 			{
-				if(blockKN5)
-				{
-					waitForIt(5, 183, 60, 243);
-					myGLCD.setBackColor( VGA_BLACK);
-					myGLCD.setColor(VGA_BLACK);     
-				}
-				else
+				if(!blockKN5)
 				{
 					waitForStart(5, 183, 60, 243);
-					myGLCD.setBackColor( 0, 0, 255);
-					myGLCD.setColor(0, 0, 255);                       //1
-					N_KN = 5;
+                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+					N_KN = 5;                                          // 5
 					myGLCD.printNumI(5, 208, 51);
 					payload[0] = 5;
 					XBeeWrite();
 				}
 			}
-			if ((x >= 63) && (x <= 118))                                // Button: 6
+			if ((x >= 63+x_delta+6) && (x <= 118+x_delta+6))                                // Button: 6
 			{
-				if(blockKN6)
-				{
-					waitForIt(63, 183, 118, 243);
-					myGLCD.setBackColor( VGA_BLACK);
-					myGLCD.setColor(VGA_BLACK);     
-				}
-				else
+				if(!blockKN6)
 				{
 					waitForStart(63, 183, 118, 243);
-					myGLCD.setBackColor( 0, 0, 255);
-					myGLCD.setColor(0, 0, 255);                       //1
-					N_KN = 6;
+                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+					N_KN = 6;                                          // 6
 					myGLCD.printNumI(6, 208, 51);
 					payload[0] = 6;
 					XBeeWrite();
 				}
 			}
-			if ((x >= 121) && (x <= 176))                               // Button: 7
+			if ((x >= 121+x_delta+6) && (x <= 176+x_delta+6))                               // Button: 7
 			{
-				if(blockKN7)
-				{
-					waitForIt(121, 183, 176, 243);
-					myGLCD.setBackColor( VGA_BLACK);
-					myGLCD.setColor(VGA_BLACK);     
-				}
-				else
+				if(!blockKN7)
 				{
 					waitForStart(121, 183, 176, 243);
-					myGLCD.setBackColor( 0, 0, 255);
-					myGLCD.setColor(0, 0, 255);                       //1
-					N_KN = 7;
+                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+					N_KN = 7;                                          // 7
 					myGLCD.printNumI(7, 208, 51);
 					payload[0] = 7;
 					XBeeWrite();
 				}
 			}
-			if ((x >= 179) && (x <= 234))                               // Button: 8
+			if ((x >= 179+x_delta+6) && (x <= 234+x_delta+6))                               // Button: 8
 			{
-				if(blockKN8)
-				{
-					waitForIt(179, 183, 234, 243);
-					myGLCD.setBackColor( VGA_BLACK);
-					myGLCD.setColor(VGA_BLACK);     
-				}
-				else
+				if(!blockKN8)
 				{
 					waitForStart(179, 183, 234, 243);
-					myGLCD.setBackColor( 0, 0, 255);
-					myGLCD.setColor(0, 0, 255);                       //1
-					N_KN = 8;
+                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+					N_KN = 8;                                          // 8
 					myGLCD.printNumI(8, 208, 51);
 					payload[0] = 8;
 					XBeeWrite();
@@ -1454,12 +1367,12 @@ void klav_Glav_Menu()
 
 		  if ((y >= 248) && (y <= 293))                                // Четвертый ряд
 		  {
-			if ((x >= 5) && (x <= 118))                                // Button: Меню 1
+			if ((x >= 5+x_delta+6) && (x <= 118+x_delta+6))                                // Button: Меню 1
 			{
 			  waitForIt(5, 248, 118, 293);
 			  klav_menu1();
 			}
-			if ((x >= 121) && (x <= 234))                              // Button: Меню 2
+			if ((x >= 121+x_delta+6) && (x <= 234+x_delta+6))                              // Button: Меню 2
 			{
 			  waitForIt(121, 248, 234, 293);
 			  klav_menu2();
@@ -3706,18 +3619,16 @@ void info_module()
 			stat_rele1 = rx.getData()[26];
 			if(rx.getData()[26] == 0)   // Отображение состояния реле №1
 			{
-				myGLCD.setColor(0, 0, 255);                    //1
-				myGLCD.fillRoundRect (5, 183, 60, 243);
-				myGLCD.setColor(255, 255, 255);
-				myGLCD.drawRoundRect (5, 183, 60, 243);
 
-
-				myGLCD.printNumI(5, 25-x_dev, 205-y_dev);  
-
-				if(countKN5 < 10) delta_x = 0;
-				else if(countKN5 > 9 && countKN5 < 100) delta_x = -8;
-				else if(countKN5 > 99) delta_x = -16;
-				myGLCD.printNumI(countKN5, 25+delta_x, 205+10);  
+				myGLCD.setColor(0, 0, 255);                             // Цвет окраса кнопки в синий  
+				myGLCD.fillRoundRect (5, 183, 60, 243);                 // Закрaшиваем кнопку
+				myGLCD.setColor(VGA_WHITE);                             // Цвет текста 
+				myGLCD.drawRoundRect (5, 183, 60, 243);                 // Рисуем обрамление кнопки
+				myGLCD.printNumI(5, 25-x_dev, 205-y_dev);               // Отображаем состояние реле №1 (КН 5)   
+				//if(countKN5 < 10) delta_x = 0;
+				//else if(countKN5 > 9 && countKN5 < 100) delta_x = -8;
+				//else if(countKN5 > 99) delta_x = -16;
+				//myGLCD.printNumI(countKN5, 25+delta_x, 205+10);  
 			}
 			else
 			{
@@ -3725,16 +3636,7 @@ void info_module()
 				myGLCD.fillRoundRect (5, 183, 60, 243);
 				myGLCD.setColor(255, 255, 255);
 				myGLCD.drawRoundRect (5, 183, 60, 243);
-	/*			myGLCD.setColor(255, 0, 0);
-				myGLCD.setBackColor( 0, 255, 0);*/
 				myGLCD.printNumI(5, 25-x_dev, 205-y_dev);  
-	/*			if(countKN5 < 10) delta_x = 0;
-				else if(countKN5 > 9 && countKN5 < 100) delta_x = -8;
-				else if(countKN5 > 99) delta_x = -16;
-				myGLCD.printNumI(countKN5, 25+delta_x, 205+10); 
-				myGLCD.setColor(255, 255, 255);
-				myGLCD.setBackColor( 0, 0, 255);*/
-
 			}
 		}
 
@@ -3784,7 +3686,7 @@ void info_module()
 			 stat_rele4 = rx.getData()[29];
 	    	if(rx.getData()[29] == 0)   // Отображение состояния реле №4
 			{
-				myGLCD.setColor(0, 0, 255);                      //4
+				myGLCD.setColor(0, 0, 255);                                 //4
 				myGLCD.fillRoundRect (179, 183, 234, 243);
 				myGLCD.setColor(255, 255, 255);
 				myGLCD.drawRoundRect (179, 183, 234, 243);
@@ -3792,67 +3694,149 @@ void info_module()
 			}
 			else
 			{
-				myGLCD.setColor(0, 255, 0);                      //4
+				myGLCD.setColor(0, 255, 0);                                  //4
 				myGLCD.fillRoundRect (179, 183, 234, 243);
 				myGLCD.setColor(255, 255, 255);
 				myGLCD.drawRoundRect (179, 183, 234, 243);
 				myGLCD.printNumI(8, 199-x_dev, 205-y_dev);                  //"4"
 			}
 		}
-	
-		myGLCD.setColor(255, 255, 255);  
+	 
+		myGLCD.setColor(VGA_WHITE);                                         // Цвет текста  
+		if(!blockKN1)
+		{
+			myGLCD.setBackColor(0,0,255);                                   // Цвет фона синий
+		}
+		else
+		{
+			myGLCD.setBackColor(VGA_BLACK);                                 // Цвет фона
+		}
 		if(countKN1 < 10) delta_x = 0;
 		else if(countKN1 > 9 && countKN1 < 100) delta_x = -8;
 		else if(countKN1 > 99) delta_x = -16;
 		myGLCD.printNumI(countKN1, 43+delta_x, 10+40);
-		
+
+		if(!blockKN2)
+		{
+			myGLCD.setBackColor(0,0,255);                       // Цвет фона синий
+		}
+		else
+		{
+			myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+		}
+
 		if(countKN2 < 10) delta_x = 0;
 		else if(countKN2 > 9 && countKN2 < 100) delta_x = -8;
 		else if(countKN2 > 99) delta_x = -16;
 		myGLCD.printNumI(countKN2, 43+delta_x, 10+130); 
+
+		if(!blockKN3)
+		{
+			myGLCD.setBackColor(0,0,255);                       // Цвет фона синий
+		}
+		else
+		{
+			myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+		}
 	
 		if(countKN3 < 10) delta_x = 0;
 		else if(countKN3 > 9 && countKN3 < 100) delta_x = -8;
 		else if(countKN3 > 99) delta_x = -16;
 		myGLCD.printNumI(countKN3, 135+delta_x, 10+40);  
-		
+
+		if(!blockKN4)
+		{
+			myGLCD.setBackColor(0,0,255);                       // Цвет фона синий
+		}
+		else
+		{
+			myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+		}
 		if(countKN4 < 10) delta_x = 0;
 		else if(countKN4 > 9 && countKN4 < 100) delta_x = -8;
 		else if(countKN4 > 99) delta_x = -16;
 		myGLCD.printNumI(countKN4, 135+delta_x, 10+130);     
 	
+		if(!blockKN5)
+		{
+			myGLCD.setBackColor(0,0,255);                       // Цвет фона синий
+		}
+		else
+		{
+			myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+		}
 		if(countKN5 < 10) delta_x = 0;
 		else if(countKN5 > 9 && countKN5 < 100) delta_x = -8;
 		else if(countKN5 > 99) delta_x = -16;
 		myGLCD.printNumI(countKN5, 25+delta_x, 205+10);  
+		
+		if(!blockKN6)
+		{
+			myGLCD.setBackColor(0,0,255);                       // Цвет фона синий
+		}
+		else
+		{
+			myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+		}
 		
 		if(countKN6 < 10) delta_x = 0;
 		else if(countKN6 > 9 && countKN6 < 100) delta_x = -8;
 		else if(countKN6 > 99) delta_x = -16;
 		myGLCD.printNumI(countKN6, 83+delta_x , 205+10); 
 		
+		if(!blockKN7)
+		{
+			myGLCD.setBackColor(0,0,255);                       // Цвет фона синий
+		}
+		else
+		{
+			myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+		}
 		if(countKN7 < 10) delta_x = 0;
 		else if(countKN7 > 9 && countKN7 < 100) delta_x = -8;
 		else if(countKN7 > 99) delta_x = -16;
 		myGLCD.printNumI(countKN7, 141+delta_x, 205+10);  
 		
+		if(!blockKN8)
+		{
+			myGLCD.setBackColor(0,0,255);                       // Цвет фона синий
+		}
+		else
+		{
+			myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+		}
 		if(countKN8 < 10) delta_x = 0;
 		else if(countKN8 > 9 && countKN8 < 100) delta_x = -8;
 		else if(countKN8 > 99) delta_x = -16;
 		myGLCD.printNumI(countKN8, 199+delta_x, 205+10); 
 	
-
+		if(!blockKN1)
+		{
+			myGLCD.setBackColor(0,0,255);                       // Цвет фона синий
+		}
+		else
+		{
+			myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+		}
 		myGLCD.setColor(255, 255, 255);  
 		int count1_2 = countKN1-countKN2;
-		myGLCD.print("   ", 19, 70);
+		myGLCD.print("     ", 10, 70);
 		if(count1_2< 0) delta_x = -24;
 		else if(count1_2 >= 0 && count1_2 < 10) delta_x = 0;
 		else if(count1_2 > 9 && count1_2 < 100) delta_x = -8;
 		else if(count1_2 > 99) delta_x = -16;
 		myGLCD.printNumI(count1_2 , 43+delta_x, 10+60);
 		
+		if(!blockKN3)
+		{
+			myGLCD.setBackColor(0,0,255);                       // Цвет фона синий
+		}
+		else
+		{
+			myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+		}
 		count1_2 = countKN3-countKN4;
-		myGLCD.print("   ", 19, 70);
+		myGLCD.print("     ", 100, 70);
 		if(count1_2< 0) delta_x = -24;
    		else if(count1_2 >= 0 && count1_2 < 10) delta_x = 0;
 		else if(count1_2 > 9 && count1_2 < 100) delta_x = -8;
