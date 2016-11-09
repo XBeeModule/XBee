@@ -1111,11 +1111,11 @@ void drawGlavMenu()
 	myGLCD.setBackColor (0, 0, 0);
 }
 void klav_Glav_Menu()
-{
+{ 
 	int x,y;
 	drawGlavMenu();
-	while (true)
-	{
+ 	while (true)
+	{ 
 		clock_read();
 		if (oldsec != second)
 		{
@@ -5944,7 +5944,7 @@ void setup()
 	//EEPROM.put(adr_start_user+4, user_pass);
 	//EEPROM.put(adr_start_user+10, user_number);	 
 	//EEPROM.put(adr_start_user+14, user_pass);
-	
+	//	delay(6000);
 	view_adr_user();                                      // Выбор пользователя
 	pass_start();                                         // Пароль на входе
 }
