@@ -92,9 +92,33 @@
 
 
 
+-----------------------------------------------------------------
+Команды:
+payload[0]    Возврат номера команды
+payload[1]    run_KN1_StatusXBee(funcType, field1, field2);
+payload[2]    run_KN2_StatusXBee(funcType, field1, field2);
+payload[3]    run_KN3_StatusXBee(funcType, field1, field2);
+payload[4]    run_KN4_StatusXBee(funcType, field1, field2);
+payload[5]    run_KN5_StatusXBee(funcType, field1, field2);
+payload[6]    run_KN6_StatusXBee(funcType, field1, field2);
+payload[7]    run_KN7_StatusXBee(funcType, field1, field2);
+payload[8]    run_KN8_StatusXBee(funcType, field1, field2); 
+payload[9]    run_set_time1_StatusXBee(funcType, field1, field2);
+payload[10]   run_set_time2_StatusXBee(funcType, field1, field2);
+payload[11]   Запрос состояния
+payload[12]   reset_count();
+payload[13]   motor1_set_time1_StatusXBee(funcType, field1, field2);
+payload[14]   motor2_set_time1_StatusXBee(funcType, field1, field2); 
 
 
-
+if(rx.getData()[11]!=0) EEPROM.put(address_count1, 0);   
+if(rx.getData()[12]!=0) EEPROM.put(address_count2, 0);
+if(rx.getData()[13]!=0) EEPROM.put(address_count3, 0);
+if(rx.getData()[14]!=0) EEPROM.put(address_count4, 0);
+if(rx.getData()[15]!=0) EEPROM.put(address_count5, 0);
+if(rx.getData()[16]!=0) EEPROM.put(address_count6, 0);
+if(rx.getData()[17]!=0) EEPROM.put(address_count7, 0);
+if(rx.getData()[18]!=0) EEPROM.put(address_count8, 0);
 
 */
 
@@ -1110,6 +1134,8 @@ void drawGlavMenu()
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (194, 70, 234, 110);
 	myGLCD.setBackColor (0, 0, 0);
+	payload[0] = 11;                              // Команда "Запросить  состояние"
+    XBeeWrite();                                  // Запросить  состояние
 }
 void klav_Glav_Menu()
 { 
@@ -1382,43 +1408,7 @@ void klav_Glav_Menu()
 	XBeeRead();
 	}
 }
-//void wiev_count(int num)
-//{
-//	myGLCD.setColor(255, 255, 255);
-//	myGLCD.setBackColor( 0, 0, 255);
-//	switch(num)                                        //generate query response based on function type
-//	{
-//	case 1:
-//		myGLCD.printNumI(rx.getData()[11], 10+33, 10+40); 
-//		break;
-//	case 2:
-//		myGLCD.printNumI(rx.getData()[11], 10+33, 10+40); 
-//		break;
-//	case 3:
-//		myGLCD.printNumI(rx.getData()[13], 102+33, 10+40);    
-//		break;
-//	case 4:
-//		myGLCD.printNumI(rx.getData()[13], 102+33, 10+40);     
-//		break;
-//	case 5:
-//		myGLCD.printNumI(rx.getData()[15], 25 , 205+10 );   
-//		break;
-//	case 6:
-//		myGLCD.printNumI(rx.getData()[16], 83 , 205+10 ); 
-//		break;
-//	case 7:
-//		myGLCD.printNumI(rx.getData()[17], 141, 205+10 );       
-//		break;
-//	case 8:
-//		myGLCD.printNumI(rx.getData()[18], 199, 205+10 ); 
-//		break;
-//	default:
-//		break;
-//	}
-//
-//
-//
-//}
+
 void test_power()
 {
   currentTime = millis();                           // считываем время, прошедшее с момента запуска программы
@@ -2644,20 +2634,12 @@ void set_pass_user_start()
 
 }
 
-void interval_start() // Начало установки интервалов
+void interval_start()               // Начало установки интервалов
 {  
-		myGLCD.setFont(BigFont);
-		myGLCD.setBackColor(0, 0, 255);
-		myGLCD.clrScr();
-		drawButtons1();
-		// Вывод строки "Введите пароль!"
-		//myGLCD.setColor(255, 0, 0);
-		//myGLCD.print(txt12, CENTER, 280);// Введите пароль!"
-		//delay(300);
-		//myGLCD.print("                   ", CENTER, 280);
-		//delay(300);
-		//myGLCD.print(txt12, CENTER, 280);// Введите пароль!"
-
+	myGLCD.setFont(BigFont);
+	myGLCD.setBackColor(0, 0, 255);
+	myGLCD.clrScr();
+	drawButtons1();
 }
 void set_interval(int adr_interval)
 {
@@ -3505,21 +3487,21 @@ void XBeeRead()
 			if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED)           // отправитель получил  ответ ACK
 				{
 				    Serial.println("packet acknowledged");          // пакет признал
-					//  !! Уточнить, может нужно сравнить адрес отправителя.
-					Serial.print("checksum is ");
-					Serial.println(rx.getChecksum(), HEX);          // Контрольная сумма
-					Serial.print("All packet length is ");
-					Serial.println(rx.getPacketLength(), DEC);      // Длина пакета общего пакета
-					Serial.print("Data packet length is ");
-					Serial.println(rx.getDataLength(), DEC);        // Длина пакета пакета данных
+					////  !! Уточнить, может нужно сравнить адрес отправителя.
+					//Serial.print("checksum is ");
+					//Serial.println(rx.getChecksum(), HEX);          // Контрольная сумма
+					//Serial.print("All packet length is ");
+					//Serial.println(rx.getPacketLength(), DEC);      // Длина пакета общего пакета
+					//Serial.print("Data packet length is ");
+					//Serial.println(rx.getDataLength(), DEC);        // Длина пакета пакета данных
 
-					for (int i = 0; i < rx.getDataLength(); i++)    // Считать информацию длина пакета  в rx.getDataLength()
-					{
-						Serial.print("payload [");                   //
-						Serial.print(i, DEC);                        //
-						Serial.print("] is ");                       //
-						Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
-					}
+					//for (int i = 0; i < rx.getDataLength(); i++)    // Считать информацию длина пакета  в rx.getDataLength()
+					//{
+					//	Serial.print("payload [");                   //
+					//	Serial.print(i, DEC);                        //
+					//	Serial.print("] is ");                       //
+					//	Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
+					//}
 
 					info_module();                                  // Вывести параметры модуля на экран.
 				} 
@@ -3528,40 +3510,6 @@ void XBeeRead()
 				   Serial.println("packet not acknowledged");        // пакет не признал
 				}
 
-				int x_back = rx.getData()[0];
-
-			//	Serial.println(x_back);
-				myGLCD.setColor(255, 255, 255);
-				switch( x_back)                                        //generate query response based on function type
-				{
-					case 1:
-						waitForEnd(5, 5, 94, 90);
-						break;
-					case 2:
-						waitForEnd(5, 93, 94, 178);
-						break;
-					case 3:
-						waitForEnd(97, 5, 186, 90);
-						break;
-					case 4:
-						waitForEnd(97, 93, 186, 178);
-						break;
-					case 5:
-						waitForEnd(5, 183, 60, 243);
-						break;
-					case 6:
-						waitForEnd(63, 183, 118, 243);
-						break;
-					case 7:
-						waitForEnd(121, 183, 176, 243);
-						break;
-					case 8:
-						waitForEnd(179, 183, 234, 243);
-						break;
-					default:
-					//	return;
-						break;
-					}
 //				Serial.println();
 				//Получаем верхние 32-битное слово 64-битный адрес.  64-битный адрес 802.15.4 MAC адрес источника 
 				XBee_Addr64_MS=(uint32_t(rx.getFrameData()[0]) << 24) + (uint32_t(rx.getFrameData()[1]) << 16) + (uint16_t(rx.getFrameData()[2]) << 8) + rx.getFrameData()[3];
@@ -3842,6 +3790,46 @@ void info_module()
 		else if(count1_2 > 9 && count1_2 < 100) delta_x = -8;
 		else if(count1_2 > 99) delta_x = -16;
 		myGLCD.printNumI(count1_2 , 135+delta_x, 10+60);
+	
+		int x_back = rx.getData()[0];
+		myGLCD.setColor(255, 255, 255);
+		switch( x_back)                                        //generate query response based on function type
+		{
+			case 1:
+				waitForEnd(5, 5, 94, 90);
+				break;
+			case 2:
+				waitForEnd(5, 93, 94, 178);
+				break;
+			case 3:
+				waitForEnd(97, 5, 186, 90);
+				break;
+			case 4:
+				waitForEnd(97, 93, 186, 178);
+				break;
+			case 5:
+				waitForEnd(5, 183, 60, 243);
+				break;
+			case 6:
+				waitForEnd(63, 183, 118, 243);
+				break;
+			case 7:
+				waitForEnd(121, 183, 176, 243);
+				break;
+			case 8:
+				waitForEnd(179, 183, 234, 243);
+				break;
+			default:
+				waitForEnd(5, 5, 94, 90);
+				waitForEnd(5, 93, 94, 178);
+				waitForEnd(97, 5, 186, 90);
+				waitForEnd(97, 93, 186, 178);
+				waitForEnd(5, 183, 60, 243);
+				waitForEnd(63, 183, 118, 243);
+				waitForEnd(121, 183, 176, 243);
+				waitForEnd(179, 183, 234, 243);
+				break;
+			}
 	}
 }
 void XBeeWrite()
@@ -5928,11 +5916,10 @@ void setup()
 	//EEPROM.put(adr_start_user+4, user_pass);
 	//EEPROM.put(adr_start_user+10, user_number);	 
 	//EEPROM.put(adr_start_user+14, user_pass);
-	//	delay(6000);
 	view_adr_user();                                      // Выбор пользователя
 	pass_start();                                         // Пароль на входе
 }
 void loop()
 {
-	klav_Glav_Menu();
+	klav_Glav_Menu(); 
 }
