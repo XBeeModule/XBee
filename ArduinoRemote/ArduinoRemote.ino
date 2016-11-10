@@ -110,6 +110,34 @@ payload[12]   reset_count();
 payload[13]   motor1_set_time1_StatusXBee(funcType, field1, field2);
 payload[14]   motor2_set_time1_StatusXBee(funcType, field1, field2); 
 
+Возврат информации с ИУ
+
+set_count(1, address_count1);
+set_count(3, address_count2);
+set_count(5, address_count3);
+set_count(7, address_count4);
+set_count(9, address_count5);
+set_count(11, address_count6);
+set_count(13, address_count7);
+set_count(15, address_count8);
+set_count(17, address_koef_time1);    // Интервал1
+set_count(19, address_koef_time2);    // Интервал2
+set_count(21, address_timeMotor1 );   //address_timeMotor1           // 
+set_count(23, address_timeMotor2 );   //address_timeMotor2    
+payload[24] = 0;                      // 
+payload[25] = 0;                      // 
+payload[26] =  rele1;                 // Состояние реле 1 
+payload[27] =  rele2;                 // Состояние реле 2
+payload[28] =  rele3;                 // Состояние реле 3 
+payload[29] =  rele4;                 // Состояние реле 4 
+
+
+
+
+
+
+
+// комады сброса счетчиков
 
 if(rx.getData()[11]!=0) EEPROM.put(address_count1, 0);   
 if(rx.getData()[12]!=0) EEPROM.put(address_count2, 0);
@@ -169,6 +197,12 @@ int countKN5 = 0;
 int countKN6 = 0;
 int countKN7 = 0;
 int countKN8 = 0;
+
+int time1      = 0;          // Интервал 1 (резерв, не применяется)
+int time2      = 0;          // Интервал 2 (резерв, не применяется)
+int timeMotor1 = 0;          // Интервал Мотор1
+int timeMotor2 = 0;          // Интервал Мотор2
+
 
 bool blockKN1 = false;
 bool blockKN2 = false;
@@ -343,10 +377,10 @@ const char  txt_pass_adm1[]                    PROGMEM = "\x89""o""\x97\xA4""op 
 const char  txt_interval1[]                    PROGMEM = "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC";         // Установить 
 const char  txt_interval2[]                    PROGMEM = "\x9D\xA2\xA4""ep""\x97""a""\xA0\xAB";                 // интервалы
 const char  txt_interval3[]                    PROGMEM = "\x86\xA2\xA4""ep""\x97""a""\xA0 ms";                  // Интервал
-const char  txt_intervalM1[]                   PROGMEM = "\xA1""o""\xA4""op 1";                                 // мотор 1
-const char  txt_intervalM2[]                   PROGMEM = "\xA1""o""\xA4""op 2";                                 // мотор 2
-const char  txt_time1[]                        PROGMEM = "time 1";                                              // 
-const char  txt_time2[]                        PROGMEM = "time 2";                                              // 
+const char  txt_intervalM1[]                   PROGMEM = "\xA1""o""\xA4""op1-";                                 // мотор1-
+const char  txt_intervalM2[]                   PROGMEM = "\xA1""o""\xA4""op2-";                                 // мотор2-
+const char  txt_time1[]                        PROGMEM = "time1-";                                              // 
+const char  txt_time2[]                        PROGMEM = "time2-";                                              // 
 const char  txt__reset_count3[]                PROGMEM = "c""\xA7""e""\xA4\xA7\x9D\x9F""o""\x97";               // счетчиков
 const char  txt__reset_user1[]                 PROGMEM = "C""\xA1""e""\xA2\x9D\xA4\xAC";                        // Сменить
 const char  txt__reset_user2[]                 PROGMEM = "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";// пользователя
@@ -2083,7 +2117,7 @@ void draw_menu5()                      // Меню установки интервалов
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51]))); 
 	myGLCD.print(buffer, CENTER, 38);  
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[52]))); 
-	myGLCD.print(buffer, CENTER, 58);  
+	myGLCD.print(buffer+String(timeMotor1), CENTER, 58);  
 
 	myGLCD.setColor(0, 0, 255);                    // 2   
 	myGLCD.fillRoundRect (5, 86, 234, 141);
@@ -2092,7 +2126,7 @@ void draw_menu5()                      // Меню установки интервалов
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51])));
 	myGLCD.print(buffer, CENTER, 96);  
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[53])));
-	myGLCD.print(buffer, CENTER, 116);  
+	myGLCD.print(buffer+String(timeMotor2), CENTER, 116);  
 
 	myGLCD.setColor(0, 0, 255);                    // 3
 	myGLCD.fillRoundRect (5, 144, 234, 199);
@@ -2101,7 +2135,7 @@ void draw_menu5()                      // Меню установки интервалов
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51])));
 	myGLCD.print(buffer, CENTER, 154);  
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[54])));
-	myGLCD.print(buffer, CENTER, 174);  
+	myGLCD.print(buffer+String(time1), CENTER, 174);  
 
 	myGLCD.setColor(0, 0, 255);                    // 4
 	myGLCD.fillRoundRect (5, 202, 234, 257);
@@ -2110,7 +2144,7 @@ void draw_menu5()                      // Меню установки интервалов
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51])));
 	myGLCD.print(buffer, CENTER, 212);  
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[54])));
-	myGLCD.print(buffer, CENTER, 232);  
+	myGLCD.print(buffer+String(time2), CENTER, 232);  
 
 	myGLCD.setColor(0, 0, 255);                    // 5   Выход         
 	myGLCD.fillRoundRect (5, 260, 234, 315);
@@ -2669,7 +2703,7 @@ void set_interval(int adr_interval)
     byte low=lowByte(var_klav123);
 	payload[1] = hi;
 	payload[2] = low;
-
+	Serial.println(var_klav123);
 	switch (adr_interval) 
 	{
 		case 1:
@@ -3550,14 +3584,19 @@ void info_module()
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.setBackColor( 0, 0, 255);
 
-	countKN1 = (rx.getData()[1]<<8) | rx.getData()[2];         // Счетчик нажатий кнопки №1
-	countKN2 = (rx.getData()[3]<<8) | rx.getData()[4];         // Счетчик нажатий кнопки №2
-	countKN3 = (rx.getData()[5]<<8) | rx.getData()[6];         // Счетчик нажатий кнопки №3
-	countKN4 = (rx.getData()[7]<<8) | rx.getData()[8];         // Счетчик нажатий кнопки №4
-	countKN5 = (rx.getData()[9]<<8) | rx.getData()[10];        // Счетчик нажатий кнопки №5
-	countKN6 = (rx.getData()[11]<<8) | rx.getData()[12];       // Счетчик нажатий кнопки №6
-	countKN7 = (rx.getData()[13]<<8) | rx.getData()[14];       // Счетчик нажатий кнопки №7
-	countKN8 = (rx.getData()[15]<<8) | rx.getData()[16];       // Счетчик нажатий кнопки №8
+	countKN1   = (rx.getData()[1]<<8) | rx.getData()[2];         // Счетчик нажатий кнопки №1
+	countKN2   = (rx.getData()[3]<<8) | rx.getData()[4];         // Счетчик нажатий кнопки №2
+	countKN3   = (rx.getData()[5]<<8) | rx.getData()[6];         // Счетчик нажатий кнопки №3
+	countKN4   = (rx.getData()[7]<<8) | rx.getData()[8];         // Счетчик нажатий кнопки №4
+	countKN5   = (rx.getData()[9]<<8) | rx.getData()[10];        // Счетчик нажатий кнопки №5
+	countKN6   = (rx.getData()[11]<<8) | rx.getData()[12];       // Счетчик нажатий кнопки №6
+	countKN7   = (rx.getData()[13]<<8) | rx.getData()[14];       // Счетчик нажатий кнопки №7
+	countKN8   = (rx.getData()[15]<<8) | rx.getData()[16];       // Счетчик нажатий кнопки №8
+	time1      = (rx.getData()[17]<<8) | rx.getData()[18];       // Интервал 1 (резерв, не применяется)
+	time2      = (rx.getData()[19]<<8) | rx.getData()[20];       // Интервал 2 (резерв, не применяется)
+	timeMotor1 = (rx.getData()[21]<<8) | rx.getData()[22];       // Интервал Мотор1
+    timeMotor2 = (rx.getData()[23]<<8) | rx.getData()[24];       // Интервал Мотор2
+
 
 	if(number_menu == 0)
 	{
@@ -3573,10 +3612,6 @@ void info_module()
 				myGLCD.setColor(VGA_WHITE);                             // Цвет текста 
 				myGLCD.drawRoundRect (5, 183, 60, 243);                 // Рисуем обрамление кнопки
 				myGLCD.printNumI(5, 25-x_dev, 205-y_dev);               // Отображаем состояние реле №1 (КН 5)   
-				//if(countKN5 < 10) delta_x = 0;
-				//else if(countKN5 > 9 && countKN5 < 100) delta_x = -8;
-				//else if(countKN5 > 99) delta_x = -16;
-				//myGLCD.printNumI(countKN5, 25+delta_x, 205+10);  
 			}
 			else
 			{

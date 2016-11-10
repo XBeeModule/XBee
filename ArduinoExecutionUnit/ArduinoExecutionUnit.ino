@@ -300,7 +300,7 @@ void sl_XBee()                                              // формировать ответ
             run_set_time2_StatusXBee(funcType, field1, field2);
       break;
     case 11:
-            
+           set_payload();
       break;
     case 12:
            reset_count();
@@ -546,7 +546,6 @@ void set_payload()
 	set_count(19, address_koef_time2);    // Интервал2
 	set_count(21, address_timeMotor1 );   //address_timeMotor1           // 
 	set_count(23, address_timeMotor2 );   //address_timeMotor2    
- 	payload[24] = 0;                      // 
 	payload[25] = 0;                      // 
 	payload[26] =  rele1;                 // Состояние реле 1 
 	payload[27] =  rele2;                 // Состояние реле 2
