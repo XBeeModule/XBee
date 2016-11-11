@@ -61,7 +61,7 @@
 Ввод пароля
 
 МЕНЮ 1                                  (klav_menu1()
-        1 - Подключить ИУ        
+        1 - Подключить ИУ         
 		    - Выбор устройства
 		2 - Сменить пользователя        (resetFunc())
 
@@ -77,13 +77,13 @@
 				   3 - Интервал ms time 1
 				   4 - Интервал ms time 2
 				   5 - Выход
-                3 - Блокировка кнопок
+                3 - Блокировка кнопок   
 
-				4 - Установить пароль
-				  1 - Сброс данныч ХХХХ
-				  2 - Установить № пользователя
+				4 - Установить пароль                klav_menu4()
+				  1 - Сброс данных ХХХХ
+				  2 - Установить № пользователя      set_n_user_start();
 				  3 - Пароль пользователя
-				  4 - Пароль администратора
+				  4 - Пароль администратора          set_pass_admin_start();
 				  5 - Выход
 		5 - Выход
 МЕНЮ 2                          (klav_menu2()
@@ -218,6 +218,7 @@ int stat_rele2 = 0;       // Текущее состояние реле
 int stat_rele3 = 0;       // Текущее состояние реле
 int stat_rele4 = 0;       // Текущее состояние реле
 
+bool pass_on_off = false;
 
 //********************* Настройка монитора ***********************************
 UTFT          myGLCD(ITDB24E_8, 38, 39, 40, 41);        // Дисплей 2.4" !! Внимание! Изменены настройки UTouchCD.h
@@ -2351,34 +2352,8 @@ void klav_menu4()                                           // Меню установки па
 				if ((y >= 28) && (y <= 83))                          // Button: 1 Сброс данных
 				{
 					waitForIt(5, 28, 234, 83);
-					pass_test_start();                               // Нарисовать цифровую клавиатуру
-					klav123();                                       // Считать информацию с клавиатуры
-					if (ret == 1)                                    // Если "Возврат" - закончить
-						{
-							goto bailout14;                          // Перейти на окончание выполнения пункта меню
-						}
-					pass_test();                                     // Проверить пароль
-
-					if ( ( pass2 == 1) || ( pass3 == 1))             // если верно - выполнить пункт меню
-						{
-							myGLCD.clrScr();                         // Очистить экран
-							myGLCD.print(txt_pass_ok, RIGHT, 280); 
-							delay (500);
-							eeprom_clear = 1;                        // Разрешить стереть информации
-					//		system_clear_start();                    // если верно - выполнить пункт меню
-						}
-					else                                             // Пароль не верный - сообщить и закончить
-						{
-							txt_pass_no_all();
-						}
-
-						bailout14: // Восстановить пункты меню
-						/*myGLCD.clrScr();
-						myButtons.drawButtons();
-						print_up();
-*/
-
-					    draw_menu3();
+			        pass_off();                              // Отключить пароль
+					draw_menu3();
 				}
 
 				if ((y >= 86) && (y <= 141))                         // Button: 2 Установить номер пользователя
@@ -2794,6 +2769,110 @@ void set_pass_admin_start()
 			myGLCD.print(buffer, CENTER, 260);                                // Ошибка ввода!
 			delay(2000);
 		}
+}
+void pass_off()
+{
+	myGLCD.clrScr();
+
+view_on_off();
+
+	myGLCD.setBackColor (0, 0, 255);
+	myGLCD.setColor(0, 0, 255);
+	myGLCD.fillRoundRect (5, 179, 118, 234);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 179, 118, 234);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[1])));
+	myGLCD.print(buffer, 14, 199);                                   // "Ввод"
+
+	myGLCD.setColor(0, 0, 255);
+	myGLCD.fillRoundRect (121, 179, 234, 234);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (121, 179, 234, 234);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	myGLCD.print(buffer, 137, 199);                                  // Вых
+	bool pass_on_off_t = false;
+
+	while (true)
+	{
+		if (pass_on_off_t != pass_on_off)
+		{
+			view_on_off();
+			pass_on_off_t = pass_on_off;
+		}
+
+		if (myTouch.dataAvailable())
+		{
+			myTouch.read();
+			x = myTouch.getX();
+			y = myTouch.getY();
+
+			if ((y>=200-150) && (y<=239-150))                       // Buttons: ВКЛ 
+			{
+				if ((x>=121) && (x<=234))
+				{
+					waitForIt(121, 200-150, 234, 239-150);
+					pass_on_off = true;
+				}
+				else if ((x>=5) && (x<=118))                        // ОТКЛ
+				{
+					waitForIt(5, 200-150, 118, 239-150);
+					pass_on_off = false;
+				}
+			}
+
+			else if ((y >= 179) && (y <= 234))                                           // Четвертый ряд
+			{
+				if ((x >= 5) && (x <= 118))                                         // Button: "Ввод"
+				{
+					waitForIt(5, 179, 118, 234);
+				}
+				if ((x >= 121) && (x <= 234)) // Button: "Выход"
+				{
+					waitForIt(121, 179, 234, 234);
+					break;
+				}
+			}
+		}
+	}
+}
+void view_on_off()
+{
+	if(pass_on_off)         // пароль включен
+	{
+		myGLCD.setColor(0, 255, 0);
+		myGLCD.fillRoundRect(121, 200-150, 234, 239-150);
+		myGLCD.setColor(255, 255, 255);
+		myGLCD.drawRoundRect(121, 200-150, 234, 239-150);
+		myGLCD.setBackColor(0, 255, 0);
+		myGLCD.setColor(255, 255, 255);
+		myGLCD.print("BK""\x88", 140, 212-150);                 // ВКЛ
+//		myGLCD.setBackColor(0, 0, 0);
+
+		myGLCD.setColor(0, 0, 0);
+		myGLCD.fillRoundRect(5, 200-150, 118, 239-150);
+		myGLCD.setColor(255, 255, 255);
+		myGLCD.drawRoundRect(5, 200-150, 118, 239-150);
+		myGLCD.setBackColor(0, 0, 0);
+		myGLCD.print("OTK""\x88", 15, 212-150);                // ОТКЛ
+	}
+	else                    // пароль отключен
+	{
+
+		myGLCD.setColor(0, 255, 0);
+		myGLCD.fillRoundRect(5, 200-150, 118, 239-150);
+		myGLCD.setColor(255, 255, 255);
+		myGLCD.drawRoundRect(5, 200-150, 118, 239-150);
+		myGLCD.setBackColor(64, 64, 128);
+		myGLCD.print("OTK""\x88", 15, 212-150);                // ОТКЛ
+
+		myGLCD.setColor(0, 0, 0);
+		myGLCD.fillRoundRect(121, 200-150, 234, 239-150);
+		myGLCD.setColor(255, 255, 255);
+		myGLCD.drawRoundRect(121, 200-150, 234, 239-150);
+		myGLCD.setBackColor(0, 0, 0);
+		myGLCD.setColor(255, 255, 255);
+		myGLCD.print("BK""\x88", 140, 212-150);                 // ВКЛ
+	}
 }
 
 void drawMenuReset()
