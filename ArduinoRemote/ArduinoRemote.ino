@@ -4429,66 +4429,6 @@ void time_flag_start()
 	 if (timeF>60000) flag_time = 1;
  }
 
-void XBeeReadCount()
-{
-	zbTx = ZBTxRequest(addr64, payload, sizeof(payload));  
-	xbee.send(zbTx); 
-	if (xbee.readPacket(700))                                               //  После отправки запроса TX, мы ожидаем ответ статуса
-		{
-		if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) 		// получил ответ! // Должен быть znet tx status       
-			{
-				xbee.getResponse().getZBTxStatusResponse(txStatus);
-				if (txStatus.getDeliveryStatus() == SUCCESS)                // Получить статус доставки, пятый байт
-					{
-						Serial.println("Success.  time to celebrate!");     // Успешно, можно радоваться.
-						myGLCD.setColor(VGA_LIME);
-						myGLCD.fillRoundRect (195, 71, 233, 109);
-						myGLCD.setColor(255, 255, 255);
-						myGLCD.drawRoundRect (194, 70, 234, 110);
-						myGLCD.setBackColor(0, 0, 0);
-						delay(400); 
-						myGLCD.setColor(0, 0, 0);
-						myGLCD.fillRoundRect (195, 71, 233, 109);
-						myGLCD.setColor(255, 255, 255);
-	
-						myGLCD.printNumI(1, 10+10, 10+10); 
-						myGLCD.printNumI(1, 10+10, 98+10);
-						myGLCD.printNumI(3, 102+10, 10+10);    
-						myGLCD.printNumI(4, 102+10, 98+10);      
-						myGLCD.printNumI(5, 25 , 205 );   
-						myGLCD.printNumI(6, 83 , 205 );    
-						myGLCD.printNumI(7, 141, 205 );       
-						myGLCD.printNumI(8, 199, 205 );   
-
-					}
-				else 
-					{
-						Serial.println("The remote XBee did not receive our packet. is it powered on?");  	// Управляемый XBee не ответил. Он включен?
-					}
-			}
-		}
-	else if (xbee.getResponse().isError())
-		{
-		Serial.print("Error reading packet.  Error code: ");  
-		Serial.println(xbee.getResponse().getErrorCode());
-		} 
-	else 
-		{
-		// local XBee did not provide a timely TX Status Response -- should not happen
-		myGLCD.setColor(255 , 0, 0);
-		myGLCD.fillRoundRect (195, 71, 233, 109);
-		myGLCD.setColor(255, 255, 255);
-		myGLCD.drawRoundRect (194, 70, 234, 110);
-		myGLCD.setBackColor(0, 0, 0);
-		delay(400); 
-		myGLCD.setColor(0, 0, 0);
-		myGLCD.fillRoundRect (195, 71, 233, 109);
-		myGLCD.setColor(255, 255, 255);
-	}
-} 
-
-// -----------------------------------------------------------------------------------
-
 void updateStrXBee(int val) // Проверка длины строки при вводе адреса XBee
 {
 
