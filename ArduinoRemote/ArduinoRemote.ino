@@ -66,25 +66,37 @@
 		2 - Сменить пользователя        (resetFunc())
 
 		3 - Меню файлов                 (klav_menu6())
+		    1 - Меню SD                 (klav_menu7())
+				1 -  Формат SD
+				2 -  
+				3 -  
+				4 -  
+				5 - Выход
+           2 - Файлы
+           3 -
+           4 -
+           5 - Выход
+
+
 		   
 		4 - Настройка системы           (klav_menu3())
 		  	- Вести пароль
-				1- Сброс счетчика        (klav_Menu_Reset())
-				   - Выбрать кнопки, на которых необходимо сбросить счетчики
-				2- Установить интервалы              (klav_menu5())
-				   1 - Интервал ms мотор 1
-				   2 - Интервал ms мотор 2
-				   3 - Интервал ms time 1
-				   4 - Интервал ms time 2
-				   5 - Выход
-                3 - Блокировка кнопок   
+			1- Сброс счетчика        (klav_Menu_Reset())
+				- Выбрать кнопки, на которых необходимо сбросить счетчики
+			2- Установить интервалы              (klav_menu5())
+				1 - Интервал ms мотор 1
+				2 - Интервал ms мотор 2
+				3 - Интервал ms time 1
+				4 - Интервал ms time 2
+				5 - Выход
+            3 - Блокировка кнопок   
 
-				4 - Установить пароль                klav_menu4()
-				  1 - Блокировать ввод пароля        pass_off()
-				  2 - Установить № пользователя      set_n_user_start();
-				  3 - Пароль пользователя
-				  4 - Пароль администратора          set_pass_admin_start();
-				  5 - Выход
+			4 - Установить пароль                  klav_menu4()
+				1 - Блокировать ввод пароля        pass_off()
+				2 - Установить № пользователя      set_n_user_start();
+				3 - Пароль пользователя
+				4 - Пароль администратора          set_pass_admin_start();
+				5 - Выход
 		5 - Выход
 МЕНЮ 2                          (klav_menu2()
        1 - 
@@ -408,6 +420,9 @@ const char  txt__block_pass1[]                 PROGMEM = "\x80\xA0""o""\x9F\x9D"
 const char  txt__block_pass2[]                 PROGMEM = "\x97\x97""o""\x99"" ""\xA3""apo""\xA0\xAF";           // ввод пароля
 const char  txt__save[]                        PROGMEM = "Coxpa""\xA2";                                         // Сохран
 const char  txt__no[]                          PROGMEM = "He""\xA4"" ""\xA3""apo""\xA0\xAF"" ""\x9D";           // Нет пароля и
+const char  txt__SDmem[]                       PROGMEM = "SD  ""\xA3""a""\xA1\xAF\xA4\x9D";                     // SD памяти
+const char  txt__SDformat[]                    PROGMEM = "\x8B""op""\xA1""a""\xA4\x9D""po""\x97""a""\xA2\x9D""e";// Форматирование
+const char  txt__SDinfo[]                      PROGMEM = "\x86\xA2\xA5""op""\xA1""a""\xA6\x9D\xAF"" o";         // Информация о
 
 
 
@@ -499,8 +514,10 @@ const char* const table_message[] PROGMEM =
  txt__block_pass1,                 // 63 "\x80\xA0""o""\x9F\x9D""po""\x97""a""\xA4\xAC";                          // Блокировать
  txt__block_pass2,                 // 64 "\x97\x97""o""\x99"" ""\xA3""apo""\xA0\xAF";                             // ввод пароля
  txt__save,                        // 65 "Coxpa""\xA2";                                                           // Сохран.
- txt__no                           // 66 "He""\xA4"" ""\xA3""apo""\xA0\xAF"" ""\x9D";                             // Нет пароля и
-
+ txt__no,                          // 66 "He""\xA4"" ""\xA3""apo""\xA0\xAF"" ""\x9D";                             // Нет пароля и
+ txt__SDmem,                       // 67 "SD  ""\xA3""a""\xA1\xAF\xA4\x9D";                                       // SD памяти
+ txt__SDformat,                    // 68 "\x8B""op""\xA1""a""\xA4\x9D""po""\x97""a""\xA2\x9D""e";                 // Форматирование
+ txt__SDinfo                       // 69 "\x86\xA2\xA5""op""\xA1""a""\xA6\x9D\xAF"" o";                           // Информация о
 
 
 
@@ -550,6 +567,409 @@ char str_year_file[3];
 //char str0_1[10];
 char str1_1[10];
 char str2_1[10];
+
+// ======================== Программа форматирования SD =============================
+
+#define DEBUG_PRINT 1
+// Serial output stream
+ArduinoOutStream cout(Serial2);     // Сменить порт
+
+// MBR information
+uint8_t partType;
+uint32_t relSector;
+uint32_t partSize;
+
+// Fake disk geometry
+uint8_t numberOfHeads;
+uint8_t sectorsPerTrack;
+
+// FAT parameters
+uint16_t reservedSectors;
+uint8_t sectorsPerCluster;
+uint32_t fatStart;
+uint32_t fatSize;
+uint32_t dataStart;
+
+// constants for file system structure
+uint16_t const BU16 = 128;
+uint16_t const BU32 = 8192;
+
+//  strings needed in file system structures
+char noName[] = "NO NAME    ";
+char fat16str[] = "FAT16   ";
+char fat32str[] = "FAT32   ";
+//------------------------------------------------------------------------------
+#define sdError(msg) sdError_F(F(msg))
+
+void sdError_F(const __FlashStringHelper* str)
+{
+  cout << F("error: ");
+  cout << str << endl;
+  if (card.errorCode()) {
+    cout << F("SD error: ") << hex << int(card.errorCode());
+    cout << ',' << int(card.errorData()) << dec << endl;
+  }
+  while (1);
+}
+
+//------------------------------------------------------------------------------
+#if DEBUG_PRINT
+void debugPrint() 
+{
+  cout << F("FreeRam: ") << FreeRam() << endl;
+  cout << F("partStart: ") << relSector << endl;
+  cout << F("partSize: ") << partSize << endl;
+  cout << F("reserved: ") << reservedSectors << endl;
+  cout << F("fatStart: ") << fatStart << endl;
+  cout << F("fatSize: ") << fatSize << endl;
+  cout << F("dataStart: ") << dataStart << endl;
+  cout << F("clusterCount: ");
+  cout << ((relSector + partSize - dataStart) / sectorsPerCluster) << endl;
+  cout << endl;
+  cout << F("Heads: ") << int(numberOfHeads) << endl;
+  cout << F("Sectors: ") << int(sectorsPerTrack) << endl;
+  cout << F("Cylinders: ");
+  cout << cardSizeBlocks / (numberOfHeads * sectorsPerTrack) << endl;
+}
+#endif  // DEBUG_PRINT
+//------------------------------------------------------------------------------
+// write cached block to the card
+uint8_t writeCache(uint32_t lbn) {
+  return card.writeBlock(lbn, cache.data);
+}
+//------------------------------------------------------------------------------
+// initialize appropriate sizes for SD capacity
+void initSizes() {
+  if (cardCapacityMB <= 6) {
+    sdError("Card is too small.");
+  } else if (cardCapacityMB <= 16) {
+    sectorsPerCluster = 2;
+  } else if (cardCapacityMB <= 32) {
+    sectorsPerCluster = 4;
+  } else if (cardCapacityMB <= 64) {
+    sectorsPerCluster = 8;
+  } else if (cardCapacityMB <= 128) {
+    sectorsPerCluster = 16;
+  } else if (cardCapacityMB <= 1024) {
+    sectorsPerCluster = 32;
+  } else if (cardCapacityMB <= 32768) {
+    sectorsPerCluster = 64;
+  } else {
+    // SDXC cards
+    sectorsPerCluster = 128;
+  }
+
+  cout << F("Blocks/Cluster: ") << int(sectorsPerCluster) << endl;
+  // set fake disk geometry
+  sectorsPerTrack = cardCapacityMB <= 256 ? 32 : 63;
+
+  if (cardCapacityMB <= 16) {
+    numberOfHeads = 2;
+  } else if (cardCapacityMB <= 32) {
+    numberOfHeads = 4;
+  } else if (cardCapacityMB <= 128) {
+    numberOfHeads = 8;
+  } else if (cardCapacityMB <= 504) {
+    numberOfHeads = 16;
+  } else if (cardCapacityMB <= 1008) {
+    numberOfHeads = 32;
+  } else if (cardCapacityMB <= 2016) {
+    numberOfHeads = 64;
+  } else if (cardCapacityMB <= 4032) {
+    numberOfHeads = 128;
+  } else {
+    numberOfHeads = 255;
+  }
+}
+//------------------------------------------------------------------------------
+// zero cache and optionally set the sector signature
+void clearCache(uint8_t addSig) {
+  memset(&cache, 0, sizeof(cache));
+  if (addSig) {
+    cache.mbr.mbrSig0 = BOOTSIG0;
+    cache.mbr.mbrSig1 = BOOTSIG1;
+  }
+}
+//------------------------------------------------------------------------------
+// zero FAT and root dir area on SD
+void clearFatDir(uint32_t bgn, uint32_t count) {
+  clearCache(false);
+  if (!card.writeStart(bgn, count)) {
+    sdError("Clear FAT/DIR writeStart failed");
+  }
+  for (uint32_t i = 0; i < count; i++) {
+    if ((i & 0XFF) == 0) {
+      cout << '.';
+    }
+    if (!card.writeData(cache.data)) {
+      sdError("Clear FAT/DIR writeData failed");
+    }
+  }
+  if (!card.writeStop()) {
+    sdError("Clear FAT/DIR writeStop failed");
+  }
+  cout << endl;
+}
+//------------------------------------------------------------------------------
+// return cylinder number for a logical block number
+uint16_t lbnToCylinder(uint32_t lbn) {
+  return lbn / (numberOfHeads * sectorsPerTrack);
+}
+//------------------------------------------------------------------------------
+// return head number for a logical block number
+uint8_t lbnToHead(uint32_t lbn) {
+  return (lbn % (numberOfHeads * sectorsPerTrack)) / sectorsPerTrack;
+}
+//------------------------------------------------------------------------------
+// return sector number for a logical block number
+uint8_t lbnToSector(uint32_t lbn) {
+  return (lbn % sectorsPerTrack) + 1;
+}
+//------------------------------------------------------------------------------
+// format and write the Master Boot Record
+void writeMbr() {
+  clearCache(true);
+  part_t* p = cache.mbr.part;
+  p->boot = 0;
+  uint16_t c = lbnToCylinder(relSector);
+  if (c > 1023) {
+    sdError("MBR CHS");
+  }
+  p->beginCylinderHigh = c >> 8;
+  p->beginCylinderLow = c & 0XFF;
+  p->beginHead = lbnToHead(relSector);
+  p->beginSector = lbnToSector(relSector);
+  p->type = partType;
+  uint32_t endLbn = relSector + partSize - 1;
+  c = lbnToCylinder(endLbn);
+  if (c <= 1023) {
+    p->endCylinderHigh = c >> 8;
+    p->endCylinderLow = c & 0XFF;
+    p->endHead = lbnToHead(endLbn);
+    p->endSector = lbnToSector(endLbn);
+  } else {
+    // Too big flag, c = 1023, h = 254, s = 63
+    p->endCylinderHigh = 3;
+    p->endCylinderLow = 255;
+    p->endHead = 254;
+    p->endSector = 63;
+  }
+  p->firstSector = relSector;
+  p->totalSectors = partSize;
+  if (!writeCache(0)) {
+    sdError("write MBR");
+  }
+}
+//------------------------------------------------------------------------------
+// generate serial number from card size and micros since boot
+uint32_t volSerialNumber() 
+{
+  return (cardSizeBlocks << 8) + micros();
+}
+//------------------------------------------------------------------------------
+// format the SD as FAT16
+void makeFat16() 
+{
+  uint32_t nc;
+  for (dataStart = 2 * BU16;; dataStart += BU16) {
+    nc = (cardSizeBlocks - dataStart) / sectorsPerCluster;
+    fatSize = (nc + 2 + 255) / 256;
+    uint32_t r = BU16 + 1 + 2 * fatSize + 32;
+    if (dataStart < r) {
+      continue;
+    }
+    relSector = dataStart - r + BU16;
+    break;
+  }
+  // check valid cluster count for FAT16 volume
+  if (nc < 4085 || nc >= 65525) {
+    sdError("Bad cluster count");
+  }
+  reservedSectors = 1;
+  fatStart = relSector + reservedSectors;
+  partSize = nc * sectorsPerCluster + 2 * fatSize + reservedSectors + 32;
+  if (partSize < 32680) {
+    partType = 0X01;
+  } else if (partSize < 65536) {
+    partType = 0X04;
+  } else {
+    partType = 0X06;
+  }
+  // write MBR
+  writeMbr();
+  clearCache(true);
+  fat_boot_t* pb = &cache.fbs;
+  pb->jump[0] = 0XEB;
+  pb->jump[1] = 0X00;
+  pb->jump[2] = 0X90;
+  for (uint8_t i = 0; i < sizeof(pb->oemId); i++) {
+    pb->oemId[i] = ' ';
+  }
+  pb->bytesPerSector = 512;
+  pb->sectorsPerCluster = sectorsPerCluster;
+  pb->reservedSectorCount = reservedSectors;
+  pb->fatCount = 2;
+  pb->rootDirEntryCount = 512;
+  pb->mediaType = 0XF8;
+  pb->sectorsPerFat16 = fatSize;
+  pb->sectorsPerTrack = sectorsPerTrack;
+  pb->headCount = numberOfHeads;
+  pb->hidddenSectors = relSector;
+  pb->totalSectors32 = partSize;
+  pb->driveNumber = 0X80;
+  pb->bootSignature = EXTENDED_BOOT_SIG;
+  pb->volumeSerialNumber = volSerialNumber();
+  memcpy(pb->volumeLabel, noName, sizeof(pb->volumeLabel));
+  memcpy(pb->fileSystemType, fat16str, sizeof(pb->fileSystemType));
+  // write partition boot sector
+  if (!writeCache(relSector)) {
+    sdError("FAT16 write PBS failed");
+  }
+  // clear FAT and root directory
+  clearFatDir(fatStart, dataStart - fatStart);
+  clearCache(false);
+  cache.fat16[0] = 0XFFF8;
+  cache.fat16[1] = 0XFFFF;
+  // write first block of FAT and backup for reserved clusters
+  if (!writeCache(fatStart)
+      || !writeCache(fatStart + fatSize)) {
+    sdError("FAT16 reserve failed");
+  }
+}
+//------------------------------------------------------------------------------
+// format the SD as FAT32
+void makeFat32() 
+{
+  uint32_t nc;
+  relSector = BU32;
+  for (dataStart = 2 * BU32;; dataStart += BU32) {
+    nc = (cardSizeBlocks - dataStart) / sectorsPerCluster;
+    fatSize = (nc + 2 + 127) / 128;
+    uint32_t r = relSector + 9 + 2 * fatSize;
+    if (dataStart >= r) {
+      break;
+    }
+  }
+  // error if too few clusters in FAT32 volume
+  if (nc < 65525) {
+    sdError("Bad cluster count");
+  }
+  reservedSectors = dataStart - relSector - 2 * fatSize;
+  fatStart = relSector + reservedSectors;
+  partSize = nc * sectorsPerCluster + dataStart - relSector;
+  // type depends on address of end sector
+  // max CHS has lbn = 16450560 = 1024*255*63
+  if ((relSector + partSize) <= 16450560) {
+    // FAT32
+    partType = 0X0B;
+  } else {
+    // FAT32 with INT 13
+    partType = 0X0C;
+  }
+  writeMbr();
+  clearCache(true);
+
+  fat32_boot_t* pb = &cache.fbs32;
+  pb->jump[0] = 0XEB;
+  pb->jump[1] = 0X00;
+  pb->jump[2] = 0X90;
+  for (uint8_t i = 0; i < sizeof(pb->oemId); i++) {
+    pb->oemId[i] = ' ';
+  }
+  pb->bytesPerSector = 512;
+  pb->sectorsPerCluster = sectorsPerCluster;
+  pb->reservedSectorCount = reservedSectors;
+  pb->fatCount = 2;
+  pb->mediaType = 0XF8;
+  pb->sectorsPerTrack = sectorsPerTrack;
+  pb->headCount = numberOfHeads;
+  pb->hidddenSectors = relSector;
+  pb->totalSectors32 = partSize;
+  pb->sectorsPerFat32 = fatSize;
+  pb->fat32RootCluster = 2;
+  pb->fat32FSInfo = 1;
+  pb->fat32BackBootBlock = 6;
+  pb->driveNumber = 0X80;
+  pb->bootSignature = EXTENDED_BOOT_SIG;
+  pb->volumeSerialNumber = volSerialNumber();
+  memcpy(pb->volumeLabel, noName, sizeof(pb->volumeLabel));
+  memcpy(pb->fileSystemType, fat32str, sizeof(pb->fileSystemType));
+  // write partition boot sector and backup
+  if (!writeCache(relSector)
+      || !writeCache(relSector + 6)) {
+    sdError("FAT32 write PBS failed");
+  }
+  clearCache(true);
+  // write extra boot area and backup
+  if (!writeCache(relSector + 2)
+      || !writeCache(relSector + 8)) {
+    sdError("FAT32 PBS ext failed");
+  }
+  fat32_fsinfo_t* pf = &cache.fsinfo;
+  pf->leadSignature = FSINFO_LEAD_SIG;
+  pf->structSignature = FSINFO_STRUCT_SIG;
+  pf->freeCount = 0XFFFFFFFF;
+  pf->nextFree = 0XFFFFFFFF;
+  // write FSINFO sector and backup
+  if (!writeCache(relSector + 1)
+      || !writeCache(relSector + 7)) {
+    sdError("FAT32 FSINFO failed");
+  }
+  clearFatDir(fatStart, 2 * fatSize + sectorsPerCluster);
+  clearCache(false);
+  cache.fat32[0] = 0x0FFFFFF8;
+  cache.fat32[1] = 0x0FFFFFFF;
+  cache.fat32[2] = 0x0FFFFFFF;
+  // write first block of FAT and backup for reserved clusters
+  if (!writeCache(fatStart)
+      || !writeCache(fatStart + fatSize)) {
+    sdError("FAT32 reserve failed");
+  }
+}
+
+//------------------------------------------------------------------------------
+void formatCard()
+{
+  cout << endl;
+  cout << F("Formatting\n");
+  initSizes();
+  if (card.type() != SD_CARD_TYPE_SDHC) 
+  {
+    cout << F("FAT16\n");
+    makeFat16();
+  } 
+  else 
+  {
+    cout << F("FAT32\n");
+    makeFat32();
+  }
+#if DEBUG_PRINT
+  debugPrint();
+#endif  // DEBUG_PRINT
+  cout << F("Format done\n");
+}
+
+void formatSD()
+{
+  if (!card.begin(chipSelect, spiSpeed)) 
+  {
+    cout << F(
+           "\nSD initialization failure!\n"
+           "Is the SD card inserted correctly?\n"
+           "Is chip select correct at the top of this program?\n");
+    sdError("card.begin failed");
+  }
+  cardSizeBlocks = card.cardSize();
+  if (cardSizeBlocks == 0) 
+  {
+    sdError("cardSize");
+  }
+  cardCapacityMB = (cardSizeBlocks + 2047) / 2048;
+
+  cout << F("Card Size: ") << cardCapacityMB;
+  cout << F(" MB, (MB = 1,048,576 bytes)") << endl;
+  formatCard();
+}
 
 
 
@@ -989,7 +1409,35 @@ void dateTime(uint16_t* date, uint16_t* time)                                   
   // return time using FAT_TIME macro to format fields
   *time = FAT_TIME(now.hour(), now.minute(), now.second());
 }
-
+void print_up() // Печать верхней строчки над меню
+{
+  myGLCD.setColor(0, 255, 0);
+  myGLCD.setBackColor(0, 0, 0);
+  myGLCD.print("                      ", CENTER, 0);
+  switch (number_menu)
+  {
+    case 1:
+      strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+      myGLCD.print(buffer, CENTER, 0);                                 // txt_info1
+      break;
+    case 2:
+      strcpy_P(buffer, (char*)pgm_read_word(&(table_message[3])));
+      myGLCD.print(buffer, CENTER, 0);                                 // txt_info2
+      break;
+    case 3:
+      strcpy_P(buffer, (char*)pgm_read_word(&(table_message[4])));
+      myGLCD.print(buffer, CENTER, 0);                                 // txt_info3
+      break;
+    case 4:
+      strcpy_P(buffer, (char*)pgm_read_word(&(table_message[5])));
+      myGLCD.print(buffer, CENTER, 0);                                 // txt_info4
+      break;
+    case 5:
+      strcpy_P(buffer, (char*)pgm_read_word(&(table_message[6])));
+      myGLCD.print(buffer, CENTER, 0);                                 // txt_info5
+      break;
+  }
+}
 void serial_print_date()                           // Печать даты и времени
 {
   DateTime now = RTC.now();
@@ -1048,7 +1496,7 @@ void drawGlavMenu()
 
 	myGLCD.clrScr();
 	myGLCD.setBackColor( 0, 0, 255);
-	number_menu =0;
+	number_menu = 0;
 	if(blockKN1)
 	{
 		myGLCD.setBackColor( VGA_BLACK);
@@ -2211,7 +2659,7 @@ void draw_menu5()                      // Меню установки интервалов
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
 	myGLCD.print(buffer, CENTER, 280);         
 }
-void draw_menu6()                      // Меню afqkjd
+void draw_menu6()                      // Меню файлов
 {
 	number_menu = 6;
 	myGLCD.clrScr();
@@ -2221,8 +2669,8 @@ void draw_menu6()                      // Меню afqkjd
 	myGLCD.fillRoundRect (5, 28, 234, 83);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 28, 234, 83);
-	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51]))); 
-	//myGLCD.print(buffer, CENTER, 38);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[43]))); 
+	myGLCD.print(buffer, CENTER, 38);  
 	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[52]))); 
 	//myGLCD.print(buffer+String(timeMotor1), CENTER, 58);  
 
@@ -2260,6 +2708,56 @@ void draw_menu6()                      // Меню afqkjd
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
 	myGLCD.print(buffer, CENTER, 280);         
 }
+void draw_menu7()                      // Меню SD
+{
+	number_menu = 7;
+	myGLCD.clrScr();
+	myGLCD.setBackColor (0, 0, 255);
+	   
+	myGLCD.setColor(0, 0, 255);                    // 1   
+	myGLCD.fillRoundRect (5, 28, 234, 83);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 28, 234, 83);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[68]))); 
+	myGLCD.print(buffer, CENTER, 38);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[67]))); 
+	myGLCD.print(buffer), CENTER, 58);  
+
+	myGLCD.setColor(0, 0, 255);                    // 2   
+	myGLCD.fillRoundRect (5, 86, 234, 141);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 86, 234, 141);	
+	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51])));
+	//myGLCD.print(buffer, CENTER, 96);  
+	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[53])));
+	//myGLCD.print(buffer), CENTER, 116);  
+
+	myGLCD.setColor(0, 0, 255);                    // 3
+	myGLCD.fillRoundRect (5, 144, 234, 199);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 144, 234, 199);
+	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51])));
+	//myGLCD.print(buffer, CENTER, 154);  
+	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[54])));
+	//myGLCD.print(buffer+String(time1), CENTER, 174);  
+
+	myGLCD.setColor(0, 0, 255);                    // 4
+	myGLCD.fillRoundRect (5, 202, 234, 257);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 202, 234, 257);
+	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51])));
+	//myGLCD.print(buffer, CENTER, 212);  
+	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[54])));
+	//myGLCD.print(buffer+String(time2), CENTER, 232);  
+
+	myGLCD.setColor(0, 0, 255);                    // 5   Выход         
+	myGLCD.fillRoundRect (5, 260, 234, 315);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (5, 260, 234, 315);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[2])));
+	myGLCD.print(buffer, CENTER, 280);         
+}
+
 
 void klav_menu1()
 {
@@ -2633,9 +3131,8 @@ void klav_menu6()                                                    //  Меню фа
 				if ((y >= 28) && (y <= 83))                          // Button: 1  
 				{
 					waitForIt(5, 28, 234, 83);
-				
-				//	bailout51: // Восстановить пункты меню
-					draw_menu5();
+				    klav_menu7();                                    // Меню SD памяти
+					draw_menu6();
 				}
 
 				if ((y >= 86) && (y <= 141))                         // Button: 2  
@@ -2643,21 +3140,71 @@ void klav_menu6()                                                    //  Меню фа
 					waitForIt(5, 86, 234, 141);
 				
 					//bailout52:
-					draw_menu5();
+					draw_menu6();
 				}
 				if ((y >= 144) && (y <= 199))                        // Button: 3    
 				{
 					waitForIt(5, 144, 234, 199);
 				
                  /*   bailout53:*/
-   					draw_menu5();
+   					draw_menu6();
 				}
 				if ((y >= 202) && (y <= 257))                        // Button: 4
 				{
 					waitForIt(5, 202, 234, 257);
 				
 					/*bailout54:*/
-					draw_menu5();
+					draw_menu6();
+			}
+			if ((y >= 260) && (y <= 315))                          // Button:Выход
+			{
+				waitForIt(5, 260, 234, 315);
+				break;
+			}
+			}
+		}
+	}
+ }
+void klav_menu7()                                                    //  Меню SD
+{
+	int x,y;
+	draw_menu7();
+	while (true)
+	{
+		if (myTouch.dataAvailable())
+		{
+			myTouch.read();
+			x = myTouch.getX();
+			y = myTouch.getY();
+			if ((x >= 5) && (x <= 234))                              // Первый ряд
+			{
+				if ((y >= 28) && (y <= 83))                          // Button: 1  
+				{
+					waitForIt(5, 28, 234, 83);
+                    formatSD();                                     // Форматирование SD памяти
+					draw_menu7();
+				}
+
+				if ((y >= 86) && (y <= 141))                         // Button: 2  
+				{
+					waitForIt(5, 86, 234, 141);
+				
+					//bailout52:
+					draw_menu7();
+				}
+				if ((y >= 144) && (y <= 199))                        // Button: 3    
+				{
+					waitForIt(5, 144, 234, 199);
+				
+                 /*   bailout53:*/
+   					draw_menu7();
+				}
+				if ((y >= 202) && (y <= 257))                        // Button: 4
+				{
+					waitForIt(5, 202, 234, 257);
+				
+					/*bailout54:*/
+					draw_menu7();
 			}
 			if ((y >= 260) && (y <= 315))                          // Button:Выход
 			{
