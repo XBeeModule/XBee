@@ -172,7 +172,6 @@ if(rx.getData()[18]!=0) EEPROM.put(address_count8, 0);
 
 */
 
-
 #include <Wire.h>
 #include <RTClib.h>
 #include <avr/pgmspace.h>
@@ -244,6 +243,9 @@ int stat_rele4 = 0;            // Текущее состояние реле
 
 bool pass_on_off   = false;    // Текущее состояние. Приминение пароля при включении прибора false - пароль отключен
 bool pass_on_off_t = false;    // Временное состояние. Приминение пароля при включении прибора false - пароль отключен
+
+int adr_user = 0;              // Адрес номера пользователя в памяти.
+
 
 //********************* Настройка монитора ***********************************
 UTFT          myGLCD(ITDB24E_8, 38, 39, 40, 41);        // Дисплей 2.4" !! Внимание! Изменены настройки UTouchCD.h
@@ -423,8 +425,11 @@ const char  txt__no[]                          PROGMEM = "He""\xA4"" ""\xA3""apo
 const char  txt__SDmem[]                       PROGMEM = "SD  ""\xA3""a""\xA1\xAF\xA4\x9D";                     // SD памяти
 const char  txt__SDformat[]                    PROGMEM = "\x8B""op""\xA1""a""\xA4\x9D""po""\x97""a""\xA2\x9D""e";// Форматирование
 const char  txt__SDinfo[]                      PROGMEM = "\x86\xA2\xA5""op""\xA1""a""\xA6\x9D\xAF"" o";         // Информация о
-
-
+const char  txt_n_user1[]                      PROGMEM = "B\x97""e\x99\x9D\xA4""e N";                           // Введите №
+const char  txt_n_user2[]                      PROGMEM = "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";// пользователя
+const char  txt_n_user3[]                      PROGMEM = "\x89""o""\x97\xA4""op""\x9D\xA4""e N";                // Повторите N
+const char  txt_n_user_pass1[]                 PROGMEM = "\x8A""c""\xA4"".N ""\xA3""o""\xA0\xAC\x9C"".";        // Уст.N польз.
+const char  txt_n_user_pass2[]                 PROGMEM = "\x9D"" ""\xA3""apo""\xA0\xAC";                        // и пароль
 
 
 
@@ -439,8 +444,8 @@ char  txt_botton_clear[] = "C\x96poc";                                          
 char  txt_system_clear1[] = "B\xA2\x9D\xA1""a\xA2\x9D""e!";                                 // Внимание !  
 char  txt_system_clear2[] = "Bc\xAF \xA1\xA2\xA5op\xA1""a""\xA6\xA1\xAF \x96y\x99""e\xA4";  // Вся информация будет 
 char  txt_system_clear3[] = "\x8A\x82""A""\x88""EHA!";                                      // УДАЛЕНА 
-char  txt_n_user[] = "B\x97""e\x99\x9D\xA4""e N \xA3o\xA0\xAC\x9C.";                        // Введите № польз.
-char  txt_rep_user[] = "\x89o\x97\xA4op\x9D\xA4""e"" N \xA3o\xA0\xAC\x9C.  ";               // Повторите № польз.
+//char  txt_n_user[] = "B\x97""e\x99\x9D\xA4""e N \xA3o\xA0\xAC\x9C.";                        // Введите № польз.
+//char  txt_rep_user[] = "\x89o\x97\xA4op\x9D\xA4""e"" N \xA3o\xA0\xAC\x9C.  ";               // Повторите № польз.
 char  txt_set_pass_user[] = "Ho\x97\xAB\x9E \xA3""apo\xA0\xAC \xA3o\xA0\xAC\x9C.";          // "Новый пароль польз."
 char  txt_rep_pass_user[] = "\x89o\x97\xA4op \xA3""apo\xA0\xAC \xA3o\xA0\xAC\x9C.";         // "Повтор пароль польз."
 
@@ -517,11 +522,15 @@ const char* const table_message[] PROGMEM =
  txt__no,                          // 66 "He""\xA4"" ""\xA3""apo""\xA0\xAF"" ""\x9D";                             // Нет пароля и
  txt__SDmem,                       // 67 "SD  ""\xA3""a""\xA1\xAF\xA4\x9D";                                       // SD памяти
  txt__SDformat,                    // 68 "\x8B""op""\xA1""a""\xA4\x9D""po""\x97""a""\xA2\x9D""e";                 // Форматирование
- txt__SDinfo                       // 69 "\x86\xA2\xA5""op""\xA1""a""\xA6\x9D\xAF"" o";                           // Информация о
+ txt__SDinfo,                      // 69 "\x86\xA2\xA5""op""\xA1""a""\xA6\x9D\xAF"" o";                           // Информация о
+ txt_n_user1,                      // 70 "B\x97""e\x99\x9D\xA4""e N";                                             // Введите №
+ txt_n_user2,                      // 71 "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";                  // пользователя
+ txt_n_user3,                      // 72 "\x89o\x97\xA4op\x9D\xA4""e"" N \xA3o\xA0\xAC\x9C.  ";                   // Повторите N
+ txt_n_user_pass1,                 // 73 "\x8A""c""\xA4"".N ""\xA3""o""\xA0\xAC\x9C"".";                          // Уст.N польз.
+ txt_n_user_pass2                  // 74 "\x9D"" ""\xA3""apo""\xA0\xAC";                                          // и пароль
 
 
-
-
+ 
 };
 
 //++++++++++++++++++++++ Работа с файлами +++++++++++++++++++++++++++++++++++++++
@@ -572,7 +581,7 @@ char str2_1[10];
 
 #define DEBUG_PRINT 1
 // Serial output stream
-ArduinoOutStream cout(Serial2);     // Сменить порт
+ArduinoOutStream cout(Serial);     // Сменить порт
 
 // MBR information
 uint8_t partType;
@@ -971,8 +980,6 @@ void formatSD()
   formatCard();
 }
 
-
-
 void txt_pass_no_all();
 void pass_test_start();
 void pass_test();
@@ -1309,8 +1316,8 @@ void klav123() // ввод данных с цифровой клавиатуры
 				myGLCD.setColor(0, 255, 0);
 				char **pointer;
 				var_klav123 = strtoul(stLast,pointer,10);
- 			    myGLCD.print(stLast, LEFT, 300);
-				break;
+				myGLCD.printNumI(var_klav123, LEFT, 300);
+ 				break;
 			  }
 			  else
 			  {
@@ -1381,6 +1388,7 @@ void pass_start()                         // Ввод пароля при старте системы
 		bailout11:                       // Восстановить пункты меню
 		myGLCD.clrScr();
 		myButtons.drawButtons();
+		view_adr_user();                                  // Выбор пользователя
 	};
 }
 
@@ -2549,12 +2557,12 @@ void draw_menu3()
 	myGLCD.fillRoundRect (5, 202, 234, 257);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 202, 234, 257);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[34])));  // Установить
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[73])));  // Уст. N польз.
 	myGLCD.print(buffer, CENTER, 212);  
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[42])));  // пароль
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[74])));  // и пароль
 	myGLCD.print(buffer, CENTER, 232);  
 
-	myGLCD.setColor(0, 0, 255);                                   // 5   Выход         
+	myGLCD.setColor(0, 0, 255);                                    // 5   Выход         
 	myGLCD.fillRoundRect (5, 260, 234, 315);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 260, 234, 315);
@@ -2589,9 +2597,9 @@ void draw_menu4()                      // Меню установки паролей
 	myGLCD.fillRoundRect (5, 144, 234, 199);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 144, 234, 199);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[42])));   // Пароль
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[31])));   // Пароль
 	myGLCD.print(buffer, CENTER, 154);  
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[41])));   // пользователя
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[31])));   // пользователя
 	myGLCD.print(buffer, CENTER, 174);  
 
 	myGLCD.setColor(0, 0, 255);                    // 4
@@ -2721,7 +2729,7 @@ void draw_menu7()                      // Меню SD
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[68]))); 
 	myGLCD.print(buffer, CENTER, 38);  
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[67]))); 
-	myGLCD.print(buffer), CENTER, 58);  
+	myGLCD.print(buffer, CENTER, 58);  
 
 	myGLCD.setColor(0, 0, 255);                    // 2   
 	myGLCD.fillRoundRect (5, 86, 234, 141);
@@ -2971,6 +2979,7 @@ void klav_menu4()                                           // Меню установки па
 							myGLCD.print(txt_pass_ok, RIGHT, 280); 
 							delay (200);
 							set_n_user_start();
+							set_pass_user_start();
 						} 
 					else
 						{
@@ -2983,40 +2992,10 @@ void klav_menu4()                                           // Меню установки па
 				if ((y >= 144) && (y <= 199))                        // Button: 3   Пароль пользователя
 				{
 					waitForIt(5, 144, 234, 199);
-				long stCurrentLen_pass_admin = 0;
-				EEPROM.get(adr_pass_admin, stCurrentLen_pass_admin);	// !!! Переделать
-					//if (stCurrentLen_pass_user == 0)
-					//	{ 
-					//			pass1 = 1;
-					//			goto pass_cross_user; 
-					//	}
-					//	pass_test_start();
-					//	klav123();
-					//if (ret == 1)
-					//	{
-					//		goto bailout34;
-					//	}
-					//	pass_test();
-					//	pass_cross_user:
 
-					if ( ( pass1 == 1)||( pass2 == 1) || ( pass3 == 1))
-						{
-							myGLCD.clrScr();
-							myGLCD.print(txt_pass_ok, RIGHT, 280);
-							delay (500);
-							set_pass_user_start();
-						}
-					else
-						{
-							txt_pass_no_all();
-						}
-
-						bailout34:
-					/*		myGLCD.clrScr();
-							myButtons.drawButtons();
-							print_up();*/
 					draw_menu4();
 				}
+
 				if ((y >= 202) && (y <= 257))                        // Button: 4
 				{
 				waitForIt(5, 202, 234, 257);
@@ -3050,9 +3029,6 @@ void klav_menu4()                                           // Меню установки па
 					}
 
 					bailout44:
-					//myGLCD.clrScr();
-					//myButtons.drawButtons();
-					//print_up();
 				    draw_menu4();
 			}
 			if ((y >= 260) && (y <= 315))                               // Button:Выход
@@ -3225,11 +3201,19 @@ void set_n_user_start()
 	drawButtons1();
 	// Вывод строки "Введите номер пользователя!"
 	myGLCD.setColor(255, 0, 0);
-	myGLCD.print(txt_n_user, CENTER, 280);// Введите номер пользователя!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[70]))); 
+	myGLCD.print(buffer, CENTER, 240);                             // Введите номер 
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[71]))); 
+	myGLCD.print(buffer, CENTER, 260);                             // пользователя!
 	delay(300);
-	myGLCD.print("                       ", CENTER, 280);
+	myGLCD.print("                       ", CENTER, 240);
+	myGLCD.print("                       ", CENTER, 260);
 	delay(300);
-	myGLCD.print(txt_n_user, CENTER, 280);// Введите номер пользователя!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[70]))); 
+	myGLCD.print(buffer, CENTER, 240);                            // Введите номер 
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[71]))); 
+	myGLCD.print(buffer, CENTER, 260);                            // пользователя!
+
 	klav123();
 	if (ret == 1)
 		{
@@ -3239,14 +3223,21 @@ void set_n_user_start()
 
 	strcpy(temp_stLast,stLast);
 
-	myGLCD.setColor(255, 0, 0);
-	myGLCD.print("                         ", CENTER, 280);
-	myGLCD.print(txt_rep_user, CENTER, 280);// Введите номер пользователя!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[72]))); 
+	myGLCD.print(buffer, CENTER, 240);                             // Повторите 
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[71]))); 
+	myGLCD.print(buffer, CENTER, 260);                             // пользователя!
 	delay(300);
-	myGLCD.print("                         ", CENTER, 280);
+	myGLCD.print("                       ", CENTER, 240);
+	myGLCD.print("                       ", CENTER, 260);
 	delay(300);
-	myGLCD.print(txt_rep_user, CENTER, 280);// Введите номер пользователя!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[72]))); 
+	myGLCD.print(buffer, CENTER, 240);                            // Повторите
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[71]))); 
+	myGLCD.print(buffer, CENTER, 260);                            // пользователя!
 
+	myGLCD.printNumI(var_klav123, LEFT, 280);
+	myGLCD.print("            ", LEFT, 300);   
 	klav123();
 	if (ret == 1)
 		{
@@ -3256,19 +3247,17 @@ void set_n_user_start()
 
 	if(strcmp(temp_stLast,stLast)==0)
 	{
-		stCurrentLen1 = i2c_eeprom_read_byte( deviceaddress,adr_stCurrentLen1);// Чтение номера пользователя
-			 
-		for (x=0; x<stCurrentLen1+1; x++)
-		{ 
-			i2c_eeprom_write_byte(deviceaddress, adr_n_user+x, stLast[x]);
-		}
-		i2c_eeprom_write_byte(deviceaddress, adr_n_user-2, stCurrentLen1);
-	
+		Serial.println("pass Ok");
+	//	Serial.println(adr_user);
+		EEPROM.put(adr_user, var_klav123);	
+
+		//i2c_eeprom_write_byte(deviceaddress, i+adr_user, stLast);          // Записать в память данные 
+
 	}
 	if(strcmp(temp_stLast,stLast)!=0)
 	{
-		myGLCD.print("                      ", CENTER, 280);
-		myGLCD.print(txt_err_pass_user, CENTER, 280);// Ошибка ввода!
+		myGLCD.print("                      ", CENTER, 260);
+		myGLCD.print(txt_err_pass_user, CENTER, 260);              // Ошибка ввода!
 		delay(1500);
 	}
 
@@ -3279,61 +3268,67 @@ void set_pass_user_start()
 	myGLCD.setBackColor(0, 0, 255);
 	myGLCD.clrScr();
 	drawButtons1();
-		// txt_set_pass_user  Вывод строки "Введите пароль пользователя!"
+		// txt_set_pass_admin  Вывод строки "Введите пароль пользователя!"
 	myGLCD.setColor(255, 0, 0);
-	myGLCD.print(txt_set_pass_user, CENTER, 280);     // Введите пароль пользователя!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[47])));     // Введите пароль
+	myGLCD.print(buffer, CENTER, 245);                                // Введите пароль пользователя!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[41])));     // пользователя
+	myGLCD.print(buffer, CENTER, 260);                                // Введите пароль пользователя!
 	delay(300);
-	myGLCD.print("                         ", CENTER, 280);
+	myGLCD.print("                       ", CENTER, 245);
+	myGLCD.print("                       ", CENTER, 260);
 	delay(300);
-	myGLCD.print(txt_set_pass_user, CENTER, 280);      // Введите пароль пользователя!
-	
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[47])));     // Введите пароль
+	myGLCD.print(buffer, CENTER, 245);// Введите пароль пользователя!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[41])));     // пользователя
+	myGLCD.print(buffer, CENTER, 260);// Введите пароль пользователя!
 	klav123();
-	if (ret == 1)
+	if (ret == 1)             // Сбросить признак введенного пароля
 		{
 			ret = 0;
-			return;
+			return;           // Выход из ввода пароля   
 		}
-
 	//проверка верности пароля
-	 
-	strcpy(temp_stLast,stLast);
+	long var_klav123_temp = var_klav123;
 
-		// txt_set_pass_user  Вывод строки "Введите пароль пользователя!"
-	myGLCD.setColor(255, 0, 0);
-	myGLCD.print(txt_rep_pass_user, CENTER, 280);// Повтор пароль пользователя!
+  	myGLCD.setColor(255, 0, 0);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[48])));     // Повторить пароль
+	myGLCD.print(buffer, CENTER, 245);// Введите пароль пользователя!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[41])));     // пользователя
+	myGLCD.print(buffer, CENTER, 260);// Введите пароль пользователя!
 	delay(300);
-	myGLCD.print("                        ", CENTER, 280);
+	myGLCD.print("                       ", CENTER, 245);
+	myGLCD.print("                       ", CENTER, 260);
 	delay(300);
-	myGLCD.print(txt_rep_pass_user, CENTER, 280);// Повтор пароль пользователя!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[48])));     // Повторить пароль
+	myGLCD.print(buffer, CENTER, 245);// Введите пароль пользователя!
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[41])));     // администраторапользователя
+	myGLCD.print(buffer, CENTER, 260);// Введите пароль пользователя!
+	myGLCD.printNumI(var_klav123_temp, LEFT, 285); 
+	myGLCD.print("                       ", CENTER, 300);
 
-		klav123();
-		if (ret == 1)
+	klav123();
+
+	if (ret == 1)             // Сбросить признак введенного пароля
 		{
 			ret = 0;
-			return;
+			return;            // Выход из ввода пароля  
 		}
-
-		if(strcmp(temp_stLast,stLast)==0)
+		myGLCD.setColor(255, 255, 255);
+		if(var_klav123_temp == var_klav123)
 		{
-
-		for (x=0; x<stCurrentLen1+1; x++)
-		{
-			i2c_eeprom_write_byte(deviceaddress, adr_pass_user+x, stLast[x]);
-		}
-			i2c_eeprom_write_byte(deviceaddress, adr_pass_user-2, stCurrentLen1);
-			myGLCD.print("                      ", CENTER, 280);
-			myGLCD.print(txt_pass_ok, RIGHT, 208);
+			EEPROM.put(adr_user+4, var_klav123);	
+			myGLCD.print("                       ", CENTER, 260);
+			myGLCD.print(txt_pass_ok, CENTER, 260); 
 			delay(1500);
 		}
-
-		if(strcmp(temp_stLast,stLast)!=0)
+		else
 		{
-			myGLCD.print("                      ", CENTER, 280);
-			myGLCD.print(txt_err_pass_user, CENTER, 280);// Ошибка ввода!
-			delay(1500);
+			strcpy_P(buffer, (char*)pgm_read_word(&(table_message[21])));     // Ошибка ввода!
+			myGLCD.print("                       ", CENTER, 260);
+			myGLCD.print(buffer, CENTER, 260);                                // Ошибка ввода!
+			delay(2000);
 		}
-
-
 }
 
 void interval_start()               // Начало установки интервалов
@@ -5641,7 +5636,6 @@ void view_adr_user()                                                  // Выбор с
 {
 	int x, y;
 	int n_page = 1;
-	int adr_user = 0;
 	draw_view_adr_user();
 	while (myTouch.dataAvailable()) {}
 	view_page_user(n_page);
@@ -5824,7 +5818,16 @@ void view_page_user(int block_n)                                       // Отобра
 		EEPROM.get(adr_user+4, user_passt );                           // Восстановить пароль пользователя
 		myGLCD.printNumI(((block_n-1) * 6)+n_bl+1, 2, yUser+8);  
 		myGLCD.print("User", 35, yUser);
+		if(user_numbert == -1)                                         // Если нет номера - заштриховать.
+		{
+          myGLCD.print("--------", RIGHT, yUser);                  //
+		}
+		else
+		{
+
 		myGLCD.printNumI(user_numbert, RIGHT, yUser);                  //
+		}
+
 		yUser = yUser + yDelta;                                        // Форматирование текста, смещение  вниз
 		myGLCD.print("Pass", 35, yUser);
 		myGLCD.print("********", RIGHT, yUser);
@@ -6052,7 +6055,7 @@ byte y[4];   ; //Чтение из памяти текущих данных старшего адреса координатора
 	y[0]= i2c_eeprom_read_byte( deviceaddress, 0+N_device+6);
 	XBee_Addr64_LS_tmp = (unsigned long&) y;  // Сложить восстановленные текущие данные в 
 
-}
+} 
 void set_adr_device()
 {
 	int x, y;
@@ -6257,12 +6260,14 @@ void format_memory()
 	   	 if (int x = EEPROM.read(0) != 55)
 		  {	
 			myGLCD.setColor(255, 255, 255);
+			int k = -1;
 			myGLCD.print("Format EEPROM!",CENTER, 80);// "Format!"
 			//delay (500);
 			//myGLCD.clrScr();
-			for (int i = 0; i < 1023; i++)
+			for (int i = 2000; i < 4095; i++)
 				{
-				  EEPROM.write(i,0);
+					EEPROM.put(i, k);	 
+				  //EEPROM.write(i,0);
 				}
 			EEPROM.write(0,55); 
 			myGLCD.clrScr();
@@ -6589,6 +6594,191 @@ void vibroM()                     // Включение вибродвигателя
 	digitalWrite(VibMot, LOW); 
 }
 
+//---------- SD info--------------
+
+// global for card size
+uint32_t cardSize;
+
+// global for card erase size
+uint32_t eraseSize;
+//------------------------------------------------------------------------------
+// store error strings in flash
+#define sdErrorMsg(msg) sdErrorMsg_F(F(msg));
+void sdErrorMsg_F(const __FlashStringHelper* str) 
+{
+  cout << str << endl;
+  if (sd.card()->errorCode()) 
+  {
+    cout << F("SD errorCode: ");
+    cout << hex << int(sd.card()->errorCode()) << endl;
+    cout << F("SD errorData: ");
+    cout << int(sd.card()->errorData()) << dec << endl;
+  }
+}
+//------------------------------------------------------------------------------
+uint8_t cidDmp() 
+{
+  cid_t cid;
+  if (!sd.card()->readCID(&cid)) {
+    sdErrorMsg("readCID failed");
+    return false;
+  }
+  cout << F("\nManufacturer ID: ");
+  cout << hex << int(cid.mid) << dec << endl;
+  cout << F("OEM ID: ") << cid.oid[0] << cid.oid[1] << endl;
+  cout << F("Product: ");
+  for (uint8_t i = 0; i < 5; i++) {
+    cout << cid.pnm[i];
+  }
+  cout << F("\nVersion: ");
+  cout << int(cid.prv_n) << '.' << int(cid.prv_m) << endl;
+  cout << F("Serial number: ") << hex << cid.psn << dec << endl;
+  cout << F("Manufacturing date: ");
+  cout << int(cid.mdt_month) << '/';
+  cout << (2000 + cid.mdt_year_low + 10 * cid.mdt_year_high) << endl;
+  cout << endl;
+  return true;
+}
+//------------------------------------------------------------------------------
+uint8_t csdDmp() 
+{
+  csd_t csd;
+  uint8_t eraseSingleBlock;
+  if (!sd.card()->readCSD(&csd)) 
+  {
+    sdErrorMsg("readCSD failed");
+    return false;
+  }
+  if (csd.v1.csd_ver == 0) {
+    eraseSingleBlock = csd.v1.erase_blk_en;
+    eraseSize = (csd.v1.sector_size_high << 1) | csd.v1.sector_size_low;
+  } else if (csd.v2.csd_ver == 1) {
+    eraseSingleBlock = csd.v2.erase_blk_en;
+    eraseSize = (csd.v2.sector_size_high << 1) | csd.v2.sector_size_low;
+  } else {
+    cout << F("csd version error\n");
+    return false;
+  }
+  eraseSize++;
+  cout << F("cardSize: ") << 0.000512*cardSize;
+  cout << F(" MB (MB = 1,000,000 bytes)\n");
+
+  cout << F("flashEraseSize: ") << int(eraseSize) << F(" blocks\n");
+  cout << F("eraseSingleBlock: ");
+  if (eraseSingleBlock) {
+    cout << F("true\n");
+  } else {
+    cout << F("false\n");
+  }
+  return true;
+}
+//------------------------------------------------------------------------------
+// print partition table
+uint8_t partDmp() 
+{
+  cache_t *p = sd.vol()->cacheClear();
+  if (!p) {
+    sdErrorMsg("cacheClear failed");
+    return false;
+  }
+  if (!sd.card()->readBlock(0, p->data)) {
+    sdErrorMsg("read MBR failed");
+    return false;
+  }
+  for (uint8_t ip = 1; ip < 5; ip++) {
+    part_t *pt = &p->mbr.part[ip - 1];
+    if ((pt->boot & 0X7F) != 0 || pt->firstSector > cardSize) {
+      cout << F("\nNo MBR. Assuming Super Floppy format.\n");
+      return true;
+    }
+  }
+  cout << F("\nSD Partition Table\n");
+  cout << F("part,boot,type,start,length\n");
+  for (uint8_t ip = 1; ip < 5; ip++) {
+    part_t *pt = &p->mbr.part[ip - 1];
+    cout << int(ip) << ',' << hex << int(pt->boot) << ',' << int(pt->type);
+    cout << dec << ',' << pt->firstSector <<',' << pt->totalSectors << endl;
+  }
+  return true;
+}
+//------------------------------------------------------------------------------
+void volDmp() 
+{
+  cout << F("\nVolume is FAT") << int(sd.vol()->fatType()) << endl;
+  cout << F("blocksPerCluster: ") << int(sd.vol()->blocksPerCluster()) << endl;
+  cout << F("clusterCount: ") << sd.vol()->clusterCount() << endl;
+  cout << F("freeClusters: ");
+  uint32_t volFree = sd.vol()->freeClusterCount();
+  cout <<  volFree << endl;
+  float fs = 0.000512*volFree*sd.vol()->blocksPerCluster();
+  cout << F("freeSpace: ") << fs << F(" MB (MB = 1,000,000 bytes)\n");
+  cout << F("fatStartBlock: ") << sd.vol()->fatStartBlock() << endl;
+  cout << F("fatCount: ") << int(sd.vol()->fatCount()) << endl;
+  cout << F("blocksPerFat: ") << sd.vol()->blocksPerFat() << endl;
+  cout << F("rootDirStart: ") << sd.vol()->rootDirStart() << endl;
+  cout << F("dataStartBlock: ") << sd.vol()->dataStartBlock() << endl;
+  if (sd.vol()->dataStartBlock() % eraseSize) {
+    cout << F("Data area is not aligned on flash erase boundaries!\n");
+    cout << F("Download and use formatter from www.sdsd.card()->org/consumer!\n");
+  }
+}
+
+void SD_info()
+{
+ cardSize = sd.card()->cardSize();
+  if (cardSize == 0) 
+  {
+    sdErrorMsg("cardSize failed");
+    return;
+  }
+// cout << F("\ninit time: ") << t << " ms" << endl;
+  cout << F("\nCard type: ");
+  switch (sd.card()->type()) 
+  {
+  case SD_CARD_TYPE_SD1:
+    cout << F("SD1\n");
+    break;
+
+  case SD_CARD_TYPE_SD2:
+    cout << F("SD2\n");
+    break;
+
+  case SD_CARD_TYPE_SDHC:
+    if (cardSize < 70000000) {
+      cout << F("SDHC\n");
+    } else {
+      cout << F("SDXC\n");
+    }
+    break;
+
+  default:
+    cout << F("Unknown\n");
+  }
+  if (!cidDmp()) {
+    return;
+  }
+  if (!csdDmp()) {
+    return;
+  }
+  uint32_t ocr;
+  if (!sd.card()->readOCR(&ocr)) {
+    sdErrorMsg("\nreadOCR failed");
+    return;
+  }
+  cout << F("OCR: ") << hex << ocr << dec << endl;
+  if (!partDmp()) {
+    return;
+  }
+  if (!sd.fsBegin()) {
+    sdErrorMsg("\nFile System initialization failed.\n");
+    return;
+  }
+  volDmp();
+}
+
+
+//-----------------------------------
+
 void setup_pin()
 {
 	pinMode(led_13, OUTPUT);                             //
@@ -6642,10 +6832,11 @@ void setup()
 		Serial.println("RTC failed");
 		while (1);
 	}
-	 SdFile::dateTimeCallback(dateTime); 
+
 	pinMode(53, OUTPUT);                                          // Настройка выбора SD
-	if (!sd.begin(chipSelect)) 
-		{
+
+	 if (!sd.begin(chipSelect, SPI_HALF_SPEED))
+ 		{
 			Serial.println("initialization SD failed!");
 		}
 	else
@@ -6654,7 +6845,8 @@ void setup()
 		}
 
 	SdFile::dateTimeCallback(dateTime);                          // Настройка времени записи файла
-
+	//SD_info();
+	Serial.println();
 	serial_print_date();                                         // Печать даты и времени
 	setup_pin();
 	Serial.print(F("FreeRam: "));
