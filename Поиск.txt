@@ -8,7 +8,11 @@ Start delimiter: 7E
 Length: 00 04 (4)
 Frame type: 08 (AT Command)
 Frame ID: 6F (111)
-AT Command: 4E 54 (NT)
+AT Command: 4E 54 (NT)    Node Discovery Timeout. Set/Read the node discovery timeout. When the network
+                          discovery (ND) command is issued, the NT value is included in the transmission to
+                          provide all remote devices with a response timeout. Remote devices wait a random
+                          time, less than NT, before sending their response.  0x3C (60d)
+						  
 Checksum: E6
 1)<-
 AT Command Response (API 2)
@@ -37,7 +41,16 @@ Start delimiter: 7E
 Length: 00 04 (4)
 Frame type: 08 (AT Command)
 Frame ID: 1B (27)
-AT Command: 4E 44 (ND)
+AT Command: 4E 44 (ND)   Обнаружение узла (Node Discover). Обнаруживает и сообщает обо всех
+                         найденных модулях. Следующая информация будет сообщена для каждого
+						 обнаруженного модуля:
+                         MY<CR>
+                         SH<CR>
+                         SL<CR>
+                         DB<CR>
+                         NI<CR><CR>
+                         После истечения 2,5 секунд, команда
+                         заканчивается, возвращая <CR> (возврат каретки).
 Parameter: 
 Checksum: 4A
 
@@ -133,7 +146,9 @@ Frame ID: 72 (114)
 64-bit dest. address: 00 13 A2 00 40 78 19 69
 16-bit dest. address: FF FE
 Command options: 02
-AT Command: 48 56 (HV)
+AT Command: 48 56 (HV)      Версия аппаратного обеспечения
+                            (Hardware Version). Чтение версии
+                            аппаратного обеспечения модуля.
 Checksum: EA
 
 9)<-
@@ -194,7 +209,8 @@ Frame ID: 74 (116)
 64-bit dest. address: 00 13 A2 00 40 78 19 69
 16-bit dest. address: FF FE
 Command options: 02
-AT Command: 56 52 (VR)
+AT Command: 56 52 (VR)      Версия прошивки (Firmware Version).
+                            Чтение версии встроенного ПО модуля
 Checksum: DE
 
 13<-
@@ -371,7 +387,8 @@ Frame ID: 79 (121)
 64-bit dest. address: 00 13 A2 00 40 67 24 DA
 16-bit dest. address: FF FE
 Command options: 02
-AT Command: 41 50 (AP)
+AT Command: 41 50 (AP)    Включить режим API (API Enable).
+                          Включение режима API
 Checksum: 85
 
 24 <-
@@ -385,7 +402,8 @@ Frame type: 97 (Remote Command Response)
 Frame ID: 79 (121)
 64-bit source address: 00 13 A2 00 40 67 24 DA
 16-bit source address: 14 BB
-AT Command: 41 50 (AP)
+AT Command: 41 50 (AP)    Включить режим API (API Enable).
+                          Включение режима API
 Status: 00 (Status OK)
 Response: 02
 Checksum: 33

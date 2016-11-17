@@ -437,11 +437,11 @@ const char  txt_tx_pover[]                     PROGMEM = "TX Power mW";         
 const char  txt_set_XBee1[]                    PROGMEM = "Hac""\xA4""po""\x9E\x9F\x9D";                         // Настройки
 const char  txt_set_XBee2[]                    PROGMEM = "XBee";                                                // XBee
 const char  txt_set_XBee3[]                    PROGMEM = "\xA1""o""\xA9\xA2""oc""\xA4\x9D";                     // мощности
-const char  txt_set_lev1[]                     PROGMEM = "Lowest +10dBm";                   // Мощность 1 mV
-const char  txt_set_lev2[]                     PROGMEM = "Low    +12dBm";                  // Мощность 25 mV
-const char  txt_set_lev3[]                     PROGMEM = "Medium +14dBm";                 // Мощность 100 mV
-const char  txt_set_lev4[]                     PROGMEM = "High   +16dBm";                 // Мощность 200 mV
-const char  txt_set_lev5[]                     PROGMEM = "Highest+18dBm";                 // Мощность 300 mV
+const char  txt_set_lev1[]                     PROGMEM = "Lowest +10dBm";                                       // Мощность 1 mV
+const char  txt_set_lev2[]                     PROGMEM = "Low    +12dBm";                                       // Мощность 25 mV
+const char  txt_set_lev3[]                     PROGMEM = "Medium +14dBm";                                       // Мощность 100 mV
+const char  txt_set_lev4[]                     PROGMEM = "High   +16dBm";                                       // Мощность 200 mV
+const char  txt_set_lev5[]                     PROGMEM = "Highest+18dBm";                                       // Мощность 300 mV
 
 
 
@@ -1051,8 +1051,8 @@ uint8_t payload[30] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 int XBee_Addr16;                            //16-разрядный адрес
 int Len_XBee = 0;
-unsigned char info_XBee_data[40];
-unsigned char info_XBee_data1[40];
+unsigned char info_XBee_data[96];
+unsigned char info_XBee_data1[96];
 char* simbol_ascii[2];
 char   cmd;
 
@@ -1094,6 +1094,20 @@ uint8_t NRCmd[]    = {'N','R'};             // Перезапуск сети
 											// Если NR = 0: Переустанавливает параметры сети на узле, вызвавшем команду. 
 											// Если NR = 1:Отправляетшироковещательную передачу для перезапуска параметров на всех узлах сети.
 uint8_t PLCmd[]    = {'P','L'};             // TX Power level mW
+uint8_t NDCmd[]    = {'N','D'};             // Обнаружение узла (Node Discover). Обнаруживает и сообщает обо всех
+                                            // найденных модулях. Следующая информация будет сообщена для каждого
+						                    // обнаруженного модуля:
+											// MY<CR>      16-разрядный адрес источника
+											// SH<CR>      Старшие байты серийного номера
+											// SL<CR>      Младшие байты серийного номера
+											// DB<CR>      Сила принимаемого сигнала (Received Signal Strength)
+											// NI<CR><CR>  Идентификатор узла (Node Identifier). Имя модуля
+
+uint8_t NTCmd[]    = {'N','T'};             // Node Discovery Timeout. Set/Read the node discovery timeout. When the network
+											// discovery (ND) command is issued, the NT value is included in the transmission to
+											// provide all remote devices with a response timeout. Remote devices wait a random
+											//  time, less than NT, before sending their response.  0x3C (60d)
+
 
 uint8_t d0Value[]  = { 0x2 };
 uint8_t irValue[]  = { 0xff, 0xff };
@@ -3297,8 +3311,8 @@ void klav_menu8()                                                    //  Установ
 				if ((y >= 202) && (y <= 257))                        // Button: 4
 				{
 					waitForIt(5, 202, 234, 257);
-				
-					/*bailout54:*/
+	
+					search_XBee();                                  // Поиск устройств XBee
 					draw_menu8();
 			}
 			if ((y >= 260) && (y <= 315))                          // Button:Выход
@@ -3794,36 +3808,20 @@ void set_power()
 		   if ((y >= 179+30+40+5) && (y <= 234+30+40+5))                        
 			{
 				if ((x >= 5) && (x <= 118))                         // Button: "Ввод"  Сохранить состояние
-				{
+				{                                                    // Сохранить настройку мощности
 					waitForIt(5, 179+30+40, 118, 234+30+40);
-			//
-			commandValueLength = 0x1 ;
-			arRequestMod.setCommand(PLCmd);
-			arRequestMod.setCommandValue(d0Value);
-			arRequestMod.setCommandValueLength(commandValueLength);
-			sendAtCommand_ar();
-			delay(250);
-			atRequest.setCommand(WRCmd);  
-			sendAtCommand();
-			delay(250);
-//atRequest.setCommand(assocCmd);  
-//sendAtCommand();
-            arRequestMod.clearCommandValue();
 
-
-
-
-
-
-
-
- //               atRequest.setCommand(PLCmd); 
-	//			atRequest.setCommandValue(d0Value);	
-	//			atRequest.setCommandValueLength(sizeof(d0Value)); 	
- //                                    // "TX Power mW"
-	//sendAtCommand(); // "TX Power mW"
- //                                        // Сохранить настройку мощности
-				}
+					commandValueLength = 0x1 ;
+					arRequestMod.setCommand(PLCmd);
+					arRequestMod.setCommandValue(d0Value);
+					arRequestMod.setCommandValueLength(commandValueLength);
+					sendAtCommand_ar();
+					delay(250);
+					atRequest.setCommand(WRCmd);  
+					sendAtCommand();
+					delay(250);
+					arRequestMod.clearCommandValue();
+ 				}
 				if ((x >= 121) && (x <= 234))                       // Button: "Выход"
 				{
 					waitForIt(121, 179+30+40, 234, 234+30+40);
@@ -3939,6 +3937,14 @@ void view_set_power(int powert, int power)
       break;
    }
 
+}
+
+void search_XBee()
+{
+	//atRequest.setCommand(NDCmd);  
+	//sendAtCommand();
+
+	//delay(4000);
 }
 
 void drawMenuReset()
@@ -5717,12 +5723,6 @@ void testRemoteAtCommand()
  }
 void test_arRequestMod()
 {
-//AtCommandRequest arRequestMod = AtCommandRequest(command,commandValue, commandValueLength);
-//AtCommandRequest.setCommand(IDCmd);
-//uint8_t command[]  = {'I','D'}; // Номер сети (ID)
-//uint8_t commandValue[]  = { 0x02, 0x35 };
-//uint8_t commandValueLength = 2;
-
 arRequestMod.setCommand(command);
 arRequestMod.setCommandValue(commandValue);
 arRequestMod.setCommandValueLength(commandValueLength);
@@ -7120,6 +7120,7 @@ void setup()
 		user_number = 0;
 		user_pass   = 0;
 	}
+	delay(5000);
 	vibroM();
 }
 void loop()
