@@ -1,0 +1,410 @@
+
+0) ->
+AT Command (API 2)
+
+7E 00 04 08 6F 4E 54 E6
+
+Start delimiter: 7E
+Length: 00 04 (4)
+Frame type: 08 (AT Command)
+Frame ID: 6F (111)
+AT Command: 4E 54 (NT)
+Checksum: E6
+1)<-
+AT Command Response (API 2)
+
+7E 00 07 88 6F 4E 54 00 00 3C 2A
+
+Start delimiter: 7E
+Length: 00 07 (7)
+Frame type: 88 (AT Command Response)
+Frame ID: 6F (111)
+AT Command: 4E 54 (NT)
+Status: 00 (Status OK)
+Response: 00 3C
+Checksum: 2A
+
+---------------------------------------
+
+
+
+2)->
+AT Command (API 2)
+
+7E 00 04 08 1B 4E 44 4A
+
+Start delimiter: 7E
+Length: 00 04 (4)
+Frame type: 08 (AT Command)
+Frame ID: 1B (27)
+AT Command: 4E 44 (ND)
+Parameter: 
+Checksum: 4A
+
+3)<-
+
+AT Command Response (API 2)
+
+7E 00 20 88 1B 4E 44 00 CE D8 00 7D 33 A2 00 40 78 19 69 52 65 70 69 74 65 72 35 00 FF FE 01 00 C1 05 10 1E 33
+
+Start delimiter: 7E
+Length: 00 20 (32)
+Frame type: 88 (AT Command Response)
+Frame ID: 1B (27)
+AT Command: 4E 44 (ND)
+Status: 00 (Status OK)
+Response: CE D8 00 13 A2 00 40 78 19 69 52 65 70 69 74 65 72 35 00 FF FE 01 00 C1 05 10 1E
+Checksum: 33
+
+-------------------------------------------------------------------------------
+4)->
+
+Remote AT Command Request (API 2)
+
+7E 00 0F 17 70 00 7D 33 A2 00 40 78 19 69 FF FE 02 52 3F F9
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 17 (Remote AT Command Request)
+Frame ID: 70 (112)
+64-bit dest. address: 00 13 A2 00 40 78 19 69
+16-bit dest. address: FF FE
+Command options: 02
+AT Command: 52 3F (R?)
+Checksum: F9
+
+5)<-
+Remote Command Response (API 2)
+
+7E 00 0F 97 70 00 7D 33 A2 00 40 78 19 69 CE D8 52 3F 02 D0
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 97 (Remote Command Response)
+Frame ID: 70 (112)
+64-bit source address: 00 13 A2 00 40 78 19 69
+16-bit source address: CE D8
+AT Command: 52 3F (R?)
+Status: 02 (Invalid command)
+Checksum: D0
+
+-----------------------------------------
+
+6)->
+Remote AT Command Request (API 2)
+
+7E 00 0F 17 71 00 7D 33 A2 00 40 78 19 69 FF FE 02 25 43 21
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 17 (Remote AT Command Request)
+Frame ID: 71 (113)
+64-bit dest. address: 00 13 A2 00 40 78 19 69
+16-bit dest. address: FF FE
+Command options: 02
+AT Command: 25 43 (%C)
+Checksum: 21
+
+7)<-
+Remote Command Response (API 2)
+
+7E 00 0F 97 71 00 7D 33 A2 00 40 78 19 69 CE D8 25 43 02 F8
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 97 (Remote Command Response)
+Frame ID: 71 (113)
+64-bit source address: 00 13 A2 00 40 78 19 69
+16-bit source address: CE D8
+AT Command: 25 43 (%C)
+Status: 02 (Invalid command)
+Checksum: F8
+-------------------------------------------------
+8)->
+
+Remote AT Command Request (API 2)
+
+7E 00 0F 17 72 00 7D 33 A2 00 40 78 19 69 FF FE 02 48 56 EA
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 17 (Remote AT Command Request)
+Frame ID: 72 (114)
+64-bit dest. address: 00 13 A2 00 40 78 19 69
+16-bit dest. address: FF FE
+Command options: 02
+AT Command: 48 56 (HV)
+Checksum: EA
+
+9)<-
+AT Command Response (API 2)
+
+7E 00 20 88 1B 4E 44 00 14 BB 00 7D 33 A2 00 40 67 24 DA 52 65 70 69 74 65 72 31 00 FF FE 01 00 C1 05 10 1E A3
+
+Start delimiter: 7E
+Length: 00 20 (32)
+Frame type: 88 (AT Command Response)
+Frame ID: 1B (27)
+AT Command: 4E 44 (ND)
+Status: 00 (Status OK)
+Response: 14 BB 00 13 A2 00 40 67 24 DA 52 65 70 69 74 65 72 31 00 FF FE 01 00 C1 05 10 1E
+Checksum: A3
+-------------------------------------------------
+
+10)->
+Remote AT Command Request (API 2)
+
+7E 00 0F 17 73 00 7D 33 A2 00 40 67 24 DA FF FE 02 52 3F 8B
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 17 (Remote AT Command Request)
+Frame ID: 73 (115)
+64-bit dest. address: 00 13 A2 00 40 67 24 DA
+16-bit dest. address: FF FE
+Command options: 02
+AT Command: 52 3F (R?)
+Checksum: 8B
+
+11<-
+Remote Command Response (API 2)
+
+7E 00 7D 31 97 72 00 7D 33 A2 00 40 78 19 69 CE D8 48 56 00 21 42 60
+
+Start delimiter: 7E
+Length: 00 11 (17)
+Frame type: 97 (Remote Command Response)
+Frame ID: 72 (114)
+64-bit source address: 00 13 A2 00 40 78 19 69
+16-bit source address: CE D8
+AT Command: 48 56 (HV)
+Status: 00 (Status OK)
+Response: 21 42
+Checksum: 60
+
+12->
+Remote AT Command Request (API 2)
+
+7E 00 0F 17 74 00 7D 33 A2 00 40 78 19 69 FF FE 02 56 52 DE
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 17 (Remote AT Command Request)
+Frame ID: 74 (116)
+64-bit dest. address: 00 13 A2 00 40 78 19 69
+16-bit dest. address: FF FE
+Command options: 02
+AT Command: 56 52 (VR)
+Checksum: DE
+
+13<-
+Remote Command Response (API 2)
+
+7E 00 0F 97 73 00 7D 33 A2 00 40 67 24 DA 14 BB 52 3F 02 39
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 97 (Remote Command Response)
+Frame ID: 73 (115)
+64-bit source address: 00 13 A2 00 40 67 24 DA
+16-bit source address: 14 BB
+AT Command: 52 3F (R?)
+Status: 02 (Invalid command)
+Checksum: 39
+
+14->
+
+Remote AT Command Request (API 2)
+
+7E 00 0F 17 75 00 7D 33 A2 00 40 67 24 DA FF FE 02 25 43 B2
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 17 (Remote AT Command Request)
+Frame ID: 75 (117)
+64-bit dest. address: 00 13 A2 00 40 67 24 DA
+16-bit dest. address: FF FE
+Command options: 02
+AT Command: 25 43 (%C)
+Checksum: B2
+
+
+15<-
+Remote Command Response (API 2)
+
+7E 00 7D 31 97 74 00 7D 33 A2 00 40 78 19 69 CE D8 56 52 00 40 59 1E
+
+Start delimiter: 7E
+Length: 00 11 (17)
+Frame type: 97 (Remote Command Response)
+Frame ID: 74 (116)
+64-bit source address: 00 13 A2 00 40 78 19 69
+16-bit source address: CE D8
+AT Command: 56 52 (VR)
+Status: 00 (Status OK)
+Response: 40 59
+Checksum: 1E
+
+16<-
+
+Remote Command Response (API 2)
+
+7E 00 0F 97 75 00 7D 33 A2 00 40 67 24 DA 14 BB 25 43 02 60
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 97 (Remote Command Response)
+Frame ID: 75 (117)
+64-bit source address: 00 13 A2 00 40 67 24 DA
+16-bit source address: 14 BB
+AT Command: 25 43 (%C)
+Status: 02 (Invalid command)
+Checksum: 60
+
+17->
+Remote AT Command Request (API 2)
+
+7E 00 0F 17 76 00 7D 33 A2 00 40 78 19 69 FF FE 02 41 50 F3
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 17 (Remote AT Command Request)
+Frame ID: 76 (118)
+64-bit dest. address: 00 13 A2 00 40 78 19 69
+16-bit dest. address: FF FE
+Command options: 02
+AT Command: 41 50 (AP)
+Checksum: F3
+
+
+18 ->
+
+Remote AT Command Request (API 2)
+
+7E 00 0F 17 77 00 7D 33 A2 00 40 67 24 DA FF FE 02 48 56 7A
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 17 (Remote AT Command Request)
+Frame ID: 77 (119)
+64-bit dest. address: 00 13 A2 00 40 67 24 DA
+16-bit dest. address: FF FE
+Command options: 02
+AT Command: 48 56 (HV)
+Checksum: 7A
+
+19<-
+Remote Command Response (API 2)
+
+7E 00 10 97 76 00 7D 33 A2 00 40 78 19 69 CE D8 41 50 00 02 CA
+
+Start delimiter: 7E
+Length: 00 10 (16)
+Frame type: 97 (Remote Command Response)
+Frame ID: 76 (118)
+64-bit source address: 00 13 A2 00 40 78 19 69
+16-bit source address: CE D8
+AT Command: 41 50 (AP)
+Status: 00 (Status OK)
+Response: 02
+Checksum: CA
+
+20<-
+
+Remote Command Response (API 2)
+
+7E 00 7D 31 97 77 00 7D 33 A2 00 40 67 24 DA 14 BB 48 56 00 21 42 C7
+
+Start delimiter: 7E
+Length: 00 11 (17)
+Frame type: 97 (Remote Command Response)
+Frame ID: 77 (119)
+64-bit source address: 00 13 A2 00 40 67 24 DA
+16-bit source address: 14 BB
+AT Command: 48 56 (HV)
+Status: 00 (Status OK)
+Response: 21 42
+Checksum: C7
+
+21 ->
+
+Remote AT Command Request (API 2)
+
+7E 00 0F 17 78 00 7D 33 A2 00 40 67 24 DA FF FE 02 56 52 6F
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 17 (Remote AT Command Request)
+Frame ID: 78 (120)
+64-bit dest. address: 00 13 A2 00 40 67 24 DA
+16-bit dest. address: FF FE
+Command options: 02
+AT Command: 56 52 (VR)
+Checksum: 6F
+
+22 <-
+
+Remote Command Response (API 2)
+
+7E 00 7D 31 97 78 00 7D 33 A2 00 40 67 24 DA 14 BB 56 52 00 40 5F 80
+
+Start delimiter: 7E
+Length: 00 11 (17)
+Frame type: 97 (Remote Command Response)
+Frame ID: 78 (120)
+64-bit source address: 00 13 A2 00 40 67 24 DA
+16-bit source address: 14 BB
+AT Command: 56 52 (VR)
+Status: 00 (Status OK)
+Response: 40 5F
+Checksum: 80
+
+23 ->
+Remote AT Command Request (API 2)
+
+7E 00 0F 17 79 00 7D 33 A2 00 40 67 24 DA FF FE 02 41 50 85
+
+Start delimiter: 7E
+Length: 00 0F (15)
+Frame type: 17 (Remote AT Command Request)
+Frame ID: 79 (121)
+64-bit dest. address: 00 13 A2 00 40 67 24 DA
+16-bit dest. address: FF FE
+Command options: 02
+AT Command: 41 50 (AP)
+Checksum: 85
+
+24 <-
+Remote Command Response (API 2)
+
+7E 00 10 97 79 00 7D 33 A2 00 40 67 24 DA 14 BB 41 50 00 02 33
+
+Start delimiter: 7E
+Length: 00 10 (16)
+Frame type: 97 (Remote Command Response)
+Frame ID: 79 (121)
+64-bit source address: 00 13 A2 00 40 67 24 DA
+16-bit source address: 14 BB
+AT Command: 41 50 (AP)
+Status: 00 (Status OK)
+Response: 02
+Checksum: 33
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

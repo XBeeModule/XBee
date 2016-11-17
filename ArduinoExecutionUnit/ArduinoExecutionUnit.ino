@@ -321,7 +321,7 @@ void XBeeWrite()
 {
   zbTx = ZBTxRequest(addr64, payload, sizeof(payload));  
   xbee.send(zbTx);
-  if (xbee.readPacket(500))                                              //  После отправки запроса TX, мы ожидаем ответ статуса. Ждать до половины секунды для реагирования состояния 
+  if (xbee.readPacket(1000))                                              //  После отправки запроса TX, мы ожидаем ответ статуса. Ждать до половины секунды для реагирования состояния 
     {
     if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE)      // получил ответ!  Должен быть znet tx status    
     {
@@ -348,7 +348,7 @@ void XBeeWrite()
       flashLed(errorLed, 10, 100);                                  // Управляемый XBee не ответил. Он включен?
       delay(200); 
     }
-  delay(500);
+  delay(1000);
 }
 
 void run_KN1_StatusXBee(byte funcType, word startreg, word numregs) // Вывод информации  в XBee
