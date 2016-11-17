@@ -7108,7 +7108,7 @@ void setup()
 	//EEPROM.put(adr_start_user+4, user_pass);
 	//EEPROM.put(adr_start_user+10, user_number);	 
 	//EEPROM.put(adr_start_user+14, user_pass);
-
+	delay(5000);
 	EEPROM.get(adr_pass_on_off, pass_on_off);	 
 	if(pass_on_off)                                       // Если флаг пароля true - включен
 	{
@@ -7120,7 +7120,6 @@ void setup()
 		user_number = 0;
 		user_pass   = 0;
 	}
-	delay(5000);
 	vibroM();
 }
 void loop()
