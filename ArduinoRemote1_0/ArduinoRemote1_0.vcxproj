@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CFBC08F7-4EC4-436E-9437-704960003A94}</ProjectGuid>
+    <RootNamespace>ArduinoRemote1_0</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>C:\arduino-1.6.5-r5\hardware\arduino\avr\cores\arduino;C:\arduino-1.6.5-r5\hardware\arduino\avr\variants\mega;F:\2 SVN XBee\trunk\ArduinoRemote1_0;C:\arduino-1.6.5-r5\hardware\arduino\avr\libraries\EEPROM;C:\arduino-1.6.5-r5\hardware\arduino\avr\libraries\EEPROM\utility;F:\2 SVN XBee\trunk\ArduinoRemote1_0\libraries\RTClib;F:\2 SVN XBee\trunk\ArduinoRemote1_0\libraries\RTClib\utility;F:\2 SVN XBee\trunk\ArduinoRemote1_0\libraries\SdFat;F:\2 SVN XBee\trunk\ArduinoRemote1_0\libraries\SdFat\utility;C:\arduino-1.6.5-r5\hardware\arduino\avr\libraries\SPI;C:\arduino-1.6.5-r5\hardware\arduino\avr\libraries\SPI\utility;F:\2 SVN XBee\trunk\ArduinoRemote1_0\libraries\UTFT;F:\2 SVN XBee\trunk\ArduinoRemote1_0\libraries\UTFT\utility;F:\2 SVN XBee\trunk\ArduinoRemote1_0\libraries\UTFT_Buttons;F:\2 SVN XBee\trunk\ArduinoRemote1_0\libraries\UTFT_Buttons\utility;F:\2 SVN XBee\trunk\ArduinoRemote1_0\libraries\UTouch;F:\2 SVN XBee\trunk\ArduinoRemote1_0\libraries\UTouch\utility;C:\arduino-1.6.5-r5\hardware\arduino\avr\libraries\Wire;C:\arduino-1.6.5-r5\hardware\arduino\avr\libraries\Wire\utility;F:\2 SVN XBee\trunk\ArduinoRemote1_0\libraries\Xbee;F:\2 SVN XBee\trunk\ArduinoRemote1_0\libraries\Xbee\utility;C:\arduino-1.6.5-r5\libraries;C:\arduino-1.6.5-r5\hardware\arduino\avr\libraries;C:\Program Files\Visual Micro\Visual Micro for Arduino\Micro Platforms\default\debuggers;F:\2 SVN XBee\trunk\ArduinoRemote1_0\libraries;C:\arduino-1.6.5-r5\hardware\tools\avr/avr/include/;C:\arduino-1.6.5-r5\hardware\tools\avr//avr/include/avr/;C:\arduino-1.6.5-r5\hardware\tools\avr/lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>F:\2 SVN XBee\trunk\ArduinoRemote1_0\Visual Micro\.ArduinoRemote1_0.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
+      <PreprocessorDefinitions>__AVR_ATmega2560__;F_CPU=16000000L;ARDUINO=165;ARDUINO_AVR_MEGA2560;ARDUINO_ARCH_AVR;__cplusplus;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="ArduinoRemote1_0.ino">
+      <FileType>CppCode</FileType>
+    </None>
+    <None Include="setTimeDate.ino">
+      <FileType>CppCode</FileType>
+    </None>
+    <None Include="utils.ino">
+      <FileType>CppCode</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Visual Micro\.ArduinoRemote1_0.vsarduino.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
