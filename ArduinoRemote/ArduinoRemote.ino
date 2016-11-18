@@ -345,8 +345,7 @@ int adr_blockKN6             = 166;       // Адрес хранения блокировки кнопок
 int adr_blockKN7             = 167;       // Адрес хранения блокировки кнопок 
 int adr_blockKN8             = 168;       // Адрес хранения блокировки кнопок 
 int adr_pass_on_off          = 169;       // Адрес хранения признак блокировки пароля
-
-
+int adr_number_device        = 170;       // Адрес хранения порядкового номера устройства (по списку)
 
 int adr_pass_admin           = 990;       // Адрес пароля администратора
 
@@ -1539,8 +1538,19 @@ void drawGlavMenu()
 
 
 	myGLCD.clrScr();
+	myGLCD.setColor(255, 255, 255); 
+	myGLCD.setBackColor( 0, 0, 0);
+	number_device = i2c_eeprom_read_byte(deviceaddress, adr_number_device);
+	Serial.println(number_device);
+	String n_dev = "N"+String(number_device) ;
+	myGLCD.print(n_dev,LEFT, 3);  
+	myGLCD.print("LS-",62, 3);
+	myGLCD.print(String(XBee_Addr64_LS,HEX), RIGHT, 3);
+
 	myGLCD.setBackColor( 0, 0, 255);
 	number_menu = 0;
+
+
 	if(blockKN1)
 	{
 		myGLCD.setBackColor( VGA_BLACK);
@@ -1552,10 +1562,10 @@ void drawGlavMenu()
 	   myGLCD.setColor(0, 0, 255);                       //1
 	}
 
-	myGLCD.fillRoundRect (5, 5, 94, 90);
+	myGLCD.fillRoundRect (5, 5+20, 94, 90+10);
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.drawRoundRect (5, 5,94, 90);
-	myGLCD.print("+ 1", 10, 10); 
+	myGLCD.drawRoundRect (5, 5+20,94, 90+10);
+	myGLCD.print("+ 1", 10, 10+20); 
 
 
 	
@@ -1569,10 +1579,10 @@ void drawGlavMenu()
 	   myGLCD.setColor(0, 0, 255);  
 	   myGLCD.setBackColor( 0, 0, 255);   //3
 	}                
-	myGLCD.fillRoundRect (97, 5, 186, 90);
+	myGLCD.fillRoundRect (97, 5+20, 186, 90+10);
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.drawRoundRect (97, 5, 186, 90);
-	myGLCD.print("+ 3", 102, 10);    
+	myGLCD.drawRoundRect (97, 5+20, 186, 90+10);
+	myGLCD.print("+ 3", 102, 10+20);    
 
 		if(blockKN2)
 	{
@@ -1584,10 +1594,10 @@ void drawGlavMenu()
 	   myGLCD.setColor(0, 0, 255);    
 	   myGLCD.setBackColor( 0, 0, 255);//2
 	}                 
-	myGLCD.fillRoundRect (5, 93, 94, 178);
+	myGLCD.fillRoundRect (5, 93+10, 94, 178);
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.drawRoundRect (5, 93,94, 178);
-	myGLCD.print("- 2", 10, 98);    
+	myGLCD.drawRoundRect (5, 93+10,94, 178);
+	myGLCD.print("- 2", 10, 98+10);    
 
 	if(blockKN4)
 	{
@@ -1599,10 +1609,10 @@ void drawGlavMenu()
 	   myGLCD.setColor(0, 0, 255); 
 	   myGLCD.setBackColor( 0, 0, 255);//4
 	}                    
-	myGLCD.fillRoundRect (97, 93, 186, 178);
+	myGLCD.fillRoundRect (97, 93+10, 186, 178);
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.drawRoundRect (97, 93, 186, 178);
-	myGLCD.print("- 4", 102, 98);                   //"4"
+	myGLCD.drawRoundRect (97, 93+10, 186, 178);
+	myGLCD.print("- 4", 102, 98+10);                   //"4"
 
 //------------------------------------------------------------------
 
@@ -1682,7 +1692,8 @@ void drawGlavMenu()
 	myGLCD.print(buffer, 130, 262);                                     //"СБРОС"
 	
 	myGLCD.setColor(255, 255, 255);
-	myGLCD.drawRoundRect (194, 70, 234, 110);
+
+	myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
 	myGLCD.setBackColor (0, 0, 0);
 	payload[0] = 11;                              // Команда "Запросить  состояние"
     XBeeWrite();                                  // Запросить  состояние
@@ -1719,11 +1730,11 @@ void klav_Glav_Menu()
 			N_KN = 1;
 			if(!blockKN1)
 			{
-				waitForStart(5, 5, 94, 90);
+				waitForStart(5, 5+20, 94, 90+10);
 				vibroM();
 			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
-				myGLCD.printNumI(1, 208, 51);                      //1
+				myGLCD.printNumI(1, 208, 75);                      //1
 				payload[0] = 0x01;
 				XBeeWrite();
 			}
@@ -1733,11 +1744,11 @@ void klav_Glav_Menu()
 			N_KN = 2;
 			if(!blockKN2)
 			{
-				waitForStart(5, 93, 94, 178);
+				waitForStart(5, 93+10, 94, 178);
 				vibroM();
 			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 				myGLCD.setColor(VGA_WHITE);                        // Цвет текста    
-				myGLCD.printNumI(2, 208, 51);                      // 2
+				myGLCD.printNumI(2, 208, 75);                      // 2
 				payload[0] = 0x02;
 				XBeeWrite();
 			}
@@ -1747,11 +1758,11 @@ void klav_Glav_Menu()
 			N_KN = 3;
 			if(!blockKN3)
 			{
-				waitForStart(97, 5, 186, 90);
+				waitForStart(97, 5+20, 186, 90+10);
 				vibroM();
 			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
-				myGLCD.printNumI(3, 208, 51);                      // 3
+				myGLCD.printNumI(3, 208, 75);                      // 3
 				payload[0] = 0x03;
 				XBeeWrite();
 			}
@@ -1761,11 +1772,11 @@ void klav_Glav_Menu()
 			N_KN = 4;
 			if(!blockKN4)
 			{
-				waitForStart(97, 93, 186, 178);
+				waitForStart(97, 93+10, 186, 178);
 				vibroM();
 			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
-				myGLCD.printNumI(4, 208, 51);                      // 4
+				myGLCD.printNumI(4, 208, 75);                      // 4
 				payload[0] = 4;
 				XBeeWrite();
 			}
@@ -1779,7 +1790,7 @@ void klav_Glav_Menu()
 				vibroM();
 			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
-				myGLCD.printNumI(5, 208, 51);                      // 5
+				myGLCD.printNumI(5, 208, 75);                      // 5
 				payload[0] = 5;
 				XBeeWrite();
 			}
@@ -1793,7 +1804,7 @@ void klav_Glav_Menu()
 				vibroM();
 			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
-				myGLCD.printNumI(6, 208, 51);                      // 6
+				myGLCD.printNumI(6, 208, 75);                      // 6
 				payload[0] = 6;
 				XBeeWrite();
 			}
@@ -1807,7 +1818,7 @@ void klav_Glav_Menu()
 				vibroM();
 			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
-				myGLCD.printNumI(7, 208, 51);                      // 7
+				myGLCD.printNumI(7, 208, 75);                      // 7
 				payload[0] = 7;
 				XBeeWrite();
 			}
@@ -1821,7 +1832,7 @@ void klav_Glav_Menu()
 				vibroM();
 			    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 				myGLCD.setColor(VGA_WHITE);                        // Цвет текста
-				myGLCD.printNumI(8, 208, 51);                      // 8
+				myGLCD.printNumI(8, 208, 75);                      // 8
 				payload[0] = 8;
 				XBeeWrite();
 			}
@@ -1833,18 +1844,18 @@ void klav_Glav_Menu()
 		  x = myTouch.getX();
 		  y = myTouch.getY(); 
 
-		  if ((y >= 5) && (y <= 90))                                    // Первый ряд
+		  if ((y >= 5+20) && (y <= 90+10))                                    // Первый ряд
 		  {
 		   if ((x >= 5+x_delta+6) && (x <= 94+x_delta+6))                                   // Button: 1
 			{
 				if(!blockKN1)
 				{
-					waitForStart(5, 5, 94, 90);
+					waitForStart(5, 5+20, 94, 90+10);
 					vibroM();
 					myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 					myGLCD.setColor(VGA_WHITE);                        // Цвет текста      
 					N_KN = 1;                                          // 1
-					myGLCD.printNumI(1, 208, 51);
+					myGLCD.printNumI(1, 208, 75);
 					payload[0] = 1;
 					XBeeWrite();
 				}
@@ -1853,30 +1864,30 @@ void klav_Glav_Menu()
 			{
 				if(!blockKN3)
 				{
-					waitForStart(97, 5, 186, 90);
+					waitForStart(97, 5+20, 186, 90+10);
 					vibroM();
                     myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
 					N_KN = 3;                                          // 3
-					myGLCD.printNumI(3, 208, 51);
+					myGLCD.printNumI(3, 208, 75);
 					payload[0] = 3;
 					XBeeWrite();
 				}
 			}
 		  }
 	 
-		  if ((y >= 93) && (y <= 178))                                  // Первый ряд
+		  if ((y >= 93+10) && (y <= 178))                                  // Первый ряд
 		  {
 		   if ((x >= 5+x_delta+6) && (x <= 94+x_delta+6))                                   // Button: 2
 			{
 				if(!blockKN2)
 				{
-					waitForStart(5, 93, 94, 178);
+					waitForStart(5, 93+10, 94, 178);
 					vibroM();
                     myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
 					N_KN = 2;                                          // 2
-					myGLCD.printNumI(2, 208, 51);
+					myGLCD.printNumI(2, 208, 75);
 					payload[0] = 2;
 					XBeeWrite();
 				}
@@ -1885,12 +1896,12 @@ void klav_Glav_Menu()
 			{
 				if(!blockKN4)
 				{
-					waitForStart(97, 93, 186, 178);
+					waitForStart(97, 93+10, 186, 178);
 					vibroM();
                     myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
 					N_KN = 4;                                          // 
-					myGLCD.printNumI(4, 208, 51);
+					myGLCD.printNumI(4, 208, 75);
 					payload[0] = 4;
 					XBeeWrite();
 				}
@@ -1908,7 +1919,7 @@ void klav_Glav_Menu()
                     myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
 					N_KN = 5;                                          // 5
-					myGLCD.printNumI(5, 208, 51);
+					myGLCD.printNumI(5, 208, 75);
 					payload[0] = 5;
 					XBeeWrite();
 				}
@@ -1922,7 +1933,7 @@ void klav_Glav_Menu()
                     myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
 					N_KN = 6;                                          // 6
-					myGLCD.printNumI(6, 208, 51);
+					myGLCD.printNumI(6, 208, 75);
 					payload[0] = 6;
 					XBeeWrite();
 				}
@@ -1936,7 +1947,7 @@ void klav_Glav_Menu()
                     myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
 					N_KN = 7;                                          // 7
-					myGLCD.printNumI(7, 208, 51);
+					myGLCD.printNumI(7, 208, 75);
 					payload[0] = 7;
 					XBeeWrite();
 				}
@@ -1950,7 +1961,7 @@ void klav_Glav_Menu()
                     myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 					myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
 					N_KN = 8;                                          // 8
-					myGLCD.printNumI(8, 208, 51);
+					myGLCD.printNumI(8, 208, 75);
 					payload[0] = 8;
 					XBeeWrite();
 				}
@@ -1988,24 +1999,24 @@ void test_power()
 	// Serial.println(power);
 	power60 = power * (5.0 / 1024.0 * 2*0.965);
 	//  Serial.println(power60);
-	if (power60 > 5.8) myGLCD.print("\xB0", 221, 5);
-	else if (power60 <= 5.8 && power60 > 5.6) myGLCD.print("\xB1", 212, 5);
-	else if (power60 <= 5.6 && power60 > 5.4) myGLCD.print("\xB2", 212, 5);
-	else if (power60 <= 5.4 && power60 > 5.2) myGLCD.print("\xB3", 212, 5);
+	if (power60 > 5.8) myGLCD.print("\xB0", 221, 25);
+	else if (power60 <= 5.8 && power60 > 5.6) myGLCD.print("\xB1", 212, 25);
+	else if (power60 <= 5.6 && power60 > 5.4) myGLCD.print("\xB2", 212, 25);
+	else if (power60 <= 5.4 && power60 > 5.2) myGLCD.print("\xB3", 212, 25);
 
 	else if (power60 <= 5.2)
 	{
 	  myGLCD.setColor(255, 0, 0);
-	  myGLCD.print("\xB4", 212, 5);
+	  myGLCD.print("\xB4", 212, 25);
 	}
-	myGLCD.printNumF(power60, 2, 200, 20);
+	myGLCD.printNumF(power60, 2, 200, 40);
 	myGLCD.setColor(255, 255, 255);
 	power = analogRead(A1);
 	power50 = power * (5.0 / 1024.0*2*0.965);
-	myGLCD.printNumF(power50, 2, 200, 30);
+	myGLCD.printNumF(power50, 2, 200, 50);
 	power = analogRead(A2);
 	power33 = power * (5.0 / 1024.0*0.965);
-	myGLCD.printNumF(power33, 2, 200, 40);
+	myGLCD.printNumF(power33, 2, 200, 60);
 	myGLCD.setFont(BigFont);
   }
 }
@@ -4848,7 +4859,7 @@ void info_module()
 		if(countKN1 < 10) delta_x = 0;
 		else if(countKN1 > 9 && countKN1 < 100) delta_x = -8;
 		else if(countKN1 > 99) delta_x = -16;
-		myGLCD.printNumI(countKN1, 43+delta_x, 10+40);
+		myGLCD.printNumI(countKN1, 43+delta_x, 10+40+10);
 
 		if(!blockKN2)
 		{
@@ -4862,7 +4873,7 @@ void info_module()
 		if(countKN2 < 10) delta_x = 0;
 		else if(countKN2 > 9 && countKN2 < 100) delta_x = -8;
 		else if(countKN2 > 99) delta_x = -16;
-		myGLCD.printNumI(countKN2, 43+delta_x, 10+130); 
+		myGLCD.printNumI(countKN2, 43+delta_x, 10+130+10); 
 
 		if(!blockKN3)
 		{
@@ -4876,7 +4887,7 @@ void info_module()
 		if(countKN3 < 10) delta_x = 0;
 		else if(countKN3 > 9 && countKN3 < 100) delta_x = -8;
 		else if(countKN3 > 99) delta_x = -16;
-		myGLCD.printNumI(countKN3, 135+delta_x, 10+40);  
+		myGLCD.printNumI(countKN3, 135+delta_x, 10+40+10);  
 
 		if(!blockKN4)
 		{
@@ -4889,7 +4900,7 @@ void info_module()
 		if(countKN4 < 10) delta_x = 0;
 		else if(countKN4 > 9 && countKN4 < 100) delta_x = -8;
 		else if(countKN4 > 99) delta_x = -16;
-		myGLCD.printNumI(countKN4, 135+delta_x, 10+130);     
+		myGLCD.printNumI(countKN4, 135+delta_x, 10+130+10);     
 	
 		if(!blockKN5)
 		{
@@ -4954,12 +4965,12 @@ void info_module()
 		}
 		myGLCD.setColor(255, 255, 255);  
 		int count1_2 = countKN1-countKN2;
-		myGLCD.print("     ", 10, 70);
+		myGLCD.print("     ", 10, 70+10);
 		if(count1_2< 0) delta_x = -24;
 		else if(count1_2 >= 0 && count1_2 < 10) delta_x = 0;
 		else if(count1_2 > 9 && count1_2 < 100) delta_x = -8;
 		else if(count1_2 > 99) delta_x = -16;
-		myGLCD.printNumI(count1_2 , 43+delta_x, 10+60);
+		myGLCD.printNumI(count1_2 , 43+delta_x, 10+60+10);
 		
 		if(!blockKN3)
 		{
@@ -4970,28 +4981,28 @@ void info_module()
 			myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
 		}
 		count1_2 = countKN3-countKN4;
-		myGLCD.print("     ", 100, 70);
+		myGLCD.print("     ", 100, 70+10);
 		if(count1_2< 0) delta_x = -24;
    		else if(count1_2 >= 0 && count1_2 < 10) delta_x = 0;
 		else if(count1_2 > 9 && count1_2 < 100) delta_x = -8;
 		else if(count1_2 > 99) delta_x = -16;
-		myGLCD.printNumI(count1_2 , 135+delta_x, 10+60);
+		myGLCD.printNumI(count1_2 , 135+delta_x, 10+60+10);
 	
 		int x_back = rx.getData()[0];
 		myGLCD.setColor(255, 255, 255);
 		switch( x_back)                                        //generate query response based on function type
 		{
 			case 1:
-				waitForEnd(5, 5, 94, 90);
+				waitForEnd(5, 5+20, 94, 90+10);
 				break;
 			case 2:
-				waitForEnd(5, 93, 94, 178);
+				waitForEnd(5, 93+10, 94, 178);
 				break;
 			case 3:
-				waitForEnd(97, 5, 186, 90);
+				waitForEnd(97, 5+20, 186, 90+10);
 				break;
 			case 4:
-				waitForEnd(97, 93, 186, 178);
+				waitForEnd(97, 93+10, 186, 178);
 				break;
 			case 5:
 				waitForEnd(5, 183, 60, 243);
@@ -5006,10 +5017,10 @@ void info_module()
 				waitForEnd(179, 183, 234, 243);
 				break;
 			default:
-				waitForEnd(5, 5, 94, 90);
-				waitForEnd(5, 93, 94, 178);
-				waitForEnd(97, 5, 186, 90);
-				waitForEnd(97, 93, 186, 178);
+				waitForEnd(5, 5+20, 94, 90+10);
+				waitForEnd(5, 93+10, 94, 178);
+				waitForEnd(97, 5+20, 186, 90+10);
+				waitForEnd(97, 93+10, 186, 178);
 				waitForEnd(5, 183, 60, 243);
 				waitForEnd(63, 183, 118, 243);
 				waitForEnd(121, 183, 176, 243);
@@ -5032,13 +5043,15 @@ void XBeeWrite()
 					{
 						Serial.println("Success.  time to celebrate!");     // Успешно, можно радоваться.
 						myGLCD.setColor(VGA_LIME);
-						myGLCD.fillRoundRect (195, 71, 233, 109);
+
+							myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
+						myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
 						myGLCD.setColor(255, 255, 255);
-						myGLCD.drawRoundRect (194, 70, 234, 110);
+						myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
 						myGLCD.setBackColor(0, 0, 0);
 						delay(400); 
 						myGLCD.setColor(0, 0, 0);
-						myGLCD.fillRoundRect (195, 71, 233, 109);
+						myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
 					}
 				else 
 					{
@@ -5056,28 +5069,28 @@ void XBeeWrite()
 		// local XBee did not provide a timely TX Status Response -- should not happen
         Serial.println("XBee did not provide a timely TX Status Response");
 		myGLCD.setColor(255 , 0, 0);
-		myGLCD.fillRoundRect (195, 71, 233, 109);
+		myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
 		myGLCD.setColor(255, 255, 255);
-		myGLCD.drawRoundRect (194, 70, 234, 110);
+		myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
 		myGLCD.setBackColor(0, 0, 0);
 		delay(400); 
 		myGLCD.setColor(0, 0, 0);
-		myGLCD.fillRoundRect (195, 71, 233, 109);
+		myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
 		myGLCD.setColor(255, 255, 255);
 		XBeeRead();                                         // Получить ответ от ИУ с параметрами.
 		switch(N_KN)                                        //generate query response based on function type
 		{
 		case 1:
-			waitForEnd(5, 5, 94, 90);
+			waitForEnd(5, 5+20, 94, 90+10);
 			break;
 		case 2:
-			waitForEnd(5, 93, 94, 178);
+			waitForEnd(5, 93+10, 94, 178);
 			break;
 		case 3:
-			waitForEnd(97, 5, 186, 90);
+			waitForEnd(97, 5+20, 186, 90+10);
 			break;
 		case 4:
-			waitForEnd(97, 93, 186, 178);
+			waitForEnd(97, 93+10, 186, 178);
 			break;
 		case 5:
 			waitForEnd(5, 183, 60, 243);
@@ -5838,7 +5851,6 @@ void view_adr_device()
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
-				//	Serial.println(adr_device);
 					draw_view_adr_device();
 					view_page(n_page);
 				}
@@ -5853,7 +5865,6 @@ void view_adr_device()
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
-				//	Serial.println(adr_device);
 					draw_view_adr_device();
 					view_page(n_page);
 				}
@@ -5868,7 +5879,6 @@ void view_adr_device()
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
-					//Serial.println(adr_device);
 					draw_view_adr_device();
 					view_page(n_page);
 				}
@@ -5885,7 +5895,6 @@ void view_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
-					//	Serial.println(adr_device);
 						draw_view_adr_device();
 						view_page(n_page);
 					}
@@ -5903,7 +5912,6 @@ void view_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
-					//	Serial.println(adr_device);
 						draw_view_adr_device();
 						view_page(n_page);
 					}
@@ -5921,7 +5929,6 @@ void view_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
-						//Serial.println(adr_device);
 						draw_view_adr_device();
 						view_page(n_page);
 					}
@@ -6328,6 +6335,8 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(number_device, CENTER, 245);     // 
+					i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
+					Serial.println(number_device);
 					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					read_HL_mem_XBee(adr_device);
@@ -6341,6 +6350,8 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(number_device, CENTER, 245);     // 
+					i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
+					Serial.println(number_device);	
 					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					read_HL_mem_XBee(adr_device);
@@ -6354,6 +6365,8 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(number_device, CENTER, 245);     // 
+					i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
+					Serial.println(number_device);
 					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					read_HL_mem_XBee(adr_device);
@@ -6370,6 +6383,8 @@ void set_adr_device()
 						myGLCD.setBackColor(0, 0, 255);
 						myGLCD.print("   ", CENTER, 245);                 //  Очистить
 						myGLCD.printNumI(number_device, CENTER, 245);     // 
+						i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
+						Serial.println(number_device);
 						myGLCD.setBackColor(0, 0, 0);
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						read_HL_mem_XBee(adr_device);
@@ -6387,6 +6402,8 @@ void set_adr_device()
 						myGLCD.setBackColor(0, 0, 255);
 						myGLCD.print("   ", CENTER, 245);                 //  Очистить
 						myGLCD.printNumI(number_device, CENTER, 245);     // 
+						i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
+						Serial.println(number_device);
 						myGLCD.setBackColor(0, 0, 0);
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						read_HL_mem_XBee(adr_device);
@@ -6404,6 +6421,8 @@ void set_adr_device()
 						myGLCD.setBackColor(0, 0, 255);
 						myGLCD.print("   ", CENTER, 245);                 //  Очистить
 						myGLCD.printNumI(number_device, CENTER, 245);     // 
+						i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
+						Serial.println(number_device);
 						myGLCD.setBackColor(0, 0, 0);
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						read_HL_mem_XBee(adr_device);
@@ -6459,7 +6478,6 @@ void set_adr_device()
 		}
 	}			
 }
-
 
 byte i2c_eeprom_read_byte( int deviceaddress, unsigned int eeaddress )
 {
@@ -7103,11 +7121,11 @@ void setup()
 
 	format_memory();
 	Serial.println(" ");                                   //
-	Serial.println("System initialization OK!.");          // Информация о завершении настройки
 	//EEPROM.put(adr_start_user, user_number);	 
 	//EEPROM.put(adr_start_user+4, user_pass);
 	//EEPROM.put(adr_start_user+10, user_number);	 
 	//EEPROM.put(adr_start_user+14, user_pass);
+	number_device = i2c_eeprom_read_byte(deviceaddress, adr_number_device);
 	delay(5000);
 	EEPROM.get(adr_pass_on_off, pass_on_off);	 
 	if(pass_on_off)                                       // Если флаг пароля true - включен
@@ -7121,6 +7139,7 @@ void setup()
 		user_pass   = 0;
 	}
 	vibroM();
+	Serial.println("System initialization OK!.");          // Информация о завершении настройки
 }
 void loop()
 {
