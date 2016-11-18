@@ -401,7 +401,7 @@ const char  txt_menu4_21[]                     PROGMEM = "\x8A""c""\xA4""a""\xA2
 const char  txt_menu4_22[]                     PROGMEM = "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";// пользователя
 const char  txt_menu4_31[]                     PROGMEM = "\x89""apo\xA0\xAC";                                   // Пароль
 const char  txt_menu4_32[]                     PROGMEM = "Me""\xA2\xAE";                                        // Меню
-const char  txt_menu4_41[]                     PROGMEM = "\xA5""a""\x9E\xA0""o""\x97";                          // файлов 
+const char  txt_menu4_41[]                     PROGMEM = "\xA5""a""\x9E\xA0""o""\x97"" ""\x9D"" SD";            // файлов и SD
 const char  txt_menu4_42[]                     PROGMEM = "a""\x99\xA1\x9D\xA2\x9D""c""\xA4""pa""\xA4""opa";     // администратора
 const char  txt_Bxod[]                         PROGMEM = "BXO""\x82";                                           // ВХОД
 const char  txt_pass_adm[]                     PROGMEM = "B""\x97""e""\x99\x9D\xA4""e ""\xA3""apo""\xA0\xAC";   // Введите пароль
@@ -506,7 +506,7 @@ const char* const table_message[] PROGMEM =
  txt_menu4_22,                     // 41 "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";                  // пользователя
  txt_menu4_31,                     // 42 "\x89""apo\xA0\xAC";                                                     // Пароль
  txt_menu4_32,                     // 43 "Me""\xA2\xAE";                                                          // Меню 
- txt_menu4_41,                     // 44 "\xA5""a""\x9E\xA0""o""\x97";                                            // файлов         
+ txt_menu4_41,                     // 44 "\xA5""a""\x9E\xA0""o""\x97"" ""\x9D"" SD";                              // файлов и SD        
  txt_menu4_42,                     // 45 "a""\x99\xA1\x9D\xA2\x9D""c""\xA4""pa""\xA4""opa";                       // администратора
  txt_Bxod,                         // 46 "BXO""\x82";                                                             // ВХОД
  txt_pass_adm,                     // 47 "B""\x97""e""\x99\x9D\xA4""e ""\xA3""apo""\xA0\xAC";                     // Введите пароль
@@ -4607,7 +4607,20 @@ void waitForIt(int x1, int y1, int x2, int y2)
   myGLCD.setColor(255, 255, 255);
   myGLCD.drawRoundRect (x1, y1, x2, y2);
 }
-
+void waitForIt_inv()
+{
+	waitForIt_page(1, 32, 239, 64);
+	waitForIt_page(1, 64, 239, 96);
+	waitForIt_page(1, 96, 239, 128);
+	waitForIt_page(1, 128, 239, 160);
+	waitForIt_page(1, 160, 239, 192);
+	waitForIt_page(1, 192, 239, 224);
+}
+void waitForIt_page(int x1, int y1, int x2, int y2)
+{
+  myGLCD.setColor(0, 0, 0);
+  myGLCD.drawRoundRect (x1, y1, x2, y2);
+}
 void waitForStart(int x1, int y1, int x2, int y2)
 {
 	myGLCD.setColor(255, 0, 0);
@@ -5784,7 +5797,6 @@ void draw_view_adr_device()
 	int yXBee = 32;                                                  // Стартовая точка смещения строк текста
 	int yDelta = 16;                                                 // Дельта смещения вниз
 	int n_page = 1;
-	//int adr_device = 0;
 	myGLCD.clrScr();                                                 // Очистить экран CENTER
 	myGLCD.setColor(0, 0, 255);
 	myGLCD.fillRoundRect (2, 2, 239, 25);                            // Нарисовать прямоугольник для текста
@@ -5842,6 +5854,7 @@ void view_adr_device()
 
 			 if ((y>=32) && (y<=64))                                  // Строка 1
 				{
+					waitForIt_inv();                                  // Убрать рамку выбора устройства
 					waitForIt(1, 32, 239, 64);
 					number_device = ((n_page-1) * 6)+1;
 					myGLCD.setBackColor(0, 0, 255);
@@ -5852,10 +5865,11 @@ void view_adr_device()
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
 					draw_view_adr_device();
-					view_page(n_page);
+					//view_page(n_page);
 				}
 			 if ((y>=64) && (y<=96))                                  // Строка 2
 				{
+					waitForIt_inv();                                  // Убрать рамку выбора устройства
 					waitForIt(1, 64, 239, 96);
 					number_device = ((n_page-1) * 6)+2;
 					myGLCD.setBackColor(0, 0, 255);
@@ -5866,10 +5880,11 @@ void view_adr_device()
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
 					draw_view_adr_device();
-					view_page(n_page);
+					//view_page(n_page);
 				}
 			if ((y>=96) && (y<=128))                                  // Строка 3
 				{
+					waitForIt_inv();                                  // Убрать рамку выбора устройства
 					waitForIt(1, 96, 239, 128);
 					number_device = ((n_page-1) * 6)+3;
 					myGLCD.setBackColor(0, 0, 255);
@@ -5880,12 +5895,13 @@ void view_adr_device()
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
 					draw_view_adr_device();
-					view_page(n_page);
+					//view_page(n_page);
 				}
 			if ((y>=128) && (y<=160))                                  // Строка 4
 				{
 					if(n_page-1 < 42)
 					{
+						waitForIt_inv();                                  // Убрать рамку выбора устройства
 						number_device = ((n_page-1) * 6)+4;
 						waitForIt(1, 128, 239, 160);
 						myGLCD.setBackColor(0, 0, 255);
@@ -5896,13 +5912,14 @@ void view_adr_device()
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
 						draw_view_adr_device();
-						view_page(n_page);
+						//view_page(n_page);
 					}
 				}
 			if ((y>=160) && (y<=192))                                  // Строка 5
 				{
 					if(n_page-1 < 42)
 					{
+						waitForIt_inv();                                  // Убрать рамку выбора устройства
 						number_device = ((n_page-1) * 6)+5;
 						waitForIt(1, 160, 239, 192);
 						myGLCD.setBackColor(0, 0, 255);
@@ -5913,13 +5930,14 @@ void view_adr_device()
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
 						draw_view_adr_device();
-						view_page(n_page);
+						//view_page(n_page);
 					}
 				}
 			if ((y>=192) && (y<=224))                                  // Строка 6
 				{
 					if(n_page-1 < 42)
 					{
+						waitForIt_inv();                                  // Убрать рамку выбора устройства
 						number_device = ((n_page-1) * 6)+6;
 						waitForIt(1, 192, 239, 224);
 						myGLCD.setBackColor(0, 0, 255);
@@ -5930,7 +5948,7 @@ void view_adr_device()
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
 						draw_view_adr_device();
-						view_page(n_page);
+						//view_page(n_page);
 					}
 				}
 
@@ -6070,6 +6088,7 @@ void view_adr_user()                                                  // Выбор с
 
 			 if ((y>=32+deltaY) && (y<=64+deltaY))                                  // Строка 1
 				{
+					waitForIt_inv();                                               // Убрать рамку выбора пользователя
 					waitForIt(1, 32, 239, 64);
 					number_user = ((n_page-1) * 6)+1;                              // Порядковый номер пользователя в списке
 					myGLCD.setBackColor(0, 0, 255);
@@ -6079,13 +6098,10 @@ void view_adr_user()                                                  // Выбор с
 					adr_user = adr_start_user + ((number_user-1) * 10);
 					EEPROM.get(adr_user, user_number);	                            // Восстановить номер пользователя
 					EEPROM.get(adr_user+4, user_pass);                              // Восстановить пароль пользователя
-					//Serial.println(adr_user);
-					//Serial.println(user_number);
-					//Serial.println(user_pass);
-
 				}
 			 if ((y>=64+deltaY) && (y<=96+deltaY))                                  // Строка 2
 				{
+					waitForIt_inv();                                               // Убрать рамку выбора пользователя
 					waitForIt(1, 64, 239, 96);
 					number_user = ((n_page-1) * 6)+2;
 					myGLCD.setBackColor(0, 0, 255);
@@ -6095,12 +6111,10 @@ void view_adr_user()                                                  // Выбор с
 					adr_user = adr_start_user + ((number_user-1) * 10);
 					EEPROM.get(adr_user, user_number);	                            // Восстановить номер пользователя
 					EEPROM.get(adr_user+4, user_pass);                              // Восстановить пароль пользователя
-					//Serial.println(adr_user);
-					//Serial.println(user_number);
-					//Serial.println(user_pass);
 				}
 			if ((y>=96+deltaY) && (y<=128+deltaY))                                  // Строка 3
 				{
+					waitForIt_inv();                                               // Убрать рамку выбора пользователя
 					waitForIt(1, 96, 239, 128);
 					number_user = ((n_page-1) * 6)+3;
 					myGLCD.setBackColor(0, 0, 255);
@@ -6110,15 +6124,13 @@ void view_adr_user()                                                  // Выбор с
 					adr_user = adr_start_user + ((number_user-1) * 10);
 					EEPROM.get(adr_user, user_number);	                            // Восстановить номер пользователя
 					EEPROM.get(adr_user+4, user_pass);                              // Восстановить пароль пользователя
-					//Serial.println(adr_user);
-					//Serial.println(user_number);
-					//Serial.println(user_pass);
 				}
 			if ((y>=128+deltaY) && (y<=160+deltaY))                                 // Строка 4
 				{
 					if(n_page-1 < 42)
 					{
 						number_user = ((n_page-1) * 6)+4;
+						waitForIt_inv();                                               // Убрать рамку выбора пользователя
 						waitForIt(1, 128, 239, 160);
 						myGLCD.setBackColor(0, 0, 255);
 						myGLCD.print("   ", CENTER, 245);                           //  Очистить
@@ -6127,9 +6139,6 @@ void view_adr_user()                                                  // Выбор с
 						adr_user = adr_start_user + ((number_user-1) * 10);
 						EEPROM.get(adr_user, user_number);	                        // Восстановить номер пользователя
 						EEPROM.get(adr_user+4, user_pass);                          // Восстановить пароль пользователя
-						//Serial.println(adr_user);
-						//Serial.println(user_number);
-						//Serial.println(user_pass);
 					}
 				}
 			if ((y>=160+deltaY) && (y<=192+deltaY))                                 // Строка 5
@@ -6137,6 +6146,7 @@ void view_adr_user()                                                  // Выбор с
 					if(n_page-1 < 42)
 					{
 						number_user = ((n_page-1) * 6)+5;
+						waitForIt_inv();                                               // Убрать рамку выбора пользователя
 						waitForIt(1, 160, 239, 192);
 						myGLCD.setBackColor(0, 0, 255);
 						myGLCD.print("   ", CENTER, 245);                           //  Очистить
@@ -6145,9 +6155,6 @@ void view_adr_user()                                                  // Выбор с
 						adr_user = adr_start_user + ((number_user-1) * 10);
 						EEPROM.get(adr_user, user_number);	                        // Восстановить номер пользователя
 						EEPROM.get(adr_user+4, user_pass);                          // Восстановить пароль пользователя
-						//Serial.println(adr_user);
-						//Serial.println(user_number);
-						//Serial.println(user_pass);
 					}
 				}
 			if ((y>=192+deltaY) && (y<=224+deltaY))                                 // Строка 6
@@ -6155,6 +6162,7 @@ void view_adr_user()                                                  // Выбор с
 					if(n_page-1 < 42)
 					{
 						number_user = ((n_page-1) * 6)+6;
+						waitForIt_inv();                                               // Убрать рамку выбора пользователя
 						waitForIt(1, 192, 239, 224);
 						myGLCD.setBackColor(0, 0, 255);
 						myGLCD.print("   ", CENTER, 245);                           //  Очистить
@@ -6163,9 +6171,6 @@ void view_adr_user()                                                  // Выбор с
 						adr_user = adr_start_user + ((number_user-1) * 10);
 						EEPROM.get(adr_user, user_number);	                        // Восстановить номер пользователя
 						EEPROM.get(adr_user+4, user_pass);                          // Восстановить пароль пользователя
-						//Serial.println(adr_user);
-						//Serial.println(user_number);
-						//Serial.println(user_pass);
 					}
 				}
 
@@ -6215,7 +6220,7 @@ void view_adr_user()                                                  // Выбор с
 		}
 	}			
 }
-void view_page_user(int block_n)                                       // Отображает одну страницу пользователя и пароля
+void view_page_user(int block_n)                                        // Отображает одну страницу пользователя и пароля
 {
 	int User_x, User_y, x, y;
 	int yUser         = 32;                                            // Стартовая точка смещения строк текста
@@ -6223,7 +6228,6 @@ void view_page_user(int block_n)                                       // Отобра
 	int n_bl_max      = 6;                                             // Максимальное количество строк на экране
 	long user_numbert = 0;                                             // номер пользователя
     long user_passt   = 0;                                             // пароль пользователя
-	//if(block_n == 43) n_bl_max = 4;                                    
 	int adr_user = adr_start_user + ((block_n-1) * 10*6) ;             // Вычисление адреса пользователя
 
 	myGLCD.setColor(0, 0, 0);
@@ -6233,19 +6237,17 @@ void view_page_user(int block_n)                                       // Отобра
 
 	for (int n_bl = 0; n_bl<n_bl_max; n_bl++)
 	{
-	//	Serial.println(adr_user);                                      // Адрес начала строки номера пользователя и пароля
 		EEPROM.get(adr_user, user_numbert );	                       // Восстановить номер пользователя
 		EEPROM.get(adr_user+4, user_passt );                           // Восстановить пароль пользователя
 		myGLCD.printNumI(((block_n-1) * 6)+n_bl+1, 2, yUser+8);  
 		myGLCD.print("User", 35, yUser);
 		if(user_numbert == -1)                                         // Если нет номера - заштриховать.
 		{
-          myGLCD.print("--------", RIGHT, yUser);                  //
+			myGLCD.print("--------", RIGHT, yUser);                    //
 		}
 		else
 		{
-
-		myGLCD.printNumI(user_numbert, RIGHT, yUser);                  //
+			myGLCD.printNumI(user_numbert, RIGHT, yUser);              //
 		}
 
 		yUser = yUser + yDelta;                                        // Форматирование текста, смещение  вниз
@@ -6330,21 +6332,22 @@ void set_adr_device()
 
 			 if ((y>=32) && (y<=64))                                  // Строка 1
 				{
+					waitForIt_inv();                                  // Убрать рамку выбора устройства
 					waitForIt(1, 32, 239, 64);
 					number_device = ((n_page-1) * 6)+1;
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(number_device, CENTER, 245);     // 
 					i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
-					Serial.println(number_device);
 					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					read_HL_mem_XBee(adr_device);
-					draw_view_adr_device();
-					view_page(n_page);
+					//draw_view_adr_device();
+					//view_page(n_page);
 				}
 			 if ((y>=64) && (y<=96))                                  // Строка 2
 				{
+					waitForIt_inv();                                  // Убрать рамку выбора устройства
 					waitForIt(1, 64, 239, 96);
 					number_device = ((n_page-1) * 6)+2;
 					myGLCD.setBackColor(0, 0, 255);
@@ -6355,11 +6358,12 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					read_HL_mem_XBee(adr_device);
-					draw_view_adr_device();
-					view_page(n_page);
+					//draw_view_adr_device();
+					//view_page(n_page);
 				}
 			if ((y>=96) && (y<=128))                                  // Строка 3
 				{
+					waitForIt_inv();                                  // Убрать рамку выбора устройства
 					waitForIt(1, 96, 239, 128);
 					number_device = ((n_page-1) * 6)+3;
 					myGLCD.setBackColor(0, 0, 255);
@@ -6371,13 +6375,14 @@ void set_adr_device()
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					read_HL_mem_XBee(adr_device);
 					Serial.println(adr_device);
-					draw_view_adr_device();
-					view_page(n_page);
+					//draw_view_adr_device();
+					//view_page(n_page);
 				}
 			if ((y>=128) && (y<=160))                                  // Строка 4
 				{
 					if(n_page-1 < 42)
 					{
+						waitForIt_inv();                                  // Убрать рамку выбора устройства
 						number_device = ((n_page-1) * 6)+4;
 						waitForIt(1, 128, 239, 160);
 						myGLCD.setBackColor(0, 0, 255);
@@ -6389,14 +6394,15 @@ void set_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						read_HL_mem_XBee(adr_device);
 						Serial.println(adr_device);
-						draw_view_adr_device();
-						view_page(n_page);
+						//draw_view_adr_device();
+						//view_page(n_page);
 					}
 				}
 			if ((y>=160) && (y<=192))                                  // Строка 5
 				{
 					if(n_page-1 < 42)
 					{
+						waitForIt_inv();                                  // Убрать рамку выбора устройства
 						number_device = ((n_page-1) * 6)+5;
 						waitForIt(1, 160, 239, 192);
 						myGLCD.setBackColor(0, 0, 255);
@@ -6408,14 +6414,15 @@ void set_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						read_HL_mem_XBee(adr_device);
 						Serial.println(adr_device);
-						draw_view_adr_device();
-						view_page(n_page);
+						//draw_view_adr_device();
+						//view_page(n_page);
 					}
 				}
 			if ((y>=192) && (y<=224))                                  // Строка 6
 				{
 					if(n_page-1 < 42)
 					{
+						waitForIt_inv();                                  // Убрать рамку выбора устройства
 						number_device = ((n_page-1) * 6)+6;
 						waitForIt(1, 192, 239, 224);
 						myGLCD.setBackColor(0, 0, 255);
@@ -6427,47 +6434,47 @@ void set_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						read_HL_mem_XBee(adr_device);
 						Serial.println(adr_device);
-						draw_view_adr_device();
-						view_page(n_page);
+						//draw_view_adr_device();
+						//view_page(n_page);
 					}
 				}
 
-		if ((y>=233) && (y<=273))                                     // Upper row  
+		if ((y>=233) && (y<=273))                                     // Листать влево
 			{
-			  if ((x>=2) && (x<=82))                                  // Выход
+			  if ((x>=2) && (x<=82))                                  // 
 				{
 					waitForIt(2, 233, 82, 273);
 					n_page--;
 					if(n_page <1) n_page = 1;
 					myGLCD.setBackColor(0, 0, 255);
-					myGLCD.print("   ", CENTER, 245);                 //  Очистить
-					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+					myGLCD.print("   ", CENTER, 245);                 // Очистить
+					myGLCD.printNumI(n_page, CENTER, 245);            // просмотр страницы
 					myGLCD.setBackColor(0, 0, 0);
 					view_page(n_page);
 				}
-			  if ((x>=87) && (x<=153))                                  // Выход
+			  if ((x>=87) && (x<=153))                                  // Перейти в начало
 				{
 					waitForIt(87, 233, 153, 273);
 					n_page = 1;
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
-					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+					myGLCD.printNumI(n_page, CENTER, 245);            //  просмотр страницы
 					myGLCD.setBackColor(0, 0, 0);
 					view_page(n_page);
 				}
-			  if ((x>=158) && (x<=238))                               // Выход
+			  if ((x>=158) && (x<=238))                               // Листать вправо
 				{
 					waitForIt(158, 233, 238, 273);
 					n_page++;
 					if(n_page > 43) n_page = 43;
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
-					myGLCD.printNumI(n_page, CENTER, 245);            // Завершить просмотр
+					myGLCD.printNumI(n_page, CENTER, 245);            //  просмотр страницы
 					myGLCD.setBackColor(0, 0, 0);
 					view_page(n_page);
 				}
 			}
-		if ((y>=278) && (y<=318))                                    // Upper row  
+		if ((y>=278) && (y<=318))                                    // 
 			{
 			if ((x>=2) && (x<=238))                                  // Выход
 				{

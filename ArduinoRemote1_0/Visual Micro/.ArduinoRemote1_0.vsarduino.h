@@ -124,6 +124,8 @@ void klav_Menu_Reset();
 void drawMenuBlockKN();
 void klav_MenuBlockKN();
 void waitForIt(int x1, int y1, int x2, int y2);
+void waitForIt_inv();
+void waitForIt_page(int x1, int y1, int x2, int y2);
 void waitForStart(int x1, int y1, int x2, int y2);
 void waitForEnd(int x1, int y1, int x2, int y2);
 void waitForStartR(int x1, int y1, int x2, int y2);
