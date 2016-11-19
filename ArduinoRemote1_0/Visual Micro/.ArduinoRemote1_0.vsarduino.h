@@ -148,6 +148,7 @@ void testRemoteAtCommand();
 void test_arRequestMod();
 void read_HL_mem_XBee(int N_device );
 void draw_view_adr_device();
+void draw_view_adr_device1();
 void view_adr_device();
 void view_page(int block_n);
 void draw_view_adr_user();

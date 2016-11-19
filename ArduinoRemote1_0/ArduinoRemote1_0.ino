@@ -60,13 +60,13 @@
 Выбор пользователя
 Ввод пароля
 
-МЕНЮ 1                                  (klav_menu1()
-        1 - Подключить ИУ        
+МЕНЮ 1                                  klav_menu1()
+        1 - Подключить ИУ               set_adr_device();
 		    - Выбор устройства
-		2 - Сменить пользователя        (resetFunc())
+		2 - Сменить пользователя        resetFunc()
 
-		3 - Меню файлов                 (klav_menu6())
-		    1 - Меню SD                 (klav_menu7())
+		3 - Меню файлов                 klav_menu6()
+		    1 - Меню SD                 klav_menu7()
 				1 -  Формат SD
 				2 -  
 				3 -  
@@ -79,11 +79,10 @@
 
 
 		   
-		4 - Настройка системы           (klav_menu3())
+		4 - Настройка системы                     (klav_menu3())
 		  	- Вести пароль
-			1- Сброс счетчика        (klav_Menu_Reset())
-				- Выбрать кнопки, на которых необходимо сбросить счетчики
-			2- Установить интервалы              (klav_menu5())
+			1- Сброс счетчика                     (klav_Menu_Reset())  - Выбрать кнопки, на которых необходимо сбросить счетчики
+			2- Установить интервалы               (klav_menu5())
 				1 - Интервал ms мотор 1
 				2 - Интервал ms мотор 2
 				3 - Интервал ms time 1
@@ -98,14 +97,18 @@
 				4 - Пароль администратора          set_pass_admin_start();
 				5 - Выход
 		5 - Выход
-МЕНЮ 2                          (klav_menu2()
-       1 - 
+МЕНЮ 2                                klav_menu2()
+       1 -  ИНФО XBee                 XBee_status();                                          // Информация XBee 
 
 	   2 - 
 
-	   3 - 
-
-	   4 - 
+	   3 - Настройки XBee             klav_menu8();            // Установки XBee
+	   		1 - Адреса ИУ устройств   view_adr_device();       // Запись адресов устройств в память
+			2 - Set Address Network   XBee_Set_Network();      // Установить адрес сети
+			3 - Настройка мощности    set_power();             // Настройка мощности
+			4 -                       search_XBee();           // Поиск устройств XBee
+			5 - Выход
+	   4 - Установить дату и время   setClock();
 
 	   5 - Выход
 
@@ -383,9 +386,9 @@ const char  txt_menu2_1[]                      PROGMEM = "\x86H\x8BO XBee";     
 const char  txt_menu2_2[]                      PROGMEM = "Coordinator SH";                                      //
 const char  txt_menu2_3[]                      PROGMEM = "Coordinator SL";                                      // 
 const char  txt_menu2_4[]                      PROGMEM = "Network";                                             //
-const char  txt_SetAddress[]                   PROGMEM = "Set Addrress";                                        //
+const char  txt_SetAddress[]                   PROGMEM = "Set Address";                                         //
 const char  txt_temperature[]                  PROGMEM = "Te""\xA1\xA3""epa""\xA4"".C";                         // Температура С
-const char  txt_view_device1[]                 PROGMEM = "A\x99""peca";                                         // Адреса 
+const char  txt_view_device1[]                 PROGMEM = "B""\x97""ec""\xA4\x9D"" a""\x99""peca";               // Ввести адреса
 const char  txt_view_device2[]                 PROGMEM = "yc""\xA4""po""\x9E""c""\xA4\x97";                     // устройств
 const char  txt_Set_device[]                   PROGMEM = "\x89""o""\x99\x9F\xA0\xAE\xA7\x9D\xA4\xAC"" ""\x86\x8A"; // Подключить ИУ
 const char  txt_null[]                         PROGMEM = "===========";                                         // "==============="
@@ -441,7 +444,7 @@ const char  txt_set_lev2[]                     PROGMEM = "Low    +12dBm";       
 const char  txt_set_lev3[]                     PROGMEM = "Medium +14dBm";                                       // Мощность 100 mV
 const char  txt_set_lev4[]                     PROGMEM = "High   +16dBm";                                       // Мощность 200 mV
 const char  txt_set_lev5[]                     PROGMEM = "Highest+18dBm";                                       // Мощность 300 mV
-
+const char  txt_search_XBee[]                  PROGMEM = "\x89""o""\x9D""c""\x9F"" XBee";                       // Поиск XBee
 
 
 
@@ -488,9 +491,9 @@ const char* const table_message[] PROGMEM =
  txt_menu2_2,                      // 23 "Coord SH";                                                              //
  txt_menu2_3,                      // 24 "Coord SL";                                                              // 
  txt_menu2_4,                      // 25 "Network";                                                               //
- txt_SetAddress,                   // 26 "Set Addrress";                                                          //
+ txt_SetAddress,                   // 26 "Set Address";                                                           //
  txt_temperature,                  // 27 "Te""\xA1\xA3""epa""\xA4""ypa C";                                        // Температура С
- txt_view_device1,                 // 28 "A\x99""peca yc""\xA4""po""\x9E""c""\xA4\x97";                           // Адреса
+ txt_view_device1,                 // 28 "B""\x97""ec""\xA4\x9D"" a""\x99""peca";                                 // Ввести адреса
  txt_view_device2,                 // 29 "yc""\xA4""po""\x9E""c""\xA4\x97";                                       // устройств
  txt_Set_device,                   // 30 "\x89""o""\x99\x9F\xA0\xAE\xA7\x9D\xA4\xAC"" ""\x86\x8A";                // Подключить ИУ
  txt_null,                         // 31 "===========";                                                           // "==============="
@@ -501,7 +504,7 @@ const char* const table_message[] PROGMEM =
  txt_menu1_41,                     // 36 "Hac""\xA4""po""\x9E\x9F""a";                                            // Настройка
  txt_menu1_42,                     // 37 "c""\x9D""c""\xA4""e""\xA1\xAB";                                         // системы
  txt_menu4_11,                     // 38 "C\x96poc \x99""a""\xA2\xA2\xABx";                                       // Сброс данных
- txt_menu4_12,                     // 39  "\x89""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAC";//  Пользователь
+ txt_menu4_12,                     // 39  "\x89""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAC";                 //  Пользователь
  txt_menu4_21,                     // 40  "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC"" N";                      // Установить N
  txt_menu4_22,                     // 41 "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";                  // пользователя
  txt_menu4_31,                     // 42 "\x89""apo\xA0\xAC";                                                     // Пароль
@@ -545,7 +548,8 @@ const char* const table_message[] PROGMEM =
  txt_set_lev2,                     // 80 "Mo""\xA9\xA2""oc""\xA4\xAC"" 25 mV";                                    // Мощность 25 mV
  txt_set_lev3,                     // 81 "Mo""\xA9\xA2""oc""\xA4\xAC"" 100 mV";                                   // Мощность 100 mV
  txt_set_lev4,                     // 82 "Mo""\xA9\xA2""oc""\xA4\xAC"" 200 mV";                                   // Мощность 200 mV
- txt_set_lev5                      // 83 "Mo""\xA9\xA2""oc""\xA4\xAC"" 300 mV";                                   // Мощность 300 mV
+ txt_set_lev5,                     // 83 "Mo""\xA9\xA2""oc""\xA4\xAC"" 300 mV";                                   // Мощность 300 mV
+ txt_search_XBee                   // 84 "\x89""o""\x9D""c""\x9F"" ""\x86\x8A"" XBee";                            // Поиск устройств XBee
 
  
 };
@@ -1045,7 +1049,7 @@ ZBRxIoSampleResponse ioSample = ZBRxIoSampleResponse();
 
 
 //Строка с данными
-uint8_t payload[30] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+uint8_t payload[64] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 //uint8_t payload1[10] ;// = {3, 4,};
 
 int XBee_Addr16;                            //16-разрядный адрес
@@ -2849,10 +2853,10 @@ void draw_menu8()                                           //  Установки XBee
 	myGLCD.fillRoundRect (5, 202, 234, 257);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 202, 234, 257);
-	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51])));
-	//myGLCD.print(buffer, CENTER, 212);  
-	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[54])));
-	//myGLCD.print(buffer+String(time2), CENTER, 232);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[84])));
+	myGLCD.print(buffer, CENTER, 212);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[29])));
+	myGLCD.print(buffer, CENTER, 232);  
 
 	myGLCD.setColor(0, 0, 255);                    // 5   Выход         
 	myGLCD.fillRoundRect (5, 260, 234, 315);
@@ -3315,14 +3319,12 @@ void klav_menu8()                                                    //  Установ
 				if ((y >= 144) && (y <= 199))                        // Button: 3    
 				{
 					waitForIt(5, 144, 234, 199);
-				
-					  set_power();                                  // Настройка мощности
+  				    set_power();                                     // Настройка мощности
    					draw_menu8();
 				}
 				if ((y >= 202) && (y <= 257))                        // Button: 4
 				{
 					waitForIt(5, 202, 234, 257);
-	
 					search_XBee();                                  // Поиск устройств XBee
 					draw_menu8();
 			}
@@ -3952,10 +3954,77 @@ void view_set_power(int powert, int power)
 
 void search_XBee()
 {
-	//atRequest.setCommand(NDCmd);  
-	//sendAtCommand();
+	d0Value[0] =  0xFE ;
+	commandValueLength = 0x1 ;
+	atRequest.setCommand(NTCmd);  
+	sendAtCommand();
+	delay(250);
+	arRequestMod.clearCommandValue();
+	delay(100);
+	atRequest.setCommand(NDCmd);  
+	int search_list = 0;
+	int i10;
+	Serial.println("\nSending command search XBee");
+	xbee.send(atRequest);
+ 	while (true)
+	{
+	if (xbee.readPacket(5000)) // подождите до 5 секунд для ответа состояния
+	{ 
+	if (xbee.getResponse().getApiId() == AT_COMMAND_RESPONSE) // Должна быть команда отклика AT
+		{
+			xbee.getResponse().getAtCommandResponse(atResponse);
 
-	//delay(4000);
+			if (atResponse.isOk()) 
+				{
+					Serial.print("Command [");
+					Serial.print(atResponse.getCommand()[0]);
+					Serial.print(atResponse.getCommand()[1]);
+					Serial.println("] was successful!");
+				 
+					if (atResponse.getValueLength() > 0) 
+						{
+							Len_XBee = atResponse.getValueLength();
+							Serial.print("Command value length is - ");
+							Serial.println(atResponse.getValueLength(), DEC);
+							Serial.print("Command value: ");
+ 
+							for (i10 = 0; i10 < atResponse.getValueLength(); i10++) 
+								{
+									info_XBee_data[i10] = atResponse.getValue()[i10];
+									Serial.print(info_XBee_data[i10], HEX);
+									Serial.print(" ");
+								}
+							Serial.println("");
+							search_list++;
+						}
+				} 
+			else 
+				{
+				Serial.print("Command return error code: ");
+				Serial.println(atResponse.getStatus(), HEX);
+				}
+		} 
+		else 
+		{
+			Serial.print("Expected AT response but got ");
+			Serial.println(xbee.getResponse().getApiId(), HEX);
+		}   
+		}
+	else 
+		{
+		if (xbee.getResponse().isError())             // at command failed
+			{
+				Serial.print("Error reading packet.  Error code: ");  
+				Serial.println(xbee.getResponse().getErrorCode());
+			} 
+		else 
+			{
+				Serial.println("\nNo response from radio1");  
+				return;
+			}
+		}
+
+	} 
 }
 
 void drawMenuReset()
@@ -4704,13 +4773,13 @@ void XBeeRead()
 					//Serial.print("Data packet length is ");
 					//Serial.println(rx.getDataLength(), DEC);        // Длина пакета пакета данных
 
-					for (int i = 0; i < rx.getDataLength(); i++)    // Считать информацию длина пакета  в rx.getDataLength()
-					{
-						Serial.print("payload [");                   //
-						Serial.print(i, DEC);                        //
-						Serial.print("] is ");                       //
-						Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
-					}
+					//for (int i = 0; i < rx.getDataLength(); i++)    // Считать информацию длина пакета  в rx.getDataLength()
+					//{
+					//	Serial.print("payload [");                   //
+					//	Serial.print(i, DEC);                        //
+					//	Serial.print("] is ");                       //
+					//	Serial.println(rx.getData()[i], HEX);        // Информация находится в rx.getData()[i]
+					//}
 
 					info_module();                                  // Вывести параметры модуля на экран.
 				} 
@@ -5047,7 +5116,7 @@ void XBeeWrite()
 	int i10;
 	zbTx = ZBTxRequest(addr64, payload, sizeof(payload));  
 	xbee.send(zbTx); 
-	if (xbee.readPacket(2000))                                               //  После отправки запроса TX, мы ожидаем ответ статуса
+	if (xbee.readPacket(6000))                                               //  После отправки запроса TX, мы ожидаем ответ статуса
 		{
 		if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) 		// получил ответ! // Должен быть znet tx status       
 			{
@@ -5056,8 +5125,7 @@ void XBeeWrite()
 					{
 						Serial.println("Success.  time to celebrate!");     // Успешно, можно радоваться.
 						myGLCD.setColor(VGA_LIME);
-
-							myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
+						myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
 						myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
 						myGLCD.setColor(255, 255, 255);
 						myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
@@ -5090,6 +5158,7 @@ void XBeeWrite()
 		myGLCD.setColor(0, 0, 0);
 		myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
 		myGLCD.setColor(255, 255, 255);
+		delay(2000);
 		XBeeRead();                                         // Получить ответ от ИУ с параметрами.
 		switch(N_KN)                                        //generate query response based on function type
 		{
@@ -5121,7 +5190,6 @@ void XBeeWrite()
 			break;
 		}
 	}
-	delay(300);
 } 
 void XBee_Setup()            //  
  {
@@ -5332,7 +5400,7 @@ void XBee_status()
 	XBee_data2 = (unsigned long&)info_XBee_data1;
 	myGLCD.setColor(VGA_YELLOW);
 	float XBee_data3 = XBee_data2;
-	myGLCD.printNumF(XBee_data3/1023*1200/1000,2, RIGHT, yXBee,'.',2);
+	myGLCD.printNumF(XBee_data3/1000,2, RIGHT, yXBee,'.',2);
 	myGLCD.setColor(255, 255, 255);
 	yXBee = yXBee + yDelta;                                             // Форматирование текста, смещение
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[27])));       // txt_temperature
@@ -5519,30 +5587,27 @@ void XBee_Set_Network()
 
 void sendAtCommand() 
 {
-	int i10;
-
+  int i10;
+  Serial.println("\nSending command sendAtCommand to the XBee");
   xbee.send(atRequest);
 
-  // wait up to 5 seconds for the status response
-  if (xbee.readPacket(5000)) 
+  if (xbee.readPacket(5000)) // подождите до 5 секунд для ответа состояния
 	{ 
-
-	// should be an AT command response
-	if (xbee.getResponse().getApiId() == AT_COMMAND_RESPONSE) 
+	if (xbee.getResponse().getApiId() == AT_COMMAND_RESPONSE) // Должна быть команда отклика AT
 		{
 		  xbee.getResponse().getAtCommandResponse(atResponse);
 
 		  if (atResponse.isOk()) 
 			  {
-				//	Serial.print("Command [");
-				//	Serial.print(atResponse.getCommand()[0]);
-				//	Serial.print(atResponse.getCommand()[1]);
-				//	Serial.println("] was successful!");
+					Serial.print("Command [");
+					Serial.print(atResponse.getCommand()[0]);
+					Serial.print(atResponse.getCommand()[1]);
+					Serial.println("] was successful!");
 				 
 					if (atResponse.getValueLength() > 0) 
 						{
-							Len_XBee = atResponse.getValueLength();
-						  Serial.print("Command value length is ");
+						  Len_XBee = atResponse.getValueLength();
+						  Serial.print("\nCommand value length is - ");
 						  Serial.println(atResponse.getValueLength(), DEC);
 						  Serial.print("Command value: ");
 							int i11=Len_XBee-1;
@@ -5555,28 +5620,28 @@ void sendAtCommand()
 							  {
 								info_XBee_data[i10] = atResponse.getValue()[i10];
 								Serial.print(info_XBee_data[i10], HEX);
+								Serial.print(" ");
 								info_XBee_data1[i11] = info_XBee_data[i10];
 								i11--;
 							  }
-						 // Serial.println("");
+						  Serial.println("");
 						}
 			  } 
-		  else 
+			else 
 			  {
 				Serial.print("Command return error code: ");
 				Serial.println(atResponse.getStatus(), HEX);
 			  }
 		} 
 		else 
-			{
-			  Serial.print("Expected AT response but got ");
-			  Serial.println(xbee.getResponse().getApiId(), HEX);
-			}   
+		{
+			Serial.print("Expected AT response but got ");
+			Serial.println(xbee.getResponse().getApiId(), HEX);
+		}   
 	  }
   else 
 	  {
-		// at command failed
-		if (xbee.getResponse().isError()) 
+		if (xbee.getResponse().isError())             // at command failed
 			{
 			  Serial.print("Error reading packet.  Error code: ");  
 			  Serial.println(xbee.getResponse().getErrorCode());
@@ -5592,10 +5657,8 @@ void sendAtCommand_ar()
 {
 	int i10;
 
- // Serial.println("Sending command to the XBee");
-
-  // send the command
-  xbee.send(arRequestMod);
+  Serial.println("\nSending command sendAtCommand_ar to the XBee");
+  xbee.send(arRequestMod);      // send the command
 
   // wait up to 5 seconds for the status response
   if (xbee.readPacket(5000)) 
@@ -5682,17 +5745,17 @@ void sendAtCommand_ar()
 }
 void sendRemoteAtCommand()
 {
-  Serial.println("Sending command to the XBee");
-
-  // send the command
+  Serial.println("\nSending command sendRemoteAtCommand to the XBee");
   xbee.send(remoteAtRequest);
 
   // wait up to 5 seconds for the status response
-  if (xbee.readPacket(5000)) {
+  if (xbee.readPacket(5000)) 
+  {
 	// got a response!
 
 	// should be an AT command response
-	if (xbee.getResponse().getApiId() == REMOTE_AT_COMMAND_RESPONSE) {
+	if (xbee.getResponse().getApiId() == REMOTE_AT_COMMAND_RESPONSE) 
+	{
 	  xbee.getResponse().getRemoteAtCommandResponse(remoteAtResponse);
 
 	  if (remoteAtResponse.isOk()) {
@@ -5718,14 +5781,20 @@ void sendRemoteAtCommand()
 		Serial.print("Command returned error code: ");
 		Serial.println(remoteAtResponse.getStatus(), HEX);
 	  }
-	} else {
+	} 
+	else 
+	{
 	  Serial.print("Expected Remote AT response but got ");
 	  Serial.print(xbee.getResponse().getApiId(), HEX);
 	}    
-  } else if (xbee.getResponse().isError()) {
+  }
+  else if (xbee.getResponse().isError()) 
+  {
 	Serial.print("Error reading packet.  Error code: ");  
 	Serial.println(xbee.getResponse().getErrorCode());
-  } else {
+  }
+  else 
+  {
 	Serial.print("No response from radio3");  
   }
 } 
@@ -5799,7 +5868,7 @@ void draw_view_adr_device()
 	int n_page = 1;
 	myGLCD.clrScr();                                                 // Очистить экран CENTER
 	myGLCD.setColor(0, 0, 255);
-	myGLCD.fillRoundRect (2, 2, 239, 25);                            // Нарисовать прямоугольник для текста
+	myGLCD.fillRoundRect (2, 2, 239, 25);                            // Нарисовать прямоугольник для текста  
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (2, 2, 239, 25);
 	myGLCD.setColor(255, 255, 255);
@@ -5807,7 +5876,7 @@ void draw_view_adr_device()
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[28])));     // Информация XBee
 	myGLCD.print(buffer, CENTER, 5);
 
-	myGLCD.setColor(0, 0, 255);                                        // Нарисовать прямоугольник для текста
+	myGLCD.setColor(0, 0, 255);                                        // Нарисовать прямоугольник для текста 
 	myGLCD.fillRoundRect (2, 233, 82, 273);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (2, 233, 82, 273);
@@ -5826,21 +5895,77 @@ void draw_view_adr_device()
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (158, 233, 238, 273);
 
+
 	myGLCD.setColor(0, 0, 255);                                        // Нарисовать прямоугольник для текста
+	myGLCD.fillRoundRect (2, 278, 118, 318);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (2, 278, 118, 318);
+	myGLCD.setBackColor(0, 0, 255);
+	myGLCD.setColor(255, 255, 255);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[19])));
+	myGLCD.print(buffer, 20, 290);                                    // Завершить просмотр
+
+	myGLCD.setColor(0, 0, 255);                                       // Нарисовать прямоугольник для текста
+	myGLCD.fillRoundRect (121, 278, 238, 318);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (121, 278, 238, 318);
+	myGLCD.setBackColor(0, 0, 255);
+	myGLCD.setColor(255, 255, 255);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[62])));
+	myGLCD.print(buffer, 139, 290);                                    // Ввести данные
+
+
+}
+void draw_view_adr_device1()
+{
+	int XBee_x, XBee_y, x, y;
+	int yXBee = 32;                                                  // Стартовая точка смещения строк текста
+	int yDelta = 16;                                                 // Дельта смещения вниз
+	int n_page = 1;
+	myGLCD.clrScr();                                                 // Очистить экран CENTER
+	myGLCD.setColor(0, 0, 255);
+	myGLCD.fillRoundRect (2, 2, 239, 25);                            // Нарисовать прямоугольник для текста  
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (2, 2, 239, 25);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.setBackColor(0, 0, 255);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[28])));     // Информация XBee
+	myGLCD.print(buffer, CENTER, 5);
+
+	myGLCD.setColor(0, 0, 255);                                        // Нарисовать прямоугольник для текста 
+	myGLCD.fillRoundRect (2, 233, 82, 273);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (2, 233, 82, 273);
+	
+	myGLCD.setColor(0, 0, 255);                                        // Нарисовать прямоугольник для текста
+	myGLCD.fillRoundRect (87, 233, 153, 273);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (87, 233, 153, 273);
+	myGLCD.setBackColor(0, 0, 255);
+	myGLCD.print("   ", CENTER, 245);                                 //  Очистить
+	myGLCD.printNumI(n_page, CENTER, 245);                            // Завершить просмотр
+	myGLCD.setBackColor(0, 0, 0);
+
+	myGLCD.setColor(0, 0, 255);                                        // Нарисовать прямоугольник для текста
+	myGLCD.fillRoundRect (158, 233, 238, 273);
+	myGLCD.setColor(255, 255, 255);
+	myGLCD.drawRoundRect (158, 233, 238, 273);
+
+	myGLCD.setColor(0, 0, 255);                                       // Нарисовать прямоугольник для текста
 	myGLCD.fillRoundRect (2, 278, 238, 318);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (2, 278, 238, 318);
 	myGLCD.setBackColor(0, 0, 255);
 	myGLCD.setColor(255, 255, 255);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[19])));
-	myGLCD.print(buffer, CENTER, 290);                                // Завершить просмотр
+	myGLCD.print(buffer, CENTER, 290);                                    // Выход 
 }
 void view_adr_device()
 {
 	int x, y;
 	int n_page = 1;
 	int adr_device = 0;
-	draw_view_adr_device();
+	draw_view_adr_device1();
 	while (myTouch.dataAvailable()) {}
 	view_page(n_page);
 
@@ -5864,7 +5989,7 @@ void view_adr_device()
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
-					draw_view_adr_device();
+					draw_view_adr_device1();
 					//view_page(n_page);
 				}
 			 if ((y>=64) && (y<=96))                                  // Строка 2
@@ -5879,7 +6004,7 @@ void view_adr_device()
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
-					draw_view_adr_device();
+					draw_view_adr_device1();
 					//view_page(n_page);
 				}
 			if ((y>=96) && (y<=128))                                  // Строка 3
@@ -5894,7 +6019,7 @@ void view_adr_device()
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
 					XBee_SetH(adr_device);
 					XBee_SetL(adr_device);
-					draw_view_adr_device();
+					draw_view_adr_device1();
 					//view_page(n_page);
 				}
 			if ((y>=128) && (y<=160))                                  // Строка 4
@@ -5911,7 +6036,7 @@ void view_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
-						draw_view_adr_device();
+						draw_view_adr_device1();
 						//view_page(n_page);
 					}
 				}
@@ -5929,7 +6054,7 @@ void view_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
-						draw_view_adr_device();
+						draw_view_adr_device1();
 						//view_page(n_page);
 					}
 				}
@@ -5947,7 +6072,7 @@ void view_adr_device()
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
 						XBee_SetH(adr_device);
 						XBee_SetL(adr_device);
-						draw_view_adr_device();
+						draw_view_adr_device1();
 						//view_page(n_page);
 					}
 				}
@@ -6338,12 +6463,8 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(number_device, CENTER, 245);     // 
-					i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
 					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
-					read_HL_mem_XBee(adr_device);
-					//draw_view_adr_device();
-					//view_page(n_page);
 				}
 			 if ((y>=64) && (y<=96))                                  // Строка 2
 				{
@@ -6353,13 +6474,8 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(number_device, CENTER, 245);     // 
-					i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
-					Serial.println(number_device);	
 					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
-					read_HL_mem_XBee(adr_device);
-					//draw_view_adr_device();
-					//view_page(n_page);
 				}
 			if ((y>=96) && (y<=128))                                  // Строка 3
 				{
@@ -6369,14 +6485,8 @@ void set_adr_device()
 					myGLCD.setBackColor(0, 0, 255);
 					myGLCD.print("   ", CENTER, 245);                 //  Очистить
 					myGLCD.printNumI(number_device, CENTER, 245);     // 
-					i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
-					Serial.println(number_device);
 					myGLCD.setBackColor(0, 0, 0);
 					adr_device = adr_start_baseHL + ((number_device-1) * 10);
-					read_HL_mem_XBee(adr_device);
-					Serial.println(adr_device);
-					//draw_view_adr_device();
-					//view_page(n_page);
 				}
 			if ((y>=128) && (y<=160))                                  // Строка 4
 				{
@@ -6388,14 +6498,8 @@ void set_adr_device()
 						myGLCD.setBackColor(0, 0, 255);
 						myGLCD.print("   ", CENTER, 245);                 //  Очистить
 						myGLCD.printNumI(number_device, CENTER, 245);     // 
-						i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
-						Serial.println(number_device);
 						myGLCD.setBackColor(0, 0, 0);
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
-						read_HL_mem_XBee(adr_device);
-						Serial.println(adr_device);
-						//draw_view_adr_device();
-						//view_page(n_page);
 					}
 				}
 			if ((y>=160) && (y<=192))                                  // Строка 5
@@ -6408,14 +6512,8 @@ void set_adr_device()
 						myGLCD.setBackColor(0, 0, 255);
 						myGLCD.print("   ", CENTER, 245);                 //  Очистить
 						myGLCD.printNumI(number_device, CENTER, 245);     // 
-						i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
-						Serial.println(number_device);
 						myGLCD.setBackColor(0, 0, 0);
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
-						read_HL_mem_XBee(adr_device);
-						Serial.println(adr_device);
-						//draw_view_adr_device();
-						//view_page(n_page);
 					}
 				}
 			if ((y>=192) && (y<=224))                                  // Строка 6
@@ -6428,14 +6526,8 @@ void set_adr_device()
 						myGLCD.setBackColor(0, 0, 255);
 						myGLCD.print("   ", CENTER, 245);                 //  Очистить
 						myGLCD.printNumI(number_device, CENTER, 245);     // 
-						i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
-						Serial.println(number_device);
 						myGLCD.setBackColor(0, 0, 0);
 						adr_device = adr_start_baseHL + ((number_device-1) * 10);
-						read_HL_mem_XBee(adr_device);
-						Serial.println(adr_device);
-						//draw_view_adr_device();
-						//view_page(n_page);
 					}
 				}
 
@@ -6476,9 +6568,16 @@ void set_adr_device()
 			}
 		if ((y>=278) && (y<=318))                                    // 
 			{
-			if ((x>=2) && (x<=238))                                  // Выход
+			if ((x>=2) && (x<=118))                                  // Выход
 				{
-					waitForIt(2, 278, 238, 318);
+					waitForIt(2, 278, 118, 318);
+					return;
+				}
+			else if ((x>=121) && (x<=238))                                  // Установить
+				{
+					waitForIt(121, 278, 238, 318);
+					i2c_eeprom_write_byte(deviceaddress, adr_number_device, number_device);   // Записать в память данные порядкового номера устройства (по списку)
+					read_HL_mem_XBee(adr_device);
 					return;
 				}
 			}
