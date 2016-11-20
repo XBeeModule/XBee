@@ -68,7 +68,7 @@
 		3 - Меню файлов                 klav_menu6()
 		    1 - Меню SD                 klav_menu7()
 				1 -  Формат SD
-				2 -  
+				2 -  Info SD
 				3 -  
 				4 -  
 				5 - Выход
@@ -93,9 +93,10 @@
 			4 - Установить пароль                  klav_menu4()
 				1 - Блокировать ввод пароля        pass_off()
 				2 - Установить № пользователя      set_n_user_start();
-				3 - Пароль пользователя
+				3 -  
 				4 - Пароль администратора          set_pass_admin_start();
 				5 - Выход
+            5 - Выход
 		5 - Выход
 МЕНЮ 2                                klav_menu2()
        1 -  ИНФО XBee                 XBee_status();                                          // Информация XBee 
@@ -106,7 +107,7 @@
 	   		1 - Адреса ИУ устройств   view_adr_device();       // Запись адресов устройств в память
 			2 - Set Address Network   XBee_Set_Network();      // Установить адрес сети
 			3 - Настройка мощности    set_power();             // Настройка мощности
-			4 -                       search_XBee();           // Поиск устройств XBee
+			4 - Поиск устройств XBee  search_XBee();           // Поиск устройств XBee
 			5 - Выход
 	   4 - Установить дату и время   setClock();
 
@@ -445,6 +446,8 @@ const char  txt_set_lev3[]                     PROGMEM = "Medium +14dBm";       
 const char  txt_set_lev4[]                     PROGMEM = "High   +16dBm";                                       // Мощность 200 mV
 const char  txt_set_lev5[]                     PROGMEM = "Highest+18dBm";                                       // Мощность 300 mV
 const char  txt_search_XBee[]                  PROGMEM = "\x89""o""\x9D""c""\x9F"" XBee";                       // Поиск XBee
+const char  txt_infoSD1[]                      PROGMEM = "\x86\xA2\xA5""op""\xA1""a""\xA6\x9D\xAF"" ";          // Информация 
+const char  txt_infoSD2[]                      PROGMEM = "SD ""\xA3""a""\xA1\xAF\xA4\x9D";                      // SD памяти
 
 
 
@@ -549,7 +552,9 @@ const char* const table_message[] PROGMEM =
  txt_set_lev3,                     // 81 "Mo""\xA9\xA2""oc""\xA4\xAC"" 100 mV";                                   // Мощность 100 mV
  txt_set_lev4,                     // 82 "Mo""\xA9\xA2""oc""\xA4\xAC"" 200 mV";                                   // Мощность 200 mV
  txt_set_lev5,                     // 83 "Mo""\xA9\xA2""oc""\xA4\xAC"" 300 mV";                                   // Мощность 300 mV
- txt_search_XBee                   // 84 "\x89""o""\x9D""c""\x9F"" ""\x86\x8A"" XBee";                            // Поиск устройств XBee
+ txt_search_XBee,                  // 84 "\x89""o""\x9D""c""\x9F"" ""\x86\x8A"" XBee";                            // Поиск устройств XBee
+ txt_infoSD1,                      // 85 "\x86\xA2\xA5""op""\xA1""a""\xA6\x9D\xAF"" ";                            // Информация 
+ txt_infoSD2                       // 86 SD ""\xA3""a""\xA1\xAF\xA4\x9D";                                         // SD памяти
 
  
 };
@@ -2648,9 +2653,9 @@ void draw_menu4()                      // Меню установки паролей
 	myGLCD.fillRoundRect (5, 144, 234, 199);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 144, 234, 199);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[31])));   // Пароль
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[31])));   //  
 	myGLCD.print(buffer, CENTER, 154);  
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[31])));   // пользователя
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[31])));   //  
 	myGLCD.print(buffer, CENTER, 174);  
 
 	myGLCD.setColor(0, 0, 255);                    // 4
@@ -2730,8 +2735,8 @@ void draw_menu6()                      // Меню файлов
 	myGLCD.drawRoundRect (5, 28, 234, 83);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[43]))); 
 	myGLCD.print(buffer, CENTER, 38);  
-	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[52]))); 
-	//myGLCD.print(buffer+String(timeMotor1), CENTER, 58);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[86]))); 
+	myGLCD.print(buffer, CENTER, 58);  
 
 	myGLCD.setColor(0, 0, 255);                    // 2   
 	myGLCD.fillRoundRect (5, 86, 234, 141);
@@ -2786,10 +2791,10 @@ void draw_menu7()                      //   Меню SD
 	myGLCD.fillRoundRect (5, 86, 234, 141);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 86, 234, 141);	
-	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[51])));
-	//myGLCD.print(buffer, CENTER, 96);  
-	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[53])));
-	//myGLCD.print(buffer), CENTER, 116);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[85])));
+	myGLCD.print(buffer, CENTER, 96);  
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[86])));
+	myGLCD.print(buffer, CENTER, 116);  
 
 	myGLCD.setColor(0, 0, 255);                    // 3
 	myGLCD.fillRoundRect (5, 144, 234, 199);
@@ -3088,7 +3093,7 @@ void klav_menu4()                                           // Меню установки па
 					bailout42:
 					draw_menu4();
 				}
-				if ((y >= 144) && (y <= 199))                        // Button: 3   Пароль пользователя
+				if ((y >= 144) && (y <= 199))                        // Button: 3    
 				{
 					waitForIt(5, 144, 234, 199);
 
@@ -3263,8 +3268,7 @@ void klav_menu7()                                                    //  Меню SD
 				if ((y >= 86) && (y <= 141))                         // Button: 2  
 				{
 					waitForIt(5, 86, 234, 141);
-				
-					//bailout52:
+  					SD_info();
 					draw_menu7();
 				}
 				if ((y >= 144) && (y <= 199))                        // Button: 3    
@@ -7012,35 +7016,37 @@ uint8_t cidDmp()
   return true;
 }
 //------------------------------------------------------------------------------
-uint8_t csdDmp() 
-{
+uint8_t csdDmp() {
   csd_t csd;
   uint8_t eraseSingleBlock;
-  if (!sd.card()->readCSD(&csd)) 
-  {
-    sdErrorMsg("readCSD failed");
-    return false;
+  if (!sd.card()->readCSD(&csd)) {
+	sdErrorMsg("readCSD failed");
+	return false;
   }
   if (csd.v1.csd_ver == 0) {
-    eraseSingleBlock = csd.v1.erase_blk_en;
-    eraseSize = (csd.v1.sector_size_high << 1) | csd.v1.sector_size_low;
+	eraseSingleBlock = csd.v1.erase_blk_en;
+	eraseSize = (csd.v1.sector_size_high << 1) | csd.v1.sector_size_low;
   } else if (csd.v2.csd_ver == 1) {
-    eraseSingleBlock = csd.v2.erase_blk_en;
-    eraseSize = (csd.v2.sector_size_high << 1) | csd.v2.sector_size_low;
+	eraseSingleBlock = csd.v2.erase_blk_en;
+	eraseSize = (csd.v2.sector_size_high << 1) | csd.v2.sector_size_low;
   } else {
-    cout << F("csd version error\n");
-    return false;
+	cout << F("csd version error\n");
+	return false;
   }
   eraseSize++;
   cout << F("cardSize: ") << 0.000512*cardSize;
+   myGLCD.print("cardSize: ", LEFT, 45);
+  myGLCD.printNumI(0.000512*cardSize, RIGHT, 5);
+//  myGLCD.print("MB", RIGHT, 5);
+
   cout << F(" MB (MB = 1,000,000 bytes)\n");
 
   cout << F("flashEraseSize: ") << int(eraseSize) << F(" blocks\n");
   cout << F("eraseSingleBlock: ");
   if (eraseSingleBlock) {
-    cout << F("true\n");
+	cout << F("true\n");
   } else {
-    cout << F("false\n");
+	cout << F("false\n");
   }
   return true;
 }
@@ -7076,78 +7082,119 @@ uint8_t partDmp()
 //------------------------------------------------------------------------------
 void volDmp() 
 {
-  cout << F("\nVolume is FAT") << int(sd.vol()->fatType()) << endl;
-  cout << F("blocksPerCluster: ") << int(sd.vol()->blocksPerCluster()) << endl;
-  cout << F("clusterCount: ") << sd.vol()->clusterCount() << endl;
-  cout << F("freeClusters: ");
-  uint32_t volFree = sd.vol()->freeClusterCount();
-  cout <<  volFree << endl;
-  float fs = 0.000512*volFree*sd.vol()->blocksPerCluster();
-  cout << F("freeSpace: ") << fs << F(" MB (MB = 1,000,000 bytes)\n");
-  cout << F("fatStartBlock: ") << sd.vol()->fatStartBlock() << endl;
-  cout << F("fatCount: ") << int(sd.vol()->fatCount()) << endl;
-  cout << F("blocksPerFat: ") << sd.vol()->blocksPerFat() << endl;
-  cout << F("rootDirStart: ") << sd.vol()->rootDirStart() << endl;
-  cout << F("dataStartBlock: ") << sd.vol()->dataStartBlock() << endl;
-  if (sd.vol()->dataStartBlock() % eraseSize) {
-    cout << F("Data area is not aligned on flash erase boundaries!\n");
-    cout << F("Download and use formatter from www.sdsd.card()->org/consumer!\n");
-  }
+	cout << F("\nVolume is FAT") << int(sd.vol()->fatType()) << endl;
+	myGLCD.print("Volume is FAT", LEFT, 65);
+	int volFAT = sd.vol()->fatType();
+	myGLCD.printNumI(volFAT, RIGHT , 65);
+	cout << F("blocksPerCluster: ") << int(sd.vol()->blocksPerCluster()) << endl;
+	cout << F("clusterCount: ") << sd.vol()->clusterCount() << endl;
+	cout << F("freeClusters: ");
+	uint32_t volFree = sd.vol()->freeClusterCount();
+	cout <<  volFree << endl;
+	float fs = 0.000512*volFree*sd.vol()->blocksPerCluster();
+	cout << F("freeSpace: ") << fs << F(" MB (MB = 1,000,000 bytes)\n");
+	myGLCD.print("freeSpace: ", LEFT, 85);
+	myGLCD.printNumI(fs, RIGHT , 85);
+	//myGLCD.print("MB", RIGHT, 85);
+	cout << F("fatStartBlock: ") << sd.vol()->fatStartBlock() << endl;
+	cout << F("fatCount: ") << int(sd.vol()->fatCount()) << endl;
+	cout << F("blocksPerFat: ") << sd.vol()->blocksPerFat() << endl;
+	cout << F("rootDirStart: ") << sd.vol()->rootDirStart() << endl;
+	cout << F("dataStartBlock: ") << sd.vol()->dataStartBlock() << endl;
+	if (sd.vol()->dataStartBlock() % eraseSize) 
+	{
+		cout << F("Data area is not aligned on flash erase boundaries!\n");
+		cout << F("Download and use formatter from www.sdsd.card()->org/consumer!\n");
+	}
 }
 
 void SD_info()
 {
- cardSize = sd.card()->cardSize();
+  myGLCD.clrScr();
+  myGLCD.setBackColor(0, 0, 0);
+  uint32_t t = micros();
+  // initialize the SD card at SPI_HALF_SPEED to avoid bus errors with
+  // breadboards.  use SPI_FULL_SPEED for better performance.
+ if (!sd.begin(chipSelect, SPI_HALF_SPEED))
+  {
+	sdErrorMsg("\ncardBegin failed");
+	myGLCD.print("cardBegin failed", LEFT, 100);
+  }
+  t = micros() - t;
+  cardSize = sd.card()->cardSize();
+
   if (cardSize == 0) 
   {
-    sdErrorMsg("cardSize failed");
-    return;
+	sdErrorMsg("cardSize failed");
+	myGLCD.print("Size failed", LEFT, 120);
   }
-// cout << F("\ninit time: ") << t << " ms" << endl;
+  cout << F("\ninit time:") << t << " us" << endl;
+  myGLCD.print("Init time: ", LEFT, 25);
+  myGLCD.printNumI(t, RIGHT, 25);
+  // myGLCD.print("us", RIGHT, 0+5);
   cout << F("\nCard type: ");
+  myGLCD.print("Card type:", LEFT, 45);
   switch (sd.card()->type()) 
   {
   case SD_CARD_TYPE_SD1:
-    cout << F("SD1\n");
-    break;
+	cout << F("SD1\n");
+	 myGLCD.print("SD1", RIGHT , 45);
+	break;
 
   case SD_CARD_TYPE_SD2:
-    cout << F("SD2\n");
-    break;
+	cout << F("SD2\n");
+	 myGLCD.print("SD2", RIGHT , 45);
+	break;
 
   case SD_CARD_TYPE_SDHC:
-    if (cardSize < 70000000) {
-      cout << F("SDHC\n");
-    } else {
-      cout << F("SDXC\n");
-    }
-    break;
+	if (cardSize < 70000000) 
+	{
+	  cout << F("SDHC\n");
+	   myGLCD.print("SDHC", RIGHT , 45);
+	} else {
+	  cout << F("SDXC\n");
+	   myGLCD.print("SDXC", RIGHT , 45);
+	}
+	break;
 
   default:
-    cout << F("Unknown\n");
+	cout << F("Unknown\n");
+	 myGLCD.print("Unknown", RIGHT , 45);
   }
-  if (!cidDmp()) {
-    return;
+  if (!cidDmp()) 
+  {
+	return;
   }
-  if (!csdDmp()) {
-    return;
+  if (!csdDmp()) 
+  {
+	return;
   }
   uint32_t ocr;
-  if (!sd.card()->readOCR(&ocr)) {
-    sdErrorMsg("\nreadOCR failed");
-    return;
+  if (!sd.card()->readOCR(&ocr)) 
+  {
+	sdErrorMsg("\nreadOCR failed");
+	myGLCD.print("OCR failed", LEFT, 145);
+	//return;
   }
   cout << F("OCR: ") << hex << ocr << dec << endl;
-  if (!partDmp()) {
-    return;
+  if (!partDmp()) 
+  {
+	return;
   }
-  if (!sd.fsBegin()) {
-    sdErrorMsg("\nFile System initialization failed.\n");
-    return;
+  if (!sd.fsBegin()) 
+  {
+	sdErrorMsg("\nFile System initialization failed.\n");
+	myGLCD.print("File System failed", LEFT, 165);
+	//return;
   }
   volDmp();
-}
 
+	myGLCD.setColor(VGA_LIME);
+//	myGLCD.print(txt_info11,CENTER, 200);
+	myGLCD.setColor(255, 255, 255);
+	while (!myTouch.dataAvailable()){}
+	while (myTouch.dataAvailable()){}
+}
 
 //-----------------------------------
 
@@ -7233,6 +7280,7 @@ void setup()
 	//EEPROM.put(adr_start_user+14, user_pass);
 	number_device = i2c_eeprom_read_byte(deviceaddress, adr_number_device);
 	delay(5000);
+	vibroM();
 	EEPROM.get(adr_pass_on_off, pass_on_off);	 
 	if(pass_on_off)                                       // Если флаг пароля true - включен
 	{
@@ -7244,7 +7292,6 @@ void setup()
 		user_number = 0;
 		user_pass   = 0;
 	}
-	vibroM();
 	Serial.println("System initialization OK!.");          // Информация о завершении настройки
 }
 void loop()
