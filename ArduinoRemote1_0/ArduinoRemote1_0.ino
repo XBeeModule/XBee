@@ -77,9 +77,7 @@
            4 -
            5 - Выход
 
-
-		   
-		4 - Настройка системы                     (klav_menu3())
+		   4 - Настройка системы                     (klav_menu3())
 		  	- Вести пароль
 			1- Сброс счетчика                     (klav_Menu_Reset())  - Выбрать кнопки, на которых необходимо сбросить счетчики
 			2- Установить интервалы               (klav_menu5())
@@ -98,6 +96,7 @@
 				5 - Выход
             5 - Выход
 		5 - Выход
+
 МЕНЮ 2                                klav_menu2()
        1 -  ИНФО XBee                 XBee_status();                                          // Информация XBee 
 
@@ -112,10 +111,6 @@
 	   4 - Установить дату и время   setClock();
 
 	   5 - Выход
-
-
-
-
 
 
 -----------------------------------------------------------------
@@ -188,9 +183,6 @@ if(rx.getData()[18]!=0) EEPROM.put(address_count8, 0);
 #include <SdFatUtil.h>
 #include <XBee.h>
 #include <EEPROM.h>
-//#include <OneWire.h>
-
-
 
 #define led_13 13  
 #define KN1 A8   
@@ -230,28 +222,25 @@ int time2      = 0;            // Интервал 2 (резерв, не применяется)
 int timeMotor1 = 0;            // Интервал Мотор1
 int timeMotor2 = 0;            // Интервал Мотор2
 
+bool blockKN1 = false;         // Признак блокировки кнопки KN1
+bool blockKN2 = false;         // Признак блокировки кнопки KN2
+bool blockKN3 = false;         // Признак блокировки кнопки KN3
+bool blockKN4 = false;         // Признак блокировки кнопки KN4
+bool blockKN5 = false;         // Признак блокировки кнопки KN5
+bool blockKN6 = false;         // Признак блокировки кнопки KN6
+bool blockKN7 = false;         // Признак блокировки кнопки KN7
+bool blockKN8 = false;         // Признак блокировки кнопки KN8
 
-bool blockKN1 = false;
-bool blockKN2 = false;
-bool blockKN3 = false;
-bool blockKN4 = false;
-bool blockKN5 = false;
-bool blockKN6 = false;
-bool blockKN7 = false;
-bool blockKN8 = false;
+int stat_rele1 = 0;            // Текущее состояние реле 1
+int stat_rele2 = 0;            // Текущее состояние реле 2
+int stat_rele3 = 0;            // Текущее состояние реле 3
+int stat_rele4 = 0;            // Текущее состояние реле 4
 
-int stat_rele1 = 0;            // Текущее состояние реле
-int stat_rele2 = 0;            // Текущее состояние реле
-int stat_rele3 = 0;            // Текущее состояние реле
-int stat_rele4 = 0;            // Текущее состояние реле
-
-bool pass_on_off    = false;    // Текущее состояние. Применение пароля при включении прибора false - пароль отключен
-bool pass_on_off_t  = false;    // Временное состояние. Применение пароля при включении прибора false - пароль отключен
+bool pass_on_off        = false;    // Текущее состояние. Применение пароля при включении прибора false - пароль отключен
+bool pass_on_off_t      = false;    // Временное состояние. Применение пароля при включении прибора false - пароль отключен
 uint8_t power_on_off    = 0;        // Текущее состояние. Установить мощность передачи
 uint8_t power_on_off_t  = 0;        // Временное состояние.  Установить мощность передачи
-
-
-int adr_user = 0;              // Адрес номера пользователя в памяти.
+int adr_user            = 0;        // Адрес номера пользователя в памяти.
 
 
 //********************* Настройка монитора ***********************************
@@ -259,8 +248,8 @@ UTFT          myGLCD(ITDB24E_8, 38, 39, 40, 41);        // Дисплей 2.4" !! Внима
 UTouch        myTouch(6, 5, 4, 3, 2);                   // Standard Arduino Mega/Due shield            : 6,5,4,3,2
 UTFT_Buttons  myButtons(&myGLCD, &myTouch);             // Finally we set up UTFT_Buttons :)
 
-boolean default_colors = true;                          //
-uint8_t menu_redraw_required = 0;
+boolean default_colors       = true;                    //
+uint8_t menu_redraw_required = 0;                       // Признак перезаписи дисплея
 // Declare which fonts we will be using
 extern uint8_t SmallFont[];
 extern uint8_t BigFont[];
@@ -284,7 +273,7 @@ unsigned long timeF;
 int flag_time = 0;
 int x_delta = 8;                                     // Смещение тачскрина по Х в файле setTimeDate.ino
 
-RTC_DS1307 RTC;                                       // define the Real Time Clock object
+RTC_DS1307 RTC;                                      // define the Real Time Clock object
 //**************************** Пароль **********************************************************
 
 int  stCurrentLen_pass = 0;               // Длина вводимой строки
@@ -313,9 +302,9 @@ int ret               = 0;                                        // Признак пре
 int lenStr            = 8;                                        // Длина строки XBee
 int count_s           = 0;                                        // Счетчик введенных символов 
 
-int x_dev = 16;
-int y_dev = 16;
-int deltaY=10;
+int x_dev = 16;                                                   // Признак смещения текста
+int y_dev = 16;                                                   // Признак смещения текста
+int deltaY=10;                                                    // Признак смещения текста
 
 int number_menu = 0;
 
@@ -559,6 +548,121 @@ const char* const table_message[] PROGMEM =
  
 };
 
+
+// ************ XBee******************
+
+XBee xbee = XBee();                                   //создаем XBee библиотеку
+
+// ++++++++++  настройки для приема и передачи пакета +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+XBeeResponse response = XBeeResponse();               //Это создает экземпляр объекта "response" "ответ" обрабатывать пакеты Xbee
+ZBRxResponse rx = ZBRxResponse();                     //Это создает экземпляр объекта "rx" на процесс Xbee Series 2 API пакеты
+ModemStatusResponse msr = ModemStatusResponse();      //Это создает экземпляр объекта "msr" процесс associate/disassociate packets (PAN membership)
+ZBRxIoSampleResponse ioSample = ZBRxIoSampleResponse();
+
+
+//Строка с данными
+uint8_t payload[64] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+//uint8_t payload1[10] ;// = {3, 4,};
+
+int XBee_Addr16;                            //16-разрядный адрес
+int Len_XBee = 0;
+unsigned char info_XBee_data[96];
+unsigned char info_XBee_data1[96];
+char* simbol_ascii[2];
+char   cmd;
+
+uint8_t shCmd[] = {'S','H'};                // serial high Старший байт адреса куда отправляется пакет
+uint8_t slCmd[] = {'S','L'};                // serial low Младший байт адреса куда отправляется пакет
+uint8_t assocCmd[] = {'A','I'};             // association status Индикация присоединения 
+											/*
+											Считывает информацию о последнем запросе узла на присоединение:
+											0x00 – Завершено успешно - Координатор стартовал илиМаршрутизатор/Конечное устройство
+											обнаружило и присоединилось родительскому устройству.
+											0x21 – Сканирование не обнаружило сети
+											0x22 – Сканирование не обнаружило работающей сети с текущими установками SC и ID
+											0x23 – Работающий Координатор или Маршрутизаторы найдены, но они не дали разрешение на
+											присоединение к сети (истекло время NJ)
+											0x27 – Попытка присоединения не удалась
+											0x2A – Запуск Координатора не удался
+											0xFF – Идет поиск родительского устройства
+											*/
+uint8_t irCmd[]    = {'I','R'};             // 
+uint8_t opCmd[]    = {'O','P'};             // Номер сети (PAN ID)
+uint8_t IDCmd[]    = {'I','D'};             // Номер сети (ID)
+uint8_t OICmd[]    = {'O','I'};             // Operating 16-bit PAN ID(OI)
+uint8_t MYCmd[]    = {'M','Y'};             // Номер сети (16-bit Network Adress
+uint8_t CHCmd[]    = {'C','H'};             // Номер Радиоканала
+uint8_t SCCmd[]    = {'S','C'};             // Scan Channel
+uint8_t BDCmd[]    = {'B','D'};             // Скорость канала (Baud Rate )
+uint8_t VoltCmd[]  = {'%','V'};             // Напряжение питания Считывает напряжение на выводе Vcc. Для преобразования значения
+											// в мВ, поделите значение на 1023 и умножьте на 1200. Значение %V равное 0x8FE (или 2302 в
+											// десятичном виде) соответствует 2700мВ или 2.70В
+uint8_t TPCmd[]    = {'T','P'};             // Температура
+uint8_t dhCmd[]    = {'D','H'};             // Старший байт адреса
+uint8_t dlCmd[]    = {'D','L'};             // Младший байт адреса
+uint8_t d0Cmd[]    = {'D','0'};             //
+uint8_t WRCmd[]    = {'W','R'};             // Запись в модуль параметров
+											// Примечание: Если введена команда WR, до получения ответа "OK\r" не должно вводится
+											// дополнительных символов
+uint8_t FRCmd[]    = {'F','R'};             // Перезапуск программного обеспечения
+uint8_t NRCmd[]    = {'N','R'};             // Перезапуск сети 
+											// Если NR = 0: Переустанавливает параметры сети на узле, вызвавшем команду. 
+											// Если NR = 1:Отправляетшироковещательную передачу для перезапуска параметров на всех узлах сети.
+uint8_t PLCmd[]    = {'P','L'};             // TX Power level mW
+uint8_t NDCmd[]    = {'N','D'};             // Обнаружение узла (Node Discover). Обнаруживает и сообщает обо всех
+                                            // найденных модулях. Следующая информация будет сообщена для каждого
+						                    // обнаруженного модуля:
+											// MY<CR>      16-разрядный адрес источника
+											// SH<CR>      Старшие байты серийного номера
+											// SL<CR>      Младшие байты серийного номера
+											// DB<CR>      Сила принимаемого сигнала (Received Signal Strength)
+											// NI<CR><CR>  Идентификатор узла (Node Identifier). Имя модуля
+
+uint8_t NTCmd[]    = {'N','T'};             // Node Discovery Timeout. Set/Read the node discovery timeout. When the network
+											// discovery (ND) command is issued, the NT value is included in the transmission to
+											// provide all remote devices with a response timeout. Remote devices wait a random
+											//  time, less than NT, before sending their response.  0x3C (60d)
+
+
+uint8_t d0Value[]  = { 0x2 };
+uint8_t irValue[]  = { 0xff, 0xff };
+uint8_t IDValue[]  = { 0x02, 0x34 };
+
+ 
+uint8_t command[]  = {'I','D'};             // Номер сети (ID)
+uint8_t commandValue[]  = { 0x02, 0x35 };
+uint8_t commandValueLength = 0x2 ;
+
+
+
+
+//Два 32-битных половинки th4 64-разрядный адрес
+long XBee_Addr64_MS =  0x0013a200;
+long XBee_Addr64_LS = 0 ; //0x40672567;
+
+//Два 32-битных половинки th4 64-разрядный адрес
+long XBee_Addr64_MS_tmp = 0;                    //
+long XBee_Addr64_LS_tmp = 0;                    //
+
+XBeeAddress64 addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);                                     // SH + SL Address of receiving XBee
+ZBTxRequest zbTx = ZBTxRequest(addr64, payload, sizeof(payload));                                         // Формирует пакет  zbTx с адресом отправителя и данными
+ZBTxStatusResponse txStatus = ZBTxStatusResponse();                                                       // Это создает экземпляр объекта "txStatus" процесс благодарности прислал Xbee Series 2 API пакеты
+AtCommandRequest atRequest = AtCommandRequest(shCmd);                                                     // XBeeAddress64 remoteAddress = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);
+AtCommandRequest arRequestMod = AtCommandRequest(command,commandValue, commandValueLength); 
+AtCommandResponse atResponse = AtCommandResponse();
+RemoteAtCommandRequest remoteAtRequest = RemoteAtCommandRequest(addr64, irCmd, irValue, sizeof(irValue)); // Create a remote AT request with the IR command
+RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();                                     // Create a Remote AT response object
+
+
+//********************************
+byte funcType;                      // Номер функции, переданной по каналу  XBee
+word field1;                        // Данные,  переданные по каналу  XBee
+word field2;                        // Данные,  переданные по каналу  XBee
+byte *_msg, _len;                   // Длина строки
+word _baud, _crc;                   // Скорость обмена и контрольная сумма блока  
+
+
 //++++++++++++++++++++++ Работа с файлами +++++++++++++++++++++++++++++++++++++++
 //#define chipSelect SS
 #define chipSelect 53                                             // Настройка выбора SD
@@ -576,7 +680,7 @@ cache_t cache;
 // созданы переменные, использующие функции библиотеки SD utility library functions: +++++++++++++++
 // Change spiSpeed to SPI_FULL_SPEED for better performance
 // Use SPI_QUARTER_SPEED for even slower SPI bus speed
-const uint8_t spiSpeed = SPI_HALF_SPEED;
+const uint8_t spiSpeed = SPI_HALF_SPEED;                       // Скорость обмена данных с SD
 
 
 //++++++++++++++++++++ Назначение имени файла ++++++++++++++++++++++++++++++++++++++++++++
@@ -607,8 +711,8 @@ char str2_1[10];
 
 #define DEBUG_PRINT 1
 // Serial output stream
-ArduinoOutStream cout(Serial);     // Сменить порт
-
+ArduinoOutStream cout(Serial);     // Вывод данных в КОМ порт
+// Переменные для работы с SD
 // MBR information
 uint8_t partType;
 uint32_t relSector;
@@ -634,13 +738,14 @@ char noName[] = "NO NAME    ";
 char fat16str[] = "FAT16   ";
 char fat32str[] = "FAT32   ";
 //------------------------------------------------------------------------------
-#define sdError(msg) sdError_F(F(msg))
+#define sdError(msg) sdError_F(F(msg))               // Программа обработки ошибок
 
-void sdError_F(const __FlashStringHelper* str)
+void sdError_F(const __FlashStringHelper* str)       // Программа обработки ошибок
 {
   cout << F("error: ");
   cout << str << endl;
-  if (card.errorCode()) {
+  if (card.errorCode()) 
+  {
     cout << F("SD error: ") << hex << int(card.errorCode());
     cout << ',' << int(card.errorData()) << dec << endl;
   }
@@ -984,7 +1089,7 @@ void formatCard()
   cout << F("Format done\n");
 }
 
-void formatSD()
+void formatSD()         // Информация о SD памяти
 {
   if (!card.begin(chipSelect, spiSpeed)) 
   {
@@ -1037,127 +1142,10 @@ void klav_menu2();
 void klav_menu3();
 
 
-
-
-
-
-// ************ XBee******************
-
-XBee xbee = XBee();                                   //создаем XBee библиотеку
-
-// ++++++++++  настройки для приема и передачи пакета +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-XBeeResponse response = XBeeResponse();               //Это создает экземпляр объекта "response" "ответ" обрабатывать пакеты Xbee
-ZBRxResponse rx = ZBRxResponse();                     //Это создает экземпляр объекта "rx" на процесс Xbee Series 2 API пакеты
-ModemStatusResponse msr = ModemStatusResponse();      //Это создает экземпляр объекта "msr" процесс associate/disassociate packets (PAN membership)
-ZBRxIoSampleResponse ioSample = ZBRxIoSampleResponse();
-
-
-//Строка с данными
-uint8_t payload[64] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-//uint8_t payload1[10] ;// = {3, 4,};
-
-int XBee_Addr16;                            //16-разрядный адрес
-int Len_XBee = 0;
-unsigned char info_XBee_data[96];
-unsigned char info_XBee_data1[96];
-char* simbol_ascii[2];
-char   cmd;
-
-uint8_t shCmd[] = {'S','H'};                // serial high Старший байт адреса куда отправляется пакет
-uint8_t slCmd[] = {'S','L'};                // serial low Младший байт адреса куда отправляется пакет
-uint8_t assocCmd[] = {'A','I'};             // association status Индикация присоединения 
-											/*
-											Считывает информацию о последнем запросе узла на присоединение:
-											0x00 – Завершено успешно - Координатор стартовал илиМаршрутизатор/Конечное устройство
-											обнаружило и присоединилось родительскому устройству.
-											0x21 – Сканирование не обнаружило сети
-											0x22 – Сканирование не обнаружило работающей сети с текущими установками SC и ID
-											0x23 – Работающий Координатор или Маршрутизаторы найдены, но они не дали разрешение на
-											присоединение к сети (истекло время NJ)
-											0x27 – Попытка присоединения не удалась
-											0x2A – Запуск Координатора не удался
-											0xFF – Идет поиск родительского устройства
-											*/
-uint8_t irCmd[]    = {'I','R'};             // 
-uint8_t opCmd[]    = {'O','P'};             // Номер сети (PAN ID)
-uint8_t IDCmd[]    = {'I','D'};             // Номер сети (ID)
-uint8_t OICmd[]    = {'O','I'};             // Operating 16-bit PAN ID(OI)
-uint8_t MYCmd[]    = {'M','Y'};             // Номер сети (16-bit Network Adress
-uint8_t CHCmd[]    = {'C','H'};             // Номер Радиоканала
-uint8_t SCCmd[]    = {'S','C'};             // Scan Channel
-uint8_t BDCmd[]    = {'B','D'};             // Скорость канала (Baud Rate )
-uint8_t VoltCmd[]  = {'%','V'};             // Напряжение питания Считывает напряжение на выводе Vcc. Для преобразования значения
-											// в мВ, поделите значение на 1023 и умножьте на 1200. Значение %V равное 0x8FE (или 2302 в
-											// десятичном виде) соответствует 2700мВ или 2.70В
-uint8_t TPCmd[]    = {'T','P'};             // Температура
-uint8_t dhCmd[]    = {'D','H'};             // Старший байт адреса
-uint8_t dlCmd[]    = {'D','L'};             // Младший байт адреса
-uint8_t d0Cmd[]    = {'D','0'};             //
-uint8_t WRCmd[]    = {'W','R'};             // Запись в модуль параметров
-											// Примечание: Если введена команда WR, до получения ответа "OK\r" не должно вводится
-											// дополнительных символов
-uint8_t FRCmd[]    = {'F','R'};             // Перезапуск программного обеспечения
-uint8_t NRCmd[]    = {'N','R'};             // Перезапуск сети 
-											// Если NR = 0: Переустанавливает параметры сети на узле, вызвавшем команду. 
-											// Если NR = 1:Отправляетшироковещательную передачу для перезапуска параметров на всех узлах сети.
-uint8_t PLCmd[]    = {'P','L'};             // TX Power level mW
-uint8_t NDCmd[]    = {'N','D'};             // Обнаружение узла (Node Discover). Обнаруживает и сообщает обо всех
-                                            // найденных модулях. Следующая информация будет сообщена для каждого
-						                    // обнаруженного модуля:
-											// MY<CR>      16-разрядный адрес источника
-											// SH<CR>      Старшие байты серийного номера
-											// SL<CR>      Младшие байты серийного номера
-											// DB<CR>      Сила принимаемого сигнала (Received Signal Strength)
-											// NI<CR><CR>  Идентификатор узла (Node Identifier). Имя модуля
-
-uint8_t NTCmd[]    = {'N','T'};             // Node Discovery Timeout. Set/Read the node discovery timeout. When the network
-											// discovery (ND) command is issued, the NT value is included in the transmission to
-											// provide all remote devices with a response timeout. Remote devices wait a random
-											//  time, less than NT, before sending their response.  0x3C (60d)
-
-
-uint8_t d0Value[]  = { 0x2 };
-uint8_t irValue[]  = { 0xff, 0xff };
-uint8_t IDValue[]  = { 0x02, 0x34 };
-
- 
-uint8_t command[]  = {'I','D'}; // Номер сети (ID)
-uint8_t commandValue[]  = { 0x02, 0x35 };
-uint8_t commandValueLength = 0x2 ;
-
-
-
-
-//Два 32-битных половинки th4 64-разрядный адрес
-long XBee_Addr64_MS = 0 ; //0x0013a200;
-long XBee_Addr64_LS = 0 ; //0x40672567;
-
-//Два 32-битных половинки th4 64-разрядный адрес
-long XBee_Addr64_MS_tmp = 0;                    //
-long XBee_Addr64_LS_tmp = 0;                    //
-
-XBeeAddress64 addr64 = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);                                     // SH + SL Address of receiving XBee
-ZBTxRequest zbTx = ZBTxRequest(addr64, payload, sizeof(payload));                                         // Формирует пакет  zbTx с адресом отправителя и данными
-ZBTxStatusResponse txStatus = ZBTxStatusResponse();                                                       // Это создает экземпляр объекта "txStatus" процесс благодарности прислал Xbee Series 2 API пакеты
-AtCommandRequest atRequest = AtCommandRequest(shCmd);                                                     // XBeeAddress64 remoteAddress = XBeeAddress64(XBee_Addr64_MS, XBee_Addr64_LS);
-AtCommandRequest arRequestMod = AtCommandRequest(command,commandValue, commandValueLength); 
-AtCommandResponse atResponse = AtCommandResponse();
-RemoteAtCommandRequest remoteAtRequest = RemoteAtCommandRequest(addr64, irCmd, irValue, sizeof(irValue)); // Create a remote AT request with the IR command
-RemoteAtCommandResponse remoteAtResponse = RemoteAtCommandResponse();                                     // Create a Remote AT response object
-
-
-//********************************
-byte funcType;
-word field1;
-word field2;
-byte *_msg, _len;
-word _baud, _crc;
-
 //-----------------------------------------------------------------------------------------------
 void(* resetFunc) (void) = 0;                         // объявляем функцию reset
 //---------------  пароль --------------------------
-void txt_pass_no_all()
+void txt_pass_no_all()                               // Вывод строки  Проверка пароля не пройдена 
 {
 		myGLCD.clrScr();
 		myGLCD.setColor(255, 255, 255);
@@ -1165,68 +1153,65 @@ void txt_pass_no_all()
 		myGLCD.print(txt_pass_no, RIGHT, 280);
 		delay (1000);
 }
-void pass_test_start() // Начало проверки пароля
+void pass_test_start()                                     // Начало проверки пароля
 {  
 		myGLCD.setFont(BigFont);
 		myGLCD.setBackColor(0, 0, 255);
 		myGLCD.clrScr();
-		drawButtons1();
-			// Вывод строки "Введите пароль!"
-		myGLCD.setColor(VGA_YELLOW);
-		myGLCD.print(txt12, CENTER, 280);// Введите пароль!"
+		drawButtons1();                                    // Нарисовать клавиатуру
+			
+		myGLCD.setColor(VGA_YELLOW);                       // Мигающие строки
+		myGLCD.print(txt12, CENTER, 280);                  // Вывод строки "Введите пароль!"
 		delay(300);
-		myGLCD.print("                   ", CENTER, 280);
+		myGLCD.print("                   ", CENTER, 280);  // Стереть строку "Введите пароль!"
 		delay(300);
-		myGLCD.print(txt12, CENTER, 280);// Введите пароль!"
+		myGLCD.print(txt12, CENTER, 280);                  // Вывод строки "Введите пароль!"
 
 }
-void pass_test()                  // Проверка паролей
+void pass_test()                                           // Проверка паролей
 {
-	pass=0;
-	pass1=0;
-	pass2=0;
-	pass3=0;
-	// Проверка пароля пользователя
-	if(user_pass == var_klav123)
+	pass=0;                                                // Признак правильности ввода пароля 
+	pass1=0;                                               // Признак правильности ввода пароля пользователя
+	pass2=0;                                               // Признак правильности ввода пароля администратора
+	pass3=0;                                               // Признак правильности ввода пароля 
+                                                           // user_pass    пароль из памяти текущий  пароля пользователя
+	if(user_pass == var_klav123)                           // Проверка пароля пользователя
 	{
-		pass1 = 1;
+		pass1 = 1;                                         // Проверка пароля пройдена 
 	}
 	else
 	{
-		pass1 = 0;
+		pass1 = 0;                                        // Проверка пароля не пройдена 
 	}
 
 	// Проверка пароля администратора 
-	EEPROM.get(adr_pass_admin,pass_admin2);	
+	EEPROM.get(adr_pass_admin,pass_admin2);		          // Получить из памяти текущий  пароля администратора 
 	if(pass_admin2 == var_klav123)
 	{
-		pass2 = 1;
+		pass2 = 1;                                        // Проверка пароля пройдена 
 	}
 	else
 	{
-		pass2 = 0;
+		pass2 = 0;                                       // Проверка пароля не пройдена 
 	}
 
-	// Проверка пароля супер администратора 
-
-	if(pass_super_admin == var_klav123)
+	if(pass_super_admin == var_klav123)             	 // Проверка пароля супер администратора 
 	{
-		pass3 = 1;
+		pass3 = 1;                                       // Проверка пароля пройдена 
 	}
 	else
 	{
-		pass3 = 0;
+		pass3 = 0;                                       // Проверка пароля не пройдена 
 	}
-	// Окончание проверки пароля супер администратора
-	
-	if (( pass1 == 1) || ( pass2 == 1)|| ( pass3 == 1))
+
+	if (( pass1 == 1) || ( pass2 == 1)|| ( pass3 == 1))	// Окончание проверки пароля супер администратора
 
 	{
-		pass = 1;
+		pass = 1;                                       // Проверка пароля пройдена   
 	}
 	else
 	{
-		pass = 0;
+		pass = 0;                                       // Проверка пароля не пройдена   
 	}
 
 	//Serial.print("pass1 - ");              // контроль пароля -удалить
@@ -1245,7 +1230,7 @@ void pass_test()                  // Проверка паролей
 	//Serial.println(ret);                   // контроль пароля -удалить
 
 }
-void drawButtons1() // Отображение цифровой клавиатуры
+void drawButtons1()                                                 // Отображение цифровой клавиатуры
 {
 
 	drawButtons0_1();
@@ -1271,7 +1256,7 @@ void drawButtons1() // Отображение цифровой клавиатуры
 	myGLCD.print(buffer, 137, 199);                                  // Вых
 	myGLCD.setBackColor (0, 0, 0);
 }
-void klav123() // ввод данных с цифровой клавиатуры
+void klav123()                             // ввод данных с цифровой клавиатуры
 {
 	ret = 0;
 	int x,y;
@@ -1407,29 +1392,29 @@ void pass_start()                         // Ввод пароля при старте системы
 {
 	while(1) 
 	{
-		pass_test_start();                // Нарисовать цифровую клавиатуру
-		klav123();                        // Считать информацию с клавиатуры
-		if (ret == 1)                     // Если "Возврат" - закончить
+		pass_test_start();                                 // Нарисовать цифровую клавиатуру
+		klav123();                                          // Считать информацию с клавиатуры
+		if (ret == 1)                                       // Если "Возврат" - закончить
 		{
-			goto bailout11;               // Перейти на окончание выполнения пункта меню
+			goto bailout11;                                 // Перейти на окончание выполнения пункта меню
 		}
-		else                              // Иначе выполнить пункт меню
+		else                                                // Иначе выполнить пункт меню
 		{
-			pass_test();                  // Проверить пароль
+			pass_test();                                    // Проверить пароль
 		}
 		if ( ( pass1 == 1)||( pass2 == 1) || ( pass3 == 1)) // если верно - выполнить пункт меню
 		{
-			myGLCD.clrScr();              // Очистить экран
+			myGLCD.clrScr();                                // Очистить экран
 			myGLCD.print(txt_pass_ok, RIGHT, 208); 
 			delay (500);
 			return;
 		}
-		else                              // Пароль не верный - сообщить
+		else                                               // Пароль не верный - сообщить
 		{
 			txt_pass_no_all();
 		}
 
-		bailout11:                       // Восстановить пункты меню
+		bailout11:                                        // Восстановить пункты меню
 		myGLCD.clrScr();
 		myButtons.drawButtons();
 		view_adr_user();                                  // Выбор пользователя
@@ -1438,14 +1423,16 @@ void pass_start()                         // Ввод пароля при старте системы
 
 
 //**************************************************
-void flashLed(int pin, int times, int wait) {
-
-  for (int i = 0; i < times; i++) {
+void flashLed(int pin, int times, int wait)  // Мигание светодиода ( не задействовано)
+{
+  for (int i = 0; i < times; i++) 
+  {
 	digitalWrite(pin, HIGH);
 	delay(wait);
 	digitalWrite(pin, LOW);
 
-	if (i + 1 < times) {
+	if (i + 1 < times) 
+	{
 	  delay(wait);
 	}
   }
@@ -1461,7 +1448,7 @@ void dateTime(uint16_t* date, uint16_t* time)                                   
   // return time using FAT_TIME macro to format fields
   *time = FAT_TIME(now.hour(), now.minute(), now.second());
 }
-void print_up() // Печать верхней строчки над меню
+void print_up() // Печать верхней строчки над меню   ( не задействовано)
 {
   myGLCD.setColor(0, 255, 0);
   myGLCD.setBackColor(0, 0, 0);
@@ -1490,7 +1477,7 @@ void print_up() // Печать верхней строчки над меню
       break;
   }
 }
-void serial_print_date()                           // Печать даты и времени
+void serial_print_date()                           // Печать даты и времени, вывод на ПК
 {
   DateTime now = RTC.now();
   Serial.print(now.day(), DEC);
@@ -1507,7 +1494,7 @@ void serial_print_date()                           // Печать даты и времени
   Serial.print("  ");
   Serial.println(str1[now.dayOfWeek()]);
 }
-void clock_read()
+void clock_read()                           // Обновить данные модуля часов
 {
   DateTime now = RTC.now();
   second = now.second();
@@ -1518,7 +1505,7 @@ void clock_read()
   month  = now.month();
   year   = now.year();
 }
-void set_time()
+void set_time()                              // Синхронизировать с ПК данные часов при программировании (не задействовано)
 {
   RTC.adjust(DateTime(__DATE__, __TIME__));
   DateTime now = RTC.now();
@@ -1533,7 +1520,7 @@ void set_time()
   DateTime set_time = DateTime(year, month, day, hour, minute, second); // Занести данные о времени в строку "set_time"
   RTC.adjust(set_time);
 }
-void drawGlavMenu()
+void drawGlavMenu()                                                        // Отображение главного меню
 {
 		 
 	 blockKN1 = i2c_eeprom_read_byte(deviceaddress,adr_blockKN1);          // Восстановить информацию о блокировке кнопок
@@ -1546,15 +1533,15 @@ void drawGlavMenu()
 	 blockKN8 = i2c_eeprom_read_byte(deviceaddress,adr_blockKN8);          // Восстановить информацию о блокировке кнопок
 
 
-	myGLCD.clrScr();
-	myGLCD.setColor(255, 255, 255); 
-	myGLCD.setBackColor( 0, 0, 0);
-	number_device = i2c_eeprom_read_byte(deviceaddress, adr_number_device);
-	Serial.println(number_device);
-	String n_dev = "N"+String(number_device) ;
-	myGLCD.print(n_dev,LEFT, 3);  
-	myGLCD.print("LS-",62, 3);
-	myGLCD.print(String(XBee_Addr64_LS,HEX), RIGHT, 3);
+	myGLCD.clrScr();                                                       // Очистить экран
+	myGLCD.setColor(255, 255, 255);                                        // Цвет текста белый 
+	myGLCD.setBackColor( 0, 0, 0);                                         // Цвет фона черный
+	number_device = i2c_eeprom_read_byte(deviceaddress, adr_number_device);// 
+//	Serial.println(number_device);                                         //                                      
+	String n_dev = "N"+String(number_device) ;                             // Вывести номер устройства в списке
+	myGLCD.print(n_dev,LEFT, 3);                                           //
+	myGLCD.print("LS-",62, 3);                                             // 
+	myGLCD.print(String(XBee_Addr64_LS,HEX), RIGHT, 3);                    // Вывести младший адрес устройства в списке
 
 	myGLCD.setBackColor( 0, 0, 255);
 	number_menu = 0;
@@ -1691,21 +1678,21 @@ void drawGlavMenu()
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (5, 248, 118, 293);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[5])));
-	myGLCD.print(buffer, 16, 262);                                      // "ВЫХОД"
+	myGLCD.print(buffer, 16, 262);                                   // "ВЫХОД"
 
 	myGLCD.setColor(0, 0, 255);
 	myGLCD.fillRoundRect (121, 248, 234, 293);
 	myGLCD.setColor(255, 255, 255);
 	myGLCD.drawRoundRect (121, 248, 234, 293);
 	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[6])));
-	myGLCD.print(buffer, 130, 262);                                     //"СБРОС"
+	myGLCD.print(buffer, 130, 262);                                 //"СБРОС"
 	
 	myGLCD.setColor(255, 255, 255);
 
 	myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
 	myGLCD.setBackColor (0, 0, 0);
-	payload[0] = 11;                              // Команда "Запросить  состояние"
-    XBeeWrite();                                  // Запросить  состояние
+	payload[0] = 11;                                                // Команда "Запросить  состояние"
+    XBeeWrite();                                                    // Запросить  состояние
 }
 void klav_Glav_Menu()
 { 
@@ -7016,17 +7003,22 @@ uint8_t cidDmp()
   return true;
 }
 //------------------------------------------------------------------------------
-uint8_t csdDmp() {
+uint8_t csdDmp() 
+{
   csd_t csd;
   uint8_t eraseSingleBlock;
-  if (!sd.card()->readCSD(&csd)) {
+  if (!sd.card()->readCSD(&csd)) 
+  {
 	sdErrorMsg("readCSD failed");
 	return false;
   }
-  if (csd.v1.csd_ver == 0) {
+  if (csd.v1.csd_ver == 0) 
+  {
 	eraseSingleBlock = csd.v1.erase_blk_en;
 	eraseSize = (csd.v1.sector_size_high << 1) | csd.v1.sector_size_low;
-  } else if (csd.v2.csd_ver == 1) {
+  }
+  else if (csd.v2.csd_ver == 1) 
+  {
 	eraseSingleBlock = csd.v2.erase_blk_en;
 	eraseSize = (csd.v2.sector_size_high << 1) | csd.v2.sector_size_low;
   } else {
