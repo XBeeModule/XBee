@@ -246,7 +246,7 @@ int adr_user            = 0;        // Адрес номера пользователя в памяти.
 //********************* Настройка монитора ***********************************
 
 UTFT          myGLCD(TFT01_24_8, 38, 39, 40, 41);        // !!!  Новый дисплей, в Омске другие настройки.  Дисплей 2.4" !! Внимание! Изменены настройки UTouchCD.h
-UTFT          myGLCD(ITDB24E_8, 38, 39, 40, 41);        // Дисплей 2.4" !! Внимание! Изменены настройки UTouchCD.h
+//UTFT          myGLCD(ITDB24E_8, 38, 39, 40, 41);        // Дисплей 2.4" !! Внимание! Изменены настройки UTouchCD.h
 
 UTouch        myTouch(6, 5, 4, 3, 2);                   // Standard Arduino Mega/Due shield            : 6,5,4,3,2
 UTFT_Buttons  myButtons(&myGLCD, &myTouch);             // Finally we set up UTFT_Buttons :)
