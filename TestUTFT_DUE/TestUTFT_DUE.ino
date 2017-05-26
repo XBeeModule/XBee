@@ -24,6 +24,7 @@
 #include "SmallFont.h"
 #include "BigFont.h"
 #include "Dingbats1_XL.h"
+#include "UTouchCD.h"
 
 #include <UTouch.h>
 #include <ILI9341_due_Buttons.h>
@@ -50,8 +51,9 @@ ILI9341_due tft = ILI9341_due(TFT_CS, TFT_DC, TFT_RST);
 UTouch        myTouch(6, 5, 4, 3, 2);
 
 // Finally we set up ILI9341_due_Buttons :)
-
 ILI9341_due_Buttons  myButtons(&tft, &myTouch);
+
+
 void setup()
 {
 	Serial.begin(115200);
