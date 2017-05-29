@@ -115,8 +115,9 @@ void drawButtons()
 	y = 0;
 	n = 0;
 	tft.fillScreen(ILI9341_BLACK);                // Очистить экран
-	//tft.setRotation(1);
+	//tft.setRotation(1);                         // Вращает экран на 90 градусов
 	tft.setTextSize(3);
+	//tft.setTextColor(ILI9341_RED, ILI9341_GREEN);  // Задает цвет текста и фона (по умолчанию белый)
 
 	for (y = 0; y < 4; y++)
 	{
@@ -127,6 +128,7 @@ void drawButtons()
 			tft.drawRoundRect(5 + ((x * 50) + (x * 5)), 5 + ((y * 50) + (y * 5)), 50, 50, 5, tft.color565(255, 255, 255));
 			tft.setCursor(20 + ((x * 50) + (x * 5)), 20 + ((y * 50) + (y * 5)));
 			n++;
+			//if(n>9) tft.setTextColor(ILI9341_WHITE , ILI9341_GREEN);  // Задает цвет текста и фона (по умолчанию белый)
 			tft.print(n);
 		}
 	}
