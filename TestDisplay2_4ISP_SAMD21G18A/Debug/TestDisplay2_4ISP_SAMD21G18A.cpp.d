@@ -1,6 +1,6 @@
 C:\Users\moseichuk\AppData\Local\Temp\VMBuilds\TestDisplay2_4ISP_SAMD21G18A\arduino_zero_native\Debug\TestDisplay2_4ISP_SAMD21G18A.cpp.o: \
  C:\Users\moseichuk\AppData\Local\Temp\VMBuilds\TestDisplay2_4ISP_SAMD21G18A\arduino_zero_native\Debug\TestDisplay2_4ISP_SAMD21G18A.cpp \
- C:\Users\moseichuk\AppData\Local\arduino15\packages\arduino\hardware\samd\1.6.15\cores\arduino/arduino.h \
+ C:\Users\moseichuk\AppData\Local\arduino15\packages\arduino\hardware\samd\1.6.15\cores\arduino/Arduino.h \
  C:\Users\moseichuk\AppData\Local\arduino15\packages\arduino\hardware\samd\1.6.15\cores\arduino/avr/pgmspace.h \
  C:\Users\moseichuk\AppData\Local\arduino15\packages\arduino\hardware\samd\1.6.15\cores\arduino/avr/interrupt.h \
  C:\Users\moseichuk\AppData\Local\arduino15\packages\arduino\hardware\samd\1.6.15\cores\arduino/avr/io.h \
@@ -103,7 +103,6 @@ C:\Users\moseichuk\AppData\Local\Temp\VMBuilds\TestDisplay2_4ISP_SAMD21G18A\ardu
  C:\Users\moseichuk\AppData\Local\arduino15\packages\arduino\hardware\samd\1.6.15\cores\arduino/USB/USB_host.h \
  C:\Users\moseichuk\AppData\Local\arduino15\packages\arduino\hardware\samd\1.6.15\cores\arduino/USB/samd21_host.h \
  C:\Users\moseichuk\AppData\Local\arduino15\packages\arduino\hardware\samd\1.6.15\libraries\SPI/SPI.h \
- C:\Users\moseichuk\AppData\Local\arduino15\packages\arduino\hardware\samd\1.6.15\cores\arduino/Arduino.h \
  D:\2\ SVN\ XBee\trunk\TestDisplay2_4ISP_SAMD21G18A\libraries\Adafruit_GFX/Adafruit_GFX.h \
  C:\Users\moseichuk\AppData\Local\arduino15\packages\arduino\hardware\samd\1.6.15\cores\arduino/Print.h \
  D:\2\ SVN\ XBee\trunk\TestDisplay2_4ISP_SAMD21G18A\libraries\Adafruit_GFX/gfxfont.h \

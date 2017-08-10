@@ -13,7 +13,7 @@
 #ifndef _VSARDUINO_H_
 #define _VSARDUINO_H_
 #define F_CPU 48000000L
-#define ARDUINO 10802
+#define ARDUINO 10803
 #define ARDUINO_SAMD_ZERO
 #define ARDUINO_ARCH_SAMD
 #define __SAMD21G18A__
@@ -53,7 +53,7 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <SAMD21G18a.h>
 
 
-#include <arduino.h>
+#include <Arduino.h>
 #include <pins_arduino.h> 
 #include <variant.h> 
 #include <variant.cpp> 

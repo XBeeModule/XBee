@@ -15,11 +15,11 @@
 #include <UTouch.h>
 
 // For the Adafruit shield, these are the default.
-#define TFT_DC   9
-#define TFT_CS   10
+#define TFT_DC   8
+#define TFT_CS   9
 #define TFT_MOSI MOSI
 #define TFT_CLK  SCK
-#define TFT_RST 8
+#define TFT_RST 7
 #define TFT_MISO MISO
 
 
