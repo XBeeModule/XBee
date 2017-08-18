@@ -1,0 +1,223 @@
+LABCENTER PROTEUS TOOL INFORMATION FILE
+=======================================
+
+In case of difficulty, please e-mail support@labcenter.co.uk
+
+Tool set up for Proteus layout 'AllProject08.pdsprj'.
+CADCAM generated at 12:08:32 on 18 августа 2017 г..
+
+File List
+---------
+Top Copper              : AllProject08 - CADCAM Top Copper.TXT
+Bottom Copper           : AllProject08 - CADCAM Bottom Copper.TXT
+Top Silk Screen         : AllProject08 - CADCAM Top Silk Screen.TXT
+Bottom Silk Screen      : AllProject08 - CADCAM Bottom Silk Screen.TXT
+Top Solder Resist       : AllProject08 - CADCAM Top Solder Resist.TXT
+Bottom Solder Resist    : AllProject08 - CADCAM Bottom Solder Resist.TXT
+Top SMT Paste Mask      : AllProject08 - CADCAM Top SMT Paste Mask.TXT
+Bottom SMT Paste Mask   : AllProject08 - CADCAM Bottom SMT Paste Mask.TXT
+Mechanical 1            : AllProject08 - CADCAM Mechanical 1.TXT
+Drill                   : AllProject08 - CADCAM Drill.TXT
+
+Photoplotter Setup
+------------------
+Format: RS274X, ASCII, 2.4, imperial, absolute, eob=*, LZO
+Notes:  D=Diameter, S=Side, W=Width, H=Height, C=Chamfer
+
+D10	CIRCLE  D=15th                                                            DRAW
+D11	CIRCLE  D=25th                                                            DRAW
+D12	CIRCLE  D=10th                                                            DRAW
+D13	CIRCLE  D=12th                                                            DRAW
+D14	CIRCLE  D=20th                                                            DRAW
+D15	CIRCLE  D=30th                                                            DRAW
+D16	CIRCLE  D=40th                                                            DRAW
+D17	CIRCLE  D=60th                                                            DRAW
+D18	CIRCLE  D=8th                                                             DRAW
+D19	CIRCLE  D=50th                                                            DRAW
+D70	CIRCLE  D=30th                                                            FLASH
+D71	CIRCLE  D=2.5th                                                           DRAW
+D20	RECT    W=50th                H=130th                                     FLASH
+D21	CIRCLE  D=140th                                                           FLASH
+D22	SQUARE  S=80th                                                            FLASH
+D23	RECT    W=45th                H=71th                                      FLASH
+D24	RECT    W=39th                H=37th                                      FLASH
+D25	SQUARE  S=60th                                                            FLASH
+D26	CIRCLE  D=60th                                                            FLASH
+D27	RECT    W=62.9th              H=11.8th                                    FLASH
+D28	RECT    W=11.8th              H=62.9th                                    FLASH
+D29	RECT    W=25th                H=80th                                      FLASH
+D72	RECT    W=15.7th              H=43.3th                                    FLASH
+D73	RECT    W=60th                H=80th                                      FLASH
+D30	RECT    W=150th               H=80th                                      FLASH
+D31	SQUARE  S=40th                                                            FLASH
+D32	RECT    W=96th                H=93th                                      FLASH
+D33	RECT    W=93th                H=96th                                      FLASH
+D34	RECT    W=100th               H=18th                                      FLASH
+D35	CIRCLE  D=55th                                                            FLASH
+D36	DIL     W=100th               H=60th                C=12th                FLASH
+D37	RECT    W=57th                H=91th                                      FLASH
+D38	RECT    W=65th                H=140th                                     FLASH
+D39	RECT    W=55th                H=89th                                      FLASH
+D40	RECT    W=50th                H=40th                                      FLASH
+D41	RECT    W=35th                H=40th                                      FLASH
+D42	RECT    W=71th                H=45th                                      FLASH
+D43	RECT    W=45th                H=57th                                      FLASH
+D44	RECT    W=37th                H=57th                                      FLASH
+D45	RECT    W=57th                H=37th                                      FLASH
+D46	RECT    W=40th                H=50th                                      FLASH
+D47	SQUARE  S=35th                                                            FLASH
+D48	SQUARE  S=83th                                                            FLASH
+D49	RECT    W=89th                H=55th                                      FLASH
+D50	RECT    W=69th                H=43th                                      FLASH
+D51	RECT    W=37th                H=39th                                      FLASH
+D52	CIRCLE  D=2.4th                                                           DRAW
+D53	RECT    W=134th               H=49th                                      FLASH
+D54	RECT    W=49th                H=71th                                      FLASH
+D55	RECT    W=57th                H=47th                                      FLASH
+D56	CIRCLE  D=100th                                                           FLASH
+D57	RECT    W=40th                H=35th                                      FLASH
+D58	CIRCLE  D=250th                                                           FLASH
+D59	CIRCLE  D=90th                                                            FLASH
+D60	CIRCLE  D=120th                                                           FLASH
+D61	RECT    W=24th                H=61th                                      FLASH
+D62	RECT    W=150th               H=108th                                     FLASH
+D63	RECT    W=61th                H=12th                                      FLASH
+D64	RECT    W=12th                H=61th                                      FLASH
+D65	CIRCLE  D=39.3th                                                          FLASH
+D66	RECT    W=91th                H=57th                                      FLASH
+D67	RECT    W=71th                H=24th                                      FLASH
+D68	RECT    W=70th                H=20th                                      FLASH
+D69	RECT    W=71th                H=89th                                      FLASH
+D74	CIRCLE  D=132th                                                           FLASH
+D75	RECT    W=89th                H=71th                                      FLASH
+D76	RECT    W=43th                H=65th                                      FLASH
+D77	RECT    W=40th                H=60th                                      FLASH
+D78	RECT    W=126th               H=77th                                      FLASH
+D79	RECT    W=130th               H=78.7th                                    FLASH
+D80	RECT    W=126th               H=36th                                      FLASH
+D81	RECT    W=35th                H=37th                                      FLASH
+D82	RECT    W=39th                H=31th                                      FLASH
+D83	RECT    W=94.4th              H=78.7th                                    FLASH
+D84	RECT    W=33th                H=20th                                      FLASH
+D85	RECT    W=22th                H=59th                                      FLASH
+D86	RECT    W=59th                H=22th                                      FLASH
+D87	RECT    W=102.3th             H=59th                                      FLASH
+D88	RECT    W=63th                H=89th                                      FLASH
+D89	RECT    W=37th                H=91th                                      FLASH
+D90	RECT    W=24th                H=71th                                      FLASH
+D91	RECT    W=20th                H=70th                                      FLASH
+D92	RECT    W=89th                H=63th                                      FLASH
+D93	RECT    W=225th               H=160th                                     FLASH
+D94	RECT    W=25th                H=20th                                      FLASH
+D95	RECT    W=43th                H=51th                                      FLASH
+D96	RECT    W=35th                H=120th                                     FLASH
+D97	RECT    W=36th                H=126th                                     FLASH
+D98	RECT    W=106th               H=45th                                      FLASH
+D99	RECT    W=80th                H=25th                                      FLASH
+D100	RECT    W=57th                H=45th                                      FLASH
+D101	RECT    W=35th                H=60th                                      FLASH
+D102	RECT    W=18th                H=100th                                     FLASH
+D103	DIL     W=60th                H=100th               C=12th                FLASH
+D104	CIRCLE  D=80th                                                            FLASH
+D105	RECT    W=60th                H=40th                                      FLASH
+D106	RECT    W=20th                H=25th                                      FLASH
+D107	RECT    W=37th                H=35th                                      FLASH
+D108	RECT    W=91th                H=37th                                      FLASH
+D109	RECT    W=65th                H=43th                                      FLASH
+D110	RECT    W=59th                H=102.3th                                   FLASH
+D111	RECT    W=61th                H=24th                                      FLASH
+D112	RECT    W=108th               H=150th                                     FLASH
+D113	CIRCLE  D=70th                                                            DRAW
+D114	RECT    W=80th                H=60th                                      FLASH
+D115	RECT    W=80th                H=150th                                     FLASH
+D116	RECT    W=49th                H=134th                                     FLASH
+D117	RECT    W=47th                H=57th                                      FLASH
+D118	RECT    W=71th                H=49th                                      FLASH
+D119	RECT    W=120th               H=35th                                      FLASH
+D120	RECT    W=20th                H=33th                                      FLASH
+D121	RECT    W=140th               H=65th                                      FLASH
+D122	SQUARE  S=24th                                                            FLASH
+D123	RECT    W=24th                H=79th                                      FLASH
+D124	CIRCLE  D=4th                                                             DRAW
+D125	CIRCLE  D=5th                                                             DRAW
+D126	CIRCLE  D=7.8th                                                           DRAW
+D127	CIRCLE  D=9.8th                                                           DRAW
+D128	CIRCLE  D=6th                                                             DRAW
+D129	CIRCLE  D=23.6th                                                          DRAW
+D130	CIRCLE  D=0                                                               DRAW
+D131	CIRCLE  D=3.9th                                                           DRAW
+D132	CIRCLE  D=14th                                                            DRAW
+D133	CIRCLE  D=13th                                                            DRAW
+D134	CIRCLE  D=50th                                                            FLASH
+D135	RECT    W=70th                H=150th                                     FLASH
+D136	SQUARE  S=100th                                                           FLASH
+D137	RECT    W=82.9th              H=31.8th                                    FLASH
+D138	RECT    W=31.8th              H=82.9th                                    FLASH
+D139	RECT    W=45th                H=100th                                     FLASH
+D140	RECT    W=35.7th              H=63.3th                                    FLASH
+D141	RECT    W=80th                H=100th                                     FLASH
+D142	RECT    W=170th               H=100th                                     FLASH
+D143	RECT    W=120th               H=38th                                      FLASH
+D144	DIL     W=120th               H=80th                C=12th                FLASH
+D145	RECT    W=85th                H=160th                                     FLASH
+D146	RECT    W=70th                H=60th                                      FLASH
+D147	RECT    W=55th                H=60th                                      FLASH
+D148	RECT    W=60th                H=70th                                      FLASH
+D149	SQUARE  S=55th                                                            FLASH
+D150	RECT    W=71th                H=26th                                      FLASH
+D151	RECT    W=154th               H=69th                                      FLASH
+D152	CIRCLE  D=130th                                                           FLASH
+D153	RECT    W=60th                H=55th                                      FLASH
+D154	CIRCLE  D=290th                                                           FLASH
+D155	CIRCLE  D=110th                                                           FLASH
+D156	CIRCLE  D=150th                                                           FLASH
+D157	CIRCLE  D=118.1th                                                         FLASH
+D158	RECT    W=90th                H=40th                                      FLASH
+D159	RECT    W=75th                H=24th                                      FLASH
+D160	RECT    W=24th                H=75th                                      FLASH
+D161	RECT    W=150th               H=98.7th                                    FLASH
+D162	RECT    W=146th               H=56th                                      FLASH
+D163	RECT    W=114.4th             H=98.7th                                    FLASH
+D164	RECT    W=122.3th             H=79th                                      FLASH
+D165	RECT    W=40th                H=90th                                      FLASH
+D166	RECT    W=245th               H=180th                                     FLASH
+D167	RECT    W=45th                H=40th                                      FLASH
+D168	RECT    W=55th                H=140th                                     FLASH
+D169	RECT    W=56th                H=146th                                     FLASH
+D170	RECT    W=100th               H=45th                                      FLASH
+D171	RECT    W=55th                H=80th                                      FLASH
+D172	RECT    W=38th                H=120th                                     FLASH
+D173	DIL     W=80th                H=120th               C=12th                FLASH
+D174	RECT    W=40th                H=45th                                      FLASH
+D175	RECT    W=79th                H=122.3th                                   FLASH
+D176	RECT    W=30th                H=91th                                      FLASH
+D177	RECT    W=91th                H=30th                                      FLASH
+D178	RECT    W=100th               H=80th                                      FLASH
+D179	RECT    W=100th               H=170th                                     FLASH
+D180	RECT    W=26th                H=71th                                      FLASH
+D181	RECT    W=69th                H=154th                                     FLASH
+D182	RECT    W=8th                 H=59th                                      FLASH
+D183	RECT    W=59th                H=8th                                       FLASH
+D184	RECT    W=140th               H=55th                                      FLASH
+D185	RECT    W=160th               H=85th                                      FLASH
+
+NC Drill Setup
+--------------
+Format: ASCII, 2.4, imperial, absolute, eob=<CR><LF>, no zero suppression.
+Notes:  Tool sizes are diameters. Layer sets are in brackets - 0=TOP, 15=BOTTOM, 1-14=INNER.
+
+T01	15th (0-15)
+T02	118th (0-15)
+T03	40th (0-15)
+T04	32th (0-15)
+T05	25th (0-15)
+T06	60th (0-15)
+T07	118.1th (0-15)
+T08	112th (0-15)
+T09	50th (0-15)
+T10	30th (0-15)
+T11	45th (0-15)
+T12	69th (0-15)
+
+
+[END OF FILE]
