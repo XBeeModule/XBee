@@ -173,16 +173,15 @@ if(rx.getData()[18]!=0) EEPROM.put(address_count8, 0);
 
 #include <Wire.h>
 #include <RTClib.h>
-#include <avr/pgmspace.h>
-//#include <avr/wdt.h>
-#include <UTFT.h>
 #include <UTouch.h>
-#include <UTFT_Buttons.h>
+//#include <UTFT_Buttons.h>
 #include <SPI.h>
+#include <TFT9341.h>
 #include <SdFat.h>
 #include <SdFatUtil.h>
 #include <XBee.h>
-#include <EEPROM.h>
+
+//#include <EEPROM.h>
 
 #define led_13 13  
 #define KN1 A8   
@@ -245,11 +244,13 @@ int adr_user            = 0;        // Адрес номера пользова�
 
 //********************* Настройка монитора ***********************************
 
-UTFT          myGLCD(TFT01_24_8, 38, 39, 40, 41);        // !!!  Новый дисплей, в Омске другие настройки.  Дисплей 2.4" !! Внимание! Изменены настройки UTouchCD.h
-//UTFT          myGLCD(ITDB24E_8, 38, 39, 40, 41);        // Дисплей 2.4" !! Внимание! Изменены настройки UTouchCD.h
+TFT9341 myGLCD;                      //   Дисплей 2.4" !! Внимание! Изменены настройки UTouchCD.h
 
 UTouch        myTouch(6, 5, 4, 3, 2);                   // Standard Arduino Mega/Due shield            : 6,5,4,3,2
-UTFT_Buttons  myButtons(&myGLCD, &myTouch);             // Finally we set up UTFT_Buttons :)
+#define TOUCH_ORIENTATION LANDSCAPE
+
+
+//UTFT_Buttons  myButtons(&myGLCD, &myTouch);             // Finally we set up UTFT_Buttons :)
 
 boolean default_colors       = true;                    //
 uint8_t menu_redraw_required = 0;                       // Признак перезаписи дисплея
@@ -1163,7 +1164,7 @@ void pass_test_start()                                     // Начало пр�
     myGLCD.clrScr();
     drawButtons1();                                    // Нарисовать клавиатуру
       
-    myGLCD.setColor(VGA_YELLOW);                       // Мигающие строки
+  //  myGLCD.setColor(VGA_YELLOW);                       // Мигающие строки
     myGLCD.print(txt12, CENTER, 280);                  // Вывод строки "Введите пароль!"
     delay(300);
     myGLCD.print("                   ", CENTER, 280);  // Стереть строку "Введите пароль!"
@@ -1188,7 +1189,7 @@ void pass_test()                                           // Проверка �
   }
 
   // Проверка пароля администратора 
-  EEPROM.get(adr_pass_admin,pass_admin2);             // Получить из памяти текущий  пароля администратора 
+ // EEPROM.get(adr_pass_admin,pass_admin2);             // Получить из памяти текущий  пароля администратора 
   if(pass_admin2 == var_klav123)
   {
     pass2 = 1;                                        // Проверка пароля пройдена 
@@ -1552,8 +1553,8 @@ void drawGlavMenu()                                                        // О
 
   if(blockKN1)
   {
-    myGLCD.setBackColor( VGA_BLACK);
-        myGLCD.setColor(VGA_BLACK);     
+  //  myGLCD.setBackColor( VGA_BLACK);
+    //    myGLCD.setColor(VGA_BLACK);     
   }
   else
   {
@@ -1570,8 +1571,8 @@ void drawGlavMenu()                                                        // О
   
   if(blockKN3)
   {
-        myGLCD.setColor(VGA_BLACK);  
-    myGLCD.setBackColor( VGA_BLACK);
+       // myGLCD.setColor(VGA_BLACK);  
+   // myGLCD.setBackColor( VGA_BLACK);
   }
   else
   {
@@ -1585,8 +1586,8 @@ void drawGlavMenu()                                                        // О
 
     if(blockKN2)
   {
-        myGLCD.setColor(VGA_BLACK); 
-    myGLCD.setBackColor( VGA_BLACK);
+      //  myGLCD.setColor(VGA_BLACK); 
+   // myGLCD.setBackColor( VGA_BLACK);
   }
   else
   {
@@ -1600,8 +1601,8 @@ void drawGlavMenu()                                                        // О
 
   if(blockKN4)
   {
-        myGLCD.setColor(VGA_BLACK);
-    myGLCD.setBackColor( VGA_BLACK);
+      //  myGLCD.setColor(VGA_BLACK);
+   // myGLCD.setBackColor( VGA_BLACK);
   }
   else
   {
@@ -1617,8 +1618,8 @@ void drawGlavMenu()                                                        // О
 
   if(blockKN5)
   {
-        myGLCD.setColor(VGA_BLACK);  
-    myGLCD.setBackColor( VGA_BLACK);
+      //  myGLCD.setColor(VGA_BLACK);  
+   // myGLCD.setBackColor( VGA_BLACK);
   }
   else
   {
@@ -1632,8 +1633,8 @@ void drawGlavMenu()                                                        // О
   
   if(blockKN6)
   {
-        myGLCD.setColor(VGA_BLACK); 
-    myGLCD.setBackColor( VGA_BLACK);
+      //  myGLCD.setColor(VGA_BLACK); 
+   // myGLCD.setBackColor( VGA_BLACK);
   }
   else
   {
@@ -1647,8 +1648,8 @@ void drawGlavMenu()                                                        // О
 
   if(blockKN7)
   {
-        myGLCD.setColor(VGA_BLACK);   
-    myGLCD.setBackColor( VGA_BLACK);
+      //  myGLCD.setColor(VGA_BLACK);   
+   // myGLCD.setBackColor( VGA_BLACK);
   }
   else
   {
@@ -1662,8 +1663,8 @@ void drawGlavMenu()                                                        // О
 
   if(blockKN8)
   {
-        myGLCD.setColor(VGA_BLACK);  
-    myGLCD.setBackColor( VGA_BLACK);
+      //  myGLCD.setColor(VGA_BLACK);  
+   // myGLCD.setBackColor( VGA_BLACK);
   }
   else
   {
@@ -1723,7 +1724,7 @@ void klav_Glav_Menu()
       myGLCD.print(print_time,110, 300);                                         //Время
       oldsec = second;
     }
-
+	/*
     if(digitalRead(KN1) == false)
     {
       N_KN = 1;
@@ -1836,7 +1837,7 @@ void klav_Glav_Menu()
         XBeeWrite();
       }
     }
-
+	*/
     if (myTouch.dataAvailable())
     {
       myTouch.read();
@@ -1851,8 +1852,8 @@ void klav_Glav_Menu()
         {
           waitForStart(5, 5+20, 94, 90+10);
           vibroM();
-          myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
-          myGLCD.setColor(VGA_WHITE);                        // Цвет текста      
+         // myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+         // myGLCD.setColor(VGA_WHITE);                        // Цвет текста      
           N_KN = 1;                                          // 1
           myGLCD.printNumI(1, 208, 75);
           payload[0] = 1;
@@ -1865,8 +1866,8 @@ void klav_Glav_Menu()
         {
           waitForStart(97, 5+20, 186, 90+10);
           vibroM();
-                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
-          myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+          //          myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+          //myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
           N_KN = 3;                                          // 3
           myGLCD.printNumI(3, 208, 75);
           payload[0] = 3;
@@ -1883,8 +1884,8 @@ void klav_Glav_Menu()
         {
           waitForStart(5, 93+10, 94, 178);
           vibroM();
-                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
-          myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+          //          myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+          //myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
           N_KN = 2;                                          // 2
           myGLCD.printNumI(2, 208, 75);
           payload[0] = 2;
@@ -1897,8 +1898,8 @@ void klav_Glav_Menu()
         {
           waitForStart(97, 93+10, 186, 178);
           vibroM();
-                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
-          myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+          //          myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+          //myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
           N_KN = 4;                                          // 
           myGLCD.printNumI(4, 208, 75);
           payload[0] = 4;
@@ -1915,8 +1916,8 @@ void klav_Glav_Menu()
         {
           waitForStart(5, 183, 60, 243);
           vibroM();
-                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
-          myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+          //          myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+          //myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
           N_KN = 5;                                          // 5
           myGLCD.printNumI(5, 208, 75);
           payload[0] = 5;
@@ -1929,8 +1930,8 @@ void klav_Glav_Menu()
         {
           waitForStart(63, 183, 118, 243);
           vibroM();
-                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
-          myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+          //          myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+          //myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
           N_KN = 6;                                          // 6
           myGLCD.printNumI(6, 208, 75);
           payload[0] = 6;
@@ -1943,8 +1944,8 @@ void klav_Glav_Menu()
         {
           waitForStart(121, 183, 176, 243);
           vibroM();
-                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
-          myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+          //          myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+          //myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
           N_KN = 7;                                          // 7
           myGLCD.printNumI(7, 208, 75);
           payload[0] = 7;
@@ -1957,8 +1958,8 @@ void klav_Glav_Menu()
         {
           waitForStart(179, 183, 234, 243);
           vibroM();
-                    myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
-          myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
+          //          myGLCD.setBackColor(VGA_BLACK);                    // Цвет фона
+          //myGLCD.setColor(VGA_WHITE);                        // Цвет текста 
           N_KN = 8;                                          // 8
           myGLCD.printNumI(8, 208, 75);
           payload[0] = 8;
@@ -1994,7 +1995,7 @@ void test_power()
   myGLCD.setFont(SmallFont);
   myGLCD.setColor(0, 255, 0);
   myGLCD.setBackColor( 0, 0, 0);
-  int power = analogRead(A11);
+  int power = analogRead(A1);
   // Serial.println(power);
   power60 = power * (5.0 / 1024.0 * 2*0.965);
   //  Serial.println(power60);
@@ -2008,15 +2009,15 @@ void test_power()
     myGLCD.setColor(255, 0, 0);
     myGLCD.print("\xB4", 212, 25);
   }
-  myGLCD.printNumF(power60, 2, 200, 40);
-  myGLCD.setColor(255, 255, 255);
-  power = analogRead(A1);
-  power50 = power * (5.0 / 1024.0*2*0.965);
-  myGLCD.printNumF(power50, 2, 200, 50);
-  power = analogRead(A2);
-  power33 = power * (5.0 / 1024.0*0.965);
-  myGLCD.printNumF(power33, 2, 200, 60);
-  myGLCD.setFont(BigFont);
+  //myGLCD.printNumF(power60, 2, 200, 40);
+  //myGLCD.setColor(255, 255, 255);
+  //power = analogRead(A1);
+  //power50 = power * (5.0 / 1024.0*2*0.965);
+  //myGLCD.printNumF(power50, 2, 200, 50);
+  //power = analogRead(A2);
+  //power33 = power * (5.0 / 1024.0*0.965);
+  //myGLCD.printNumF(power33, 2, 200, 60);
+  //myGLCD.setFont(BigFont);
   }
 }
 void drawButtons0_1() // Отображение цифровой клавиатуры
@@ -2412,7 +2413,7 @@ void klavXBee()
     {
       waitForIt(5, 237, 118, 292);
       myGLCD.clrScr();
-      myGLCD.setBackColor(VGA_BLACK);
+    //  myGLCD.setBackColor(VGA_BLACK);
       ret = 1;
       stCurrent[0] = '\0';
       stCurrentLen = 0;
@@ -3094,7 +3095,7 @@ void klav_menu4()                                           // Меню уста
         {
         waitForIt(5, 202, 234, 257);
         long stCurrentLen_pass_admin = 0;
-        EEPROM.get(adr_pass_admin, stCurrentLen_pass_admin);  
+    //    EEPROM.get(adr_pass_admin, stCurrentLen_pass_admin);  
         if (stCurrentLen_pass_admin == 0)
           {  
             pass2 = 1;
@@ -3388,7 +3389,7 @@ void set_n_user_start()
   {
     Serial.println("pass Ok");
   //  Serial.println(adr_user);
-    EEPROM.put(adr_user, var_klav123);  
+   // EEPROM.put(adr_user, var_klav123);  
 
     //i2c_eeprom_write_byte(deviceaddress, i+adr_user, stLast);          // Записать в память данные 
 
@@ -3456,7 +3457,7 @@ void set_pass_user_start()
     myGLCD.setColor(255, 255, 255);
     if(var_klav123_temp == var_klav123)
     {
-      EEPROM.put(adr_user+4, var_klav123);  
+   //   EEPROM.put(adr_user+4, var_klav123);  
       myGLCD.print("                       ", CENTER, 260);
       myGLCD.print(txt_pass_ok, CENTER, 260); 
       delay(1500);
@@ -3584,7 +3585,7 @@ void set_pass_admin_start()
     myGLCD.setColor(255, 255, 255);
     if(var_klav123_temp == var_klav123)
     {
-      EEPROM.put(adr_pass_admin, var_klav123);  
+   //   EEPROM.put(adr_pass_admin, var_klav123);  
       myGLCD.print("                       ", CENTER, 260);
       myGLCD.print(txt_pass_ok, CENTER, 260); 
       delay(1500);
@@ -6356,8 +6357,8 @@ void view_page_user(int block_n)                                        // От�
 
   for (int n_bl = 0; n_bl<n_bl_max; n_bl++)
   {
-    EEPROM.get(adr_user, user_numbert );                         // Восстановить номер пользователя
-    EEPROM.get(adr_user+4, user_passt );                           // Восстановить пароль пользователя
+    //EEPROM.get(adr_user, user_numbert );                           // Восстановить номер пользователя
+    //EEPROM.get(adr_user+4, user_passt );                           // Восстановить пароль пользователя
     myGLCD.printNumI(((block_n-1) * 6)+n_bl+1, 2, yUser+8);  
     myGLCD.print("User", 35, yUser);
     if(user_numbert == -1)                                         // Если нет номера - заштриховать.
@@ -7233,7 +7234,9 @@ void setup()
   Serial.println(" ");
   Serial.println(" ***** Start system  *****");
   Serial.println(" ");
-  myTouch.InitTouch(0);
+ 
+  myTouch.InitTouch(TOUCH_ORIENTATION);
+ 
   delay(500);
   //myTouch.setPrecision(PREC_MEDIUM);
   myTouch.setPrecision(PREC_HI);

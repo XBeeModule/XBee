@@ -18,7 +18,6 @@ MIT license, all text above must be included in any redistribution
 #include <SPI.h>
 #include <Wire.h>      // this is needed even tho we aren't using it
 #include <Adafruit_ILI9341.h>
-//#include <Adafruit_STMPE610.h>
 #include <UTouch.h>
 
 // This is calibration data for the raw touch data to the screen coordinates
@@ -27,22 +26,14 @@ MIT license, all text above must be included in any redistribution
 #define TS_MAXX 3800
 #define TS_MAXY 4000
 
-// The STMPE610 uses hardware SPI on the shield, and #8
-//#define STMPE_CS 8
-//Adafruit_STMPE610 ts = Adafruit_STMPE610(STMPE_CS);
-
-
 // For the Adafruit shield, these are the default.
-#define TFT_RST  8
-#define TFT_DC 9
-#define TFT_CS 10
-
-//#define TFT_MOSI 51
-//#define TFT_CLK 52
-
+#define TFT_RST  7
+#define TFT_DC 8
+#define TFT_CS 9
 #define TFT_MOSI MOSI
 #define TFT_MISO MISO
 #define TFT_CLK  SCK
+#define intensityLCD 11            // Порт управления яркостью экрана
 
 //#define TFT_MISO 50
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
@@ -69,10 +60,9 @@ int stCurrentLen = 0;
 char stLast[20] = "";
 
 void setup(void) {
-	// while (!Serial);     // used for leonardo debugging
 
-	Serial.begin(9600);
-	while (!Serial);
+	Serial.begin(115200);
+//	while (!Serial);
 	Serial.println(F("Touch Paint!"));
 
 	tft.begin();
@@ -83,21 +73,23 @@ void setup(void) {
 
 	// make the color selection boxes
 
-	for (x = 0; x<5; x++)
+	for (y = 0; y < 7; y++)
 	{
-		//  tft.setColor(0, 0, 255);
-		tft.fillRect(5 + ((x*BOXSIZE) + (5 * x)), 5, BOXSIZE, BOXSIZE, ILI9341_BLUE);
-		tft.drawRect(5 + ((x*BOXSIZE) + (5 * x)), 5, BOXSIZE, BOXSIZE, ILI9341_WHITE);
-		Serial.println(5 + ((x*BOXSIZE) + (5 * x)));
+		for (x = 0; x < 5; x++)
+		{
+			//  tft.setColor(0, 0, 255);
+			tft.fillRect(5 + ((x*BOXSIZE) + (5 * x)), 5 + ((y*BOXSIZE) + (5 * y)), BOXSIZE, BOXSIZE, ILI9341_BLUE);
+			tft.drawRect(5 + ((x*BOXSIZE) + (5 * x)), 5 + ((y*BOXSIZE) + (5 * y)), BOXSIZE, BOXSIZE, ILI9341_WHITE);
+			Serial.println(5 + ((x*BOXSIZE) + (5 * x)));
 
-
-
-		//  tft.setColor(255, 255, 255);
-		//tft.drawRoundRect (10+(x*60), 10, 60+(x*60), 60);
-		// tft.printNumI(x+1, 27+(x*60), 27);
+			//  tft.setColor(255, 255, 255);
+			//tft.drawRoundRect (10+(x*60), 10, 60+(x*60), 60);
+			// tft.printNumI(x+1, 27+(x*60), 27);
+		}
 	}
 	currentcolor = ILI9341_RED;
-
+	pinMode(intensityLCD, OUTPUT);
+	digitalWrite(intensityLCD, LOW);
 }
 
 void waitForIt(int x1, int y1, int x2, int y2)
@@ -120,9 +112,9 @@ void loop()
 			x = myTouch.getX();
 			y = myTouch.getY();
 
-			if ((y >= 5) && (y <= 45))  // Upper row
+			if ((y >= 5) && (y <= 40))  // Upper row
 			{
-				if ((x >= 5) && (x <= 45))  // Button: 1
+				if ((x >= 5) && (x <= 40))  // Button: 1
 				{
 					waitForIt(5, 5, 40, 40);
 					Serial.println('1');
@@ -148,9 +140,6 @@ void loop()
 					Serial.println('5');
 				}
 			}
-
-			//Serial.println("Touch Ok");
-
 		}
 	}
 
