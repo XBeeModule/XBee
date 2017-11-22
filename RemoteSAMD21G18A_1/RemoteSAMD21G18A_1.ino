@@ -16,25 +16,50 @@ Email: pronavto@ntmp.ru
 #include <UTouch.h>
 #include <SPI.h>
 #include <TFT9341.h>
-//#include <SdFat.h>
-//#include <SdFatUtil.h>
+#include <SdFat.h>
+#include <SdFatUtil.h>
 #include <XBee.h>
+#include <Arduino.h>                                 // required before wiring_private.h
+#include "wiring_private.h"                          // pinPeripheral() function
+
+//
+#define Serial SERIAL_PORT_USBVIRTUAL                              // Подключаем USB порт в качестве COM порта
 
 
-//#define led_13 13  
-//#define KN1 A8   
-//#define KN2 A9  
-//#define KN3 A7 
-//#define KN4 A10  
-//#define KN5 A4  
-//#define KN6 A6  
-//#define KN7 A3  
-//#define KN8 A5 
-//#define VibMot 42 
+
+#define led_13 13  
+#define KN1V   A3      //pin 8
+#define KN2V   A4      //pin 9
+#define KN3V   A5      //pin 10 
+#define KN1G   38      //pin 22  PA13
+#define KN2G   27      //pin 41  PA28
+#define KN3G   30      //pin 37  PB22
+#define KN4G   31      //pin 38  PB23
+#define VibMot 12      //pin 28
 
 //int statusLed = 13;
 //int errorLed = 13;
 //int N_KN = 0;
+
+
+int PinOut[4]{ KN1G, KN2G, KN3G, KN4G }; // пины выходы
+
+int PinIn[3]{ KN1V, KN2V, KN3V }; // пины входа
+int val = 0;
+const int value[4][3]
+{ 
+	{ 1, 5, 9 },
+	{ 2, 6, 10 },
+	{ 3, 7, 11 },
+	{ 4, 8, 12 }
+};
+// двойной массив, обозначающий кнопку
+
+int b = 0; // переменная, куда кладется число из массива(номер кнопки)
+
+
+
+
 
 bool count1 = false;
 bool count2 = false;
@@ -6547,34 +6572,127 @@ byte y[4];   ; //Чтение из памяти текущих данных ст
 //
 
 
-
-byte i2c_eeprom_read_byte( int deviceaddress, unsigned int eeaddress )
+//+++++++++++++++++++++++  Настройки EEPROM +++++++++++++++++++++++++++++++++++++
+unsigned long i2c_eeprom_ulong_read(int addr)
 {
-
-  byte rdata = 0xFF;
-  Wire.beginTransmission(deviceaddress);
-  Wire.write((int)(eeaddress >> 8)); // MSB
-  Wire.write((int)(eeaddress & 0xFF)); // LSB
-  Wire.endTransmission();
-  Wire.requestFrom(deviceaddress,1);
-  if (Wire.available()) rdata = Wire.read();
-  //delay(10);
-  return rdata;
-  
+	byte raw[4];
+	for (byte i = 0; i < 4; i++) raw[i] = i2c_eeprom_read_byte(deviceaddress, addr + i);
+	unsigned long &num = (unsigned long&)raw;
+	return num;
+}
+// запись
+void i2c_eeprom_ulong_write(int addr, unsigned long num)
+{
+	byte raw[4];
+	(unsigned long&)raw = num;
+	for (byte i = 0; i < 4; i++) i2c_eeprom_write_byte(deviceaddress, addr + i, raw[i]);
 }
 
-
-
-void i2c_eeprom_write_byte( int deviceaddress, unsigned int eeaddress, byte data )
+void i2c_eeprom_write_byte(int deviceaddress, unsigned int eeaddress, byte data)
 {
-  int rdata = data;
-  Wire.beginTransmission(deviceaddress);
-  Wire.write((int)(eeaddress >> 8)); // MSB
-  Wire.write((int)(eeaddress & 0xFF)); // LSB
-  Wire.write(rdata);
-  Wire.endTransmission();
-  delay(20);
+	int rdata = data;
+	Wire.beginTransmission(deviceaddress);
+	Wire.write((int)(eeaddress >> 8)); // MSB
+	Wire.write((int)(eeaddress & 0xFF)); // LSB
+	Wire.write(rdata);
+	Wire.endTransmission();
+	delay(10);
 }
+byte i2c_eeprom_read_byte(int deviceaddress, unsigned int eeaddress) {
+	byte rdata = 0xFF;
+	Wire.beginTransmission(deviceaddress);
+	Wire.write((int)(eeaddress >> 8)); // MSB
+	Wire.write((int)(eeaddress & 0xFF)); // LSB
+	Wire.endTransmission();
+	Wire.requestFrom(deviceaddress, 1);
+	if (Wire.available()) rdata = Wire.read();
+	return rdata;
+}
+void i2c_eeprom_read_buffer(int deviceaddress, unsigned int eeaddress, byte *buffer, int length)
+{
+
+	Wire.beginTransmission(deviceaddress);
+	Wire.write((int)(eeaddress >> 8)); // MSB
+	Wire.write((int)(eeaddress & 0xFF)); // LSB
+	Wire.endTransmission();
+	Wire.requestFrom(deviceaddress, length);
+	int c = 0;
+	for (c = 0; c < length; c++)
+		if (Wire.available()) buffer[c] = Wire.read();
+
+}
+void i2c_eeprom_write_page(int deviceaddress, unsigned int eeaddresspage, byte* data, byte length)
+{
+	Wire.beginTransmission(deviceaddress);
+	Wire.write((int)(eeaddresspage >> 8)); // MSB
+	Wire.write((int)(eeaddresspage & 0xFF)); // LSB
+	byte c;
+	for (c = 0; c < length; c++)
+		Wire.write(data[c]);
+	Wire.endTransmission();
+
+}
+void i2c_test()
+{
+	Serial.println("--------  EEPROM Test  ---------");
+	char somedata[] = "this data from the eeprom i2c"; // data to write
+	i2c_eeprom_write_page(deviceaddress, 0, (byte *)somedata, sizeof(somedata)); // write to EEPROM
+	delay(100); //add a small delay
+	Serial.println("Written Done");
+	delay(10);
+	Serial.print("Read EERPOM:");
+	byte b = i2c_eeprom_read_byte(deviceaddress, 0); // access the first address from the memory
+	char addr = 0; //first address
+
+	while (b != 0)
+	{
+		Serial.print((char)b); //print content to serial port
+		if (b != somedata[addr])
+		{
+			break;
+		}
+		addr++; //increase address
+		b = i2c_eeprom_read_byte(0x50, addr); //access an address from the memory
+	}
+	Serial.println();
+	Serial.println();
+}
+
+// *
+
+
+
+
+
+//
+//
+//byte i2c_eeprom_read_byte( int deviceaddress, unsigned int eeaddress )
+//{
+//
+//  byte rdata = 0xFF;
+//  Wire.beginTransmission(deviceaddress);
+//  Wire.write((int)(eeaddress >> 8)); // MSB
+//  Wire.write((int)(eeaddress & 0xFF)); // LSB
+//  Wire.endTransmission();
+//  Wire.requestFrom(deviceaddress,1);
+//  if (Wire.available()) rdata = Wire.read();
+//  //delay(10);
+//  return rdata;
+//  
+//}
+//
+//
+//
+//void i2c_eeprom_write_byte( int deviceaddress, unsigned int eeaddress, byte data )
+//{
+//  int rdata = data;
+//  Wire.beginTransmission(deviceaddress);
+//  Wire.write((int)(eeaddress >> 8)); // MSB
+//  Wire.write((int)(eeaddress & 0xFF)); // LSB
+//  Wire.write(rdata);
+//  Wire.endTransmission();
+//  delay(20);
+//}
 
 //
 //
@@ -7180,39 +7298,103 @@ void i2c_eeprom_write_byte( int deviceaddress, unsigned int eeaddress, byte data
 //*/
 ////-----------------------------------
 
-void setup_pin()
-{
-  //pinMode(led_13, OUTPUT);                             //
-  //digitalWrite(led_13, HIGH);                          //
-  //pinMode(VibMot, OUTPUT);                             //
-  //digitalWrite(VibMot, LOW); 
-  //pinMode(KN1, INPUT); 
-  //pinMode(KN2, INPUT); 
-  //pinMode(KN3, INPUT); 
-  //pinMode(KN4, INPUT); 
-  //pinMode(KN5, INPUT); 
-  //pinMode(KN6, INPUT); 
-  //pinMode(KN7, INPUT); 
-  //pinMode(KN8, INPUT); 
+//void Line1()
+//{
+//	int KN_1 = 0;
+//	for (int i = 1; i < 4; i++)
+//	{
+//		digitalWrite(KN1G, HIGH);
+//		if (digitalRead(KN1V) == HIGH) KN_1 = i; break;
+//		digitalWrite(KN2G, HIGH);
+//		if (digitalRead(KN1V) == HIGH) KN_1 = i; break;
+//		digitalWrite(KN3G, HIGH);
+//		if (digitalRead(KN1V) == HIGH) KN_1 = i; break;
+//		digitalWrite(KN4G, HIGH);
+//		if (digitalRead(KN1V) == HIGH) KN_1 = i; break;
+//	}
+//
+//	if (KN_1 > 0) Serial.println(KN_1);
+//}
+//void Line2()
+//{
+//
+//
+//}
+//void Line3()
+//{
+//
+//
+//}
+//
 
-  //digitalWrite(KN1, HIGH); 
-  //digitalWrite(KN2, HIGH); 
-  //digitalWrite(KN3, HIGH); 
-  //digitalWrite(KN4, HIGH); 
-  //digitalWrite(KN5, HIGH); 
-  //digitalWrite(KN6, HIGH); 
-  //digitalWrite(KN7, HIGH); 
-  //digitalWrite(KN8, HIGH); 
+void matrix() // создаем функцию для чтения кнопок
+{
+	for (int i = 1; i <= 4; i++) // цикл, передающий 0 по всем столбцам
+	{
+		digitalWrite(PinOut[i - 1], LOW); // если i меньше 4 , то отправляем 0 на ножку
+		for (int j = 1; j <= 3; j++) // цикл, принимающих 0 по строкам
+		{
+			if (digitalRead(PinIn[j - 1]) == LOW) // если один из указанных портов входа равен 0, то..
+			{
+				Serial.println(value[i - 1][j - 1]); // то b равно значению из двойного массива
+				delay(175);
+			}
+		}
+		digitalWrite(PinOut[i - 1], HIGH); // подаём обратно высокий уровень
+	}
 }
 
- #define Serial SERIAL_PORT_USBVIRTUAL                                   // Подключаем USB порт в качестве COM порта
+
+
+
+void setup_pin()
+{
+  pinMode(led_13, OUTPUT);                             //
+  digitalWrite(led_13, HIGH);                          //
+  pinMode(VibMot, OUTPUT);                             //
+  digitalWrite(VibMot, LOW); 
+
+  pinMode(KN1V, INPUT); 
+  pinMode(KN2V, INPUT); 
+  pinMode(KN3V, INPUT); 
+  pinMode(KN1G, OUTPUT);
+  pinMode(KN2G, OUTPUT);
+  pinMode(KN3G, OUTPUT);
+  pinMode(KN4G, OUTPUT);
+  //pinMode(KN8, INPUT); 
+
+  digitalWrite(KN1V, HIGH); 
+  digitalWrite(KN2V, HIGH); 
+  digitalWrite(KN3V, HIGH); 
+ 
+  digitalWrite(KN1G, LOW);
+  digitalWrite(KN2G, LOW);
+  digitalWrite(KN3G, LOW);
+  digitalWrite(KN4G, LOW);
+}
+
+extern "C" char *sbrk(int i);
+
+int FreeRamSAMD() {
+	char stack_dummy = 0;
+	return &stack_dummy - sbrk(0);
+}
+
 
 void setup()
 {
-
 	// Initial setup
 	Serial.begin(115200);                                                // Подключение к USB ПК
-	Serial1.begin(9600);                                                 // Подключение к XBee868
+	Serial1.begin(9600);                                                 // Initialize hardware serial port, pins 0/1
+
+	while (!Serial);                                                    // Wait for Serial monitor to open
+	delay(500);
+
+	Wire.begin();
+
+	xbee.setSerial(Serial1);
+	delay(500);
+
 	Serial.println(" ");
 	Serial.println(" ***** Start system  *****");
 	Serial.println(" ");
@@ -7223,67 +7405,58 @@ void setup()
 	// myTouch.InitTouch();
 	myTouch.InitTouch(TOUCH_ORIENTATION);
 	myTouch.setPrecision(PREC_MEDIUM);
-
+	//myTouch.setPrecision(PREC_HI);
+	//myTouch.setPrecision(PREC_EXTREME);
+	//	i2c_test();
 	myGLCD.setFont(BigFont);
 	myGLCD.setBackColor(0, 0, 0);
-	myGLCD.print("LOAD SYSTEM", CENTER, 140);       // ЗАГРУЗКА
+	//myGLCD.print("LOAD SYSTEM", CENTER, 100);       // ЗАГРУЗКА
 
+	//myGLCD.setFont(SmallFont);
+	//myGLCD.setFont(BigFont);
+	//myGLCD.print("\x85""A""\x81""P""\x8A\x85""KA", CENTER, 140);        // ЗАГРУЗКА
+	//myGLCD.setFont(SmallFont);
+	//myGLCD.setFont(BigFont);
+	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[52]))); 
+	//myGLCD.print("C""\x86""CTEM""\x91", CENTER, 170);                     // СИСТЕМЫ
+   
 
-
-
-  /*myGLCD.InitLCD(0);
-  myGLCD.clrScr();*/
- // myGLCD.setFont(BigFont);
- // myGLCD.print("\x85""A""\x81""P""\x8A\x85""KA", CENTER, 140);       // ЗАГРУЗКА
-  //strcpy_P(buffer, (char*)pgm_read_word(&(table_message[52]))); 
- // myGLCD.print("C""\x86""CTEM""\x91", CENTER, 170);                  // СИСТЕМЫ
-
-//  Serial1.begin(115200);                                             // Подключение к
- // Serial2.begin(9600);                                               // Подключение к
- // xbee.setSerial(Serial2);
-  //Serial3.begin(115200);                                 // Подключение к
-  
  
- // myTouch.InitTouch(TOUCH_ORIENTATION);
+	delay(500);
  
-  delay(500);
-  //myTouch.setPrecision(PREC_MEDIUM);
-  myTouch.setPrecision(PREC_HI);
-  //myTouch.setPrecision(PREC_EXTREME);
+	DS3231_clock.begin();
 
-  Wire.begin();
-  DS3231_clock.begin();
+	DS3231_clock.armAlarm1(false);
+	DS3231_clock.armAlarm2(false);
+	DS3231_clock.clearAlarm1();
+	DS3231_clock.clearAlarm2();
 
-  DS3231_clock.armAlarm1(false);
-  DS3231_clock.armAlarm2(false);
-  DS3231_clock.clearAlarm1();
-  DS3231_clock.clearAlarm2();
+	//DS3231_clock.setDateTime(__DATE__, __TIME__);
+	// Enable output
 
-  //DS3231_clock.setDateTime(__DATE__, __TIME__);
-  // Enable output
+	DS3231_clock.setOutput(DS3231_1HZ);
+	DS3231_clock.enableOutput(true);
+	// Check config
 
-  DS3231_clock.setOutput(DS3231_1HZ);
-  DS3231_clock.enableOutput(true);
-  // Check config
+	if (DS3231_clock.isOutput())
+	{
+		Serial.println("Oscilator is enabled");
+	}
+	else
+	{
+		Serial.println("Oscilator is disabled");
+	}
 
-  if (DS3231_clock.isOutput())
-  {
-	  Serial.println("Oscilator is enabled");
-  }
-  else
-  {
-	  Serial.println("Oscilator is disabled");
-  }
-
-  switch (DS3231_clock.getOutput())
-  {
-  case DS3231_1HZ:     Serial.println("SQW = 1Hz"); break;
-  case DS3231_4096HZ:  Serial.println("SQW = 4096Hz"); break;
-  case DS3231_8192HZ:  Serial.println("SQW = 8192Hz"); break;
-  case DS3231_32768HZ: Serial.println("SQW = 32768Hz"); break;
-  default: Serial.println("SQW = Unknown"); break;
-  }
-
+	switch (DS3231_clock.getOutput())
+	{
+		case DS3231_1HZ:     Serial.println("SQW = 1Hz"); break;
+		case DS3231_4096HZ:  Serial.println("SQW = 4096Hz"); break;
+		case DS3231_8192HZ:  Serial.println("SQW = 8192Hz"); break;
+		case DS3231_32768HZ: Serial.println("SQW = 32768Hz"); break;
+		default: Serial.println("SQW = Unknown"); break;
+	}
+	dt = DS3231_clock.getDateTime();
+	Serial.println(DS3231_clock.dateFormat("d-m-Y H:i:s - l", dt));
 
 
 
@@ -7303,8 +7476,9 @@ void setup()
   Serial.println();
  // serial_print_date();                                         // Печать даты и времени
   setup_pin();
-  //Serial.print(F("FreeRam: "));
-  //Serial.println(FreeRam());
+  Serial.print(F("FreeRam: "));
+  Serial.println(FreeRam());
+  Serial.println(FreeRamSAMD());
   //restore_default_device();
 
 
@@ -7334,11 +7508,41 @@ void setup()
   //  user_number = 0;
   //  user_pass   = 0;
   //}
+
+  //for (int i = 30; i < 40; i++)
+  //{
+	 // //pinMode(i, OUTPUT);
+
+
+  //}
+
+
+  //attachInterrupt(KN1V, Line1, FALLING);
+  //attachInterrupt(KN2V, Line2, FALLING);
+  //attachInterrupt(KN3V, Line3, FALLING);
+  
   Serial.println("System initialization OK!.");          // Информация о завершении настройки
+
+
 }
+
+
 void loop()
 {
-  //klav_Glav_Menu(); 
+	//dt = DS3231_clock.getDateTime();
+	//Serial.println(DS3231_clock.dateFormat("d-m-Y H:i:s - l", dt));
+
+	////for (int i = 30; i < 40; i++)
+	////{
+	/////*	digitalWrite(i, HIGH);
+	////	delay(100);
+	////	digitalWrite(i, LOW);
+	////	delay(100);*/
+	////}
+	matrix(); // используем функцию опроса матричной клавиатуры
+	//
+	delay(100);
+    //klav_Glav_Menu(); 
 }
 
 
