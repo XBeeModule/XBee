@@ -122,6 +122,10 @@ uint8_t menu_redraw_required = 0;                       // Признак пер
 // Declare which fonts we will be using
 extern uint8_t SmallFont[];
 extern uint8_t BigFont[];
+extern uint8_t DotMatrix_M[];
+extern uint8_t Ubuntu[];
+extern uint8_t TinyFont[];
+
 //extern uint8_t Dingbats1_XL[];
 //extern uint8_t SmallSymbolFont[];
 //+++++++++++++++++++++++++++++ Внешняя память +++++++++++++++++++++++++++++++++++++++
@@ -7351,9 +7355,6 @@ int matrix() // создаем функцию для чтения кнопок
 }
 
 
-
-
-
 void setup_pin()
 {
   pinMode(led_13, OUTPUT);                             //
@@ -7415,18 +7416,22 @@ void setup()
 	//myTouch.setPrecision(PREC_HI);
 	//myTouch.setPrecision(PREC_EXTREME);
 	//	i2c_test();
-	myGLCD.setFont(BigFont);
+	//myGLCD.setFont(BigFont);
+	//myGLCD.setFont(DotMatrix_M);
+	//myGLCD.setFont(Ubuntu);
+	myGLCD.setFont(TinyFont);
 	myGLCD.setBackColor(0, 0, 0);
-	//myGLCD.print("LOAD SYSTEM", CENTER, 100);       // ЗАГРУЗКА
-
+	myGLCD.print("LOAD SYSTEM", 0, 100);       // ЗАГРУЗКА
+	myGLCD.setFont(SmallFont);
+	myGLCD.print("LOAD SYSTEM", 0, 120);       // ЗАГРУЗКА
 	//myGLCD.setFont(SmallFont);
 	//myGLCD.setFont(BigFont);
-	//myGLCD.print("\x85""A""\x81""P""\x8A\x85""KA", CENTER, 140);        // ЗАГРУЗКА
-	//myGLCD.setFont(SmallFont);
-	myGLCD.setFont(BigFont);
-	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[52]))); 
-	myGLCD.print("C""\x86""CTEM""\x91", CENTER, 170);                     // СИСТЕМЫ
-   
+	//myGLCD.print("\x85""A""\x81""P""\x8A\x85""KA", 50, 140);        // ЗАГРУЗКА
+	////myGLCD.setFont(SmallFont);
+	////myGLCD.setFont(BigFont);
+	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[52]))); 
+	//myGLCD.print("C""\x86""CTEM""\x91", 40, 170);                     // СИСТЕМЫ
+ //  
 
  
 	//delay(500);
