@@ -28,14 +28,17 @@ Email: pronavto@ntmp.ru
 
 
 #define led_13 13  
-#define KN1V   A3      //pin 8
-#define KN2V   A4      //pin 9
-#define KN3V   A5      //pin 10 
+#define KN1V   A2      //pin 8
+#define KN2V   A3      //pin 9
+#define KN3V   A4      //pin 10 
 #define KN1G   38      //pin 22  PA13
 #define KN2G   27      //pin 41  PA28
 #define KN3G   30      //pin 37  PB22
 #define KN4G   31      //pin 38  PB23
 #define VibMot 12      //pin 28
+
+int klav_new = 0;
+int klav_old = 0;
 
 //int statusLed = 13;
 //int errorLed = 13;
@@ -48,7 +51,7 @@ int PinIn[3]{ KN1V, KN2V, KN3V }; // пины входа
 int val = 0;
 const int value[4][3]
 { 
-	{ 1, 5, 9 },
+	{ 1, 5, 9, },
 	{ 2, 6, 10 },
 	{ 3, 7, 11 },
 	{ 4, 8, 12 }
@@ -7327,8 +7330,9 @@ void i2c_test()
 //}
 //
 
-void matrix() // создаем функцию для чтения кнопок
+int matrix() // создаем функцию для чтения кнопок
 {
+	int klav = 0;
 	for (int i = 1; i <= 4; i++) // цикл, передающий 0 по всем столбцам
 	{
 		digitalWrite(PinOut[i - 1], LOW); // если i меньше 4 , то отправляем 0 на ножку
@@ -7336,13 +7340,16 @@ void matrix() // создаем функцию для чтения кнопок
 		{
 			if (digitalRead(PinIn[j - 1]) == LOW) // если один из указанных портов входа равен 0, то..
 			{
-				Serial.println(value[i - 1][j - 1]); // то b равно значению из двойного массива
-				delay(175);
+				klav = value[i - 1][j - 1];
+				//Serial.println(value[i - 1][j - 1]); // то b равно значению из двойного массива
+				delay(100);
 			}
 		}
 		digitalWrite(PinOut[i - 1], HIGH); // подаём обратно высокий уровень
 	}
+	return klav;
 }
+
 
 
 
@@ -7354,7 +7361,7 @@ void setup_pin()
   pinMode(VibMot, OUTPUT);                             //
   digitalWrite(VibMot, LOW); 
 
-  pinMode(KN1V, INPUT); 
+  pinMode(KN1V, INPUT);
   pinMode(KN2V, INPUT); 
   pinMode(KN3V, INPUT); 
   pinMode(KN1G, OUTPUT);
@@ -7416,13 +7423,13 @@ void setup()
 	//myGLCD.setFont(BigFont);
 	//myGLCD.print("\x85""A""\x81""P""\x8A\x85""KA", CENTER, 140);        // ЗАГРУЗКА
 	//myGLCD.setFont(SmallFont);
-	//myGLCD.setFont(BigFont);
-	//strcpy_P(buffer, (char*)pgm_read_word(&(table_message[52]))); 
-	//myGLCD.print("C""\x86""CTEM""\x91", CENTER, 170);                     // СИСТЕМЫ
+	myGLCD.setFont(BigFont);
+	strcpy_P(buffer, (char*)pgm_read_word(&(table_message[52]))); 
+	myGLCD.print("C""\x86""CTEM""\x91", CENTER, 170);                     // СИСТЕМЫ
    
 
  
-	delay(500);
+	//delay(500);
  
 	DS3231_clock.begin();
 
@@ -7492,8 +7499,8 @@ void setup()
   //EEPROM.put(adr_start_user+4, user_pass);
   //EEPROM.put(adr_start_user+10, user_number);  
   //EEPROM.put(adr_start_user+14, user_pass);
-  number_device = i2c_eeprom_read_byte(deviceaddress, adr_number_device);
-  delay(5000);
+ /* number_device = i2c_eeprom_read_byte(deviceaddress, adr_number_device);
+  delay(5000);*/
 //  vibroM();
 
 
@@ -7515,11 +7522,6 @@ void setup()
 
 
   //}
-
-
-  //attachInterrupt(KN1V, Line1, FALLING);
-  //attachInterrupt(KN2V, Line2, FALLING);
-  //attachInterrupt(KN3V, Line3, FALLING);
   
   Serial.println("System initialization OK!.");          // Информация о завершении настройки
 
@@ -7539,9 +7541,23 @@ void loop()
 	////	digitalWrite(i, LOW);
 	////	delay(100);*/
 	////}
-	matrix(); // используем функцию опроса матричной клавиатуры
+
+	klav_new = matrix(); // используем функцию опроса матричной клавиатуры
+	if (klav_new != klav_old)
+	{
+		if(klav_new != 0)  Serial.println(klav_new); // то b равно значению из двойного массива
+		klav_old = klav_new;
+	}
+
+
 	//
-	delay(100);
+
+		//digitalWrite(KN3V, HIGH);
+		//delay(100);
+		//digitalWrite(KN3V, LOW);
+		//delay(100);
+
+	//delay(100);
     //klav_Glav_Menu(); 
 }
 
