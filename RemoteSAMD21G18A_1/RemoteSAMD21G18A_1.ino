@@ -1909,7 +1909,7 @@ void test_power()
 	//	Serial.println(power);
 		power60 = power * (3.0 / 1024.0 * 2);
 
-		myGLCD.printNumI(power60, 212, 45);
+		myGLCD.print(String (power60), 205, 40);
 		Serial.println(power60);
 
 
