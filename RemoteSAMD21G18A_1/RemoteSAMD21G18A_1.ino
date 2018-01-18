@@ -127,7 +127,7 @@ extern uint8_t Ubuntu[];
 extern uint8_t TinyFont[];
 
 //extern uint8_t Dingbats1_XL[];
-//extern uint8_t SmallSymbolFont[];
+extern uint8_t SmallSymbolFont[];
 //+++++++++++++++++++++++++++++ Внешняя память +++++++++++++++++++++++++++++++++++++++
 int deviceaddress        = 80;                          // Адрес микросхемы памяти
 //unsigned int eeaddress   =  0;                          // Адрес ячейки памяти
@@ -332,98 +332,98 @@ char  txt_rep_pass_user[] = "\x89o\x97\xA4op \xA3""apo\xA0\xAC \xA3o\xA0\xAC\x9C
 
 
 char buffer[30];
-const char* const table_message[] PROGMEM =
-{
- txt_botton_otmena,                // 0 "O""\xA4\xA1""e""\xA2""a";                                               // "Отмена"
- txt_botton_vvod,                  // 1 "B\x97o\x99 ";                                                           // "Ввод"
- txt_botton_ret,                   // 2  "B""\xAB""x";                                                           // "Вых"
- txt_perepolnenie,                 // 3 "\x89""EPE""\x89O\x88HEH\x86""E!"                                        // "Переполнение"
- txt_empty,                        // 4 "\x80\x8A\x8B\x8B""EP \x89\x8A""CTO\x87!"                                // "БУФФЕР ПУСТОЙ"
- txt_menu1,                        // 5 "MEH""\x94"" 1";                                                         // "МЕНЮ 1"
- txt_menu2,                        // 6 "MEH""\x94"" 2";                                                         // "МЕНЮ 2"
- txt_info_XBee_ALL,                // 7 "\x86\xA2\xA5op\xA1""a""\xA6\x9D\xAF XBee";                              // Информация XBee
- txt_info_XBee_USB,                // 8 "o\xA4\xA3p""a""\x97\xA0""e""\xA2""a"" USB port";                        //
- txt_info_XBee_MY,                 // 9 "Network Address MY";                                                    //
- txt_info_XBee_CoordinatorAdr,     // 10 "Addr Coordinat";                                                       //
- txt_info_XBee_Serial,             // 11 "Number SH,SL"                                                          //
- txt_info_XBee_Network_Address,    // 12 "Network (MY) = ";//
- txt_info_XBee_Operating_PAN_OP,   // 13 "PAN ID (OP)  = ";//
- txt_info_XBee_Operating_ID,       // 14 "ID (ID)      = ";//
- txt_info_XBee_Chanel_CH,          // 15 "Chanel (CH)";//
- txt_info_XBee_Association,        // 16 "Association(AI)";//
- txt_info_XBee_Baud_Rate,          // 17 "Baud Rate(BD)";//
- txt_info_XBee_Voltage,            // 18 "Voltage (%V) =";//
- txt_return,                       // 19 "B""\x91""XO""\x82";                                                     // ВЫХОД
- txt_XBee_Set,                     // 20 "Hac""\xA4""po""\x9E\x9F""a XBee";                                       // Настройка XBee
- txt_err_pass_user,                // 21 "O\xA8\x9D\x96ka \x97\x97o\x99""a" ;                                     // Ошибка ввода
- txt_menu2_1,                      // 22 "\x86H\x8BO XBee";                                                       // Инфо XBee
- txt_menu2_2,                      // 23 "Coord SH";                                                              //
- txt_menu2_3,                      // 24 "Coord SL";                                                              // 
- txt_menu2_4,                      // 25 "Network";                                                               //
- txt_SetAddress,                   // 26 "Set Address";                                                           //
- txt_temperature,                  // 27 "Te""\xA1\xA3""epa""\xA4""ypa C";                                        // Температура С
- txt_view_device1,                 // 28 "B""\x97""ec""\xA4\x9D"" a""\x99""peca";                                 // Ввести адреса
- txt_view_device2,                 // 29 "yc""\xA4""po""\x9E""c""\xA4\x97";                                       // устройств
- txt_Set_device,                   // 30 "\x89""o""\x99\x9F\xA0\xAE\xA7\x9D\xA4\xAC"" ""\x86\x8A";                // Подключить ИУ
- txt_null,                         // 31 "===========";                                                           // "==============="
- txt_reset_count,                  // 32 "C""\x96""poc" ;                                                         // Сброс 
- txt_reset_count1,                 // 33 "C""\x96""poc";                                                          // Сброс
- txt_set_date1,                    // 34 "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC";                           // Установить
- txt_set_date2,                    // 35 "\x82""a""\xA4""y ""\x9D"" ""\x97""pe""\xA1\xAF";                        // Дату и время 
- txt_menu1_41,                     // 36 "Hac""\xA4""po""\x9E\x9F""a";                                            // Настройка
- txt_menu1_42,                     // 37 "c""\x9D""c""\xA4""e""\xA1\xAB";                                         // системы
- txt_menu4_11,                     // 38 "C\x96poc \x99""a""\xA2\xA2\xABx";                                       // Сброс данных
- txt_menu4_12,                     // 39  "\x89""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAC";                 //  Пользователь
- txt_menu4_21,                     // 40  "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC"" N";                      // Установить N
- txt_menu4_22,                     // 41 "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";                  // пользователя
- txt_menu4_31,                     // 42 "\x89""apo\xA0\xAC";                                                     // Пароль
- txt_menu4_32,                     // 43 "Me""\xA2\xAE";                                                          // Меню 
- txt_menu4_41,                     // 44 "\xA5""a""\x9E\xA0""o""\x97"" ""\x9D"" SD";                              // файлов и SD        
- txt_menu4_42,                     // 45 "a""\x99\xA1\x9D\xA2\x9D""c""\xA4""pa""\xA4""opa";                       // администратора
- txt_Bxod,                         // 46 "BXO""\x82";                                                             // ВХОД
- txt_pass_adm,                     // 47 "B""\x97""e""\x99\x9D\xA4""e ""\xA3""apo""\xA0\xAC";                     // Введите пароль
- txt_pass_adm1,                    // 48 "\x89""o""\x97\xA4""op  ""\xA3""apo""\xA0\xAF";                          // Повтор  пароля
- txt_interval1,                    // 49 "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC";                           // Установить 
- txt_interval2,                    // 50 "\x9D\xA2\xA4""ep""\x97""a""\xA0";                                       //  интервалы
- txt_interval3,                    // 51 "\x86\xA2\xA4""ep""\x97""a""\xA0";                                       // Интервал
- txt_intervalM1,                   // 52 "\xA1""o""\xA4""op 1";                                                   // мотор 1
- txt_intervalM2,                   // 53 "\xA1""o""\xA4""op 2";                                                   // мотор 2
- txt_time1,                        // 54 "time 1";                                                                // 
- txt_time2,                        // 55 "time 2";                                                                // 
- txt__reset_count3,                // 56 "c""\xA7""e""\xA4\xA7\x9D\x9F""o""\x97";                                 // счетчиков
- txt__reset_user1,                 // 57 "C""\xA1""e""\xA2\x9D\xA4\xAC";                                          // Сменить
- txt__reset_user2,                 // 58 "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";                  // пользователя
- txt__blockKNa,                    // 59 "\x80\xA0""o""\x9F\x9D""po""\x97\x9F""a";                                // Блокировка
- txt__blockKNb,                    // 60 "\x9F\xA2""o""\xA3""o""\x9F";                                            // кнопок
- txt__resCount,                    // 61 "C""\x96""poc c""\xA7""e""\xA4\xA7\x9D\x9F""a";                          // Сброс счетчика
- txt__SaveKN,                      // 62 "\x8A""CTAH.";                                                           // УСТАН.
- txt__block_pass1,                 // 63 "\x80\xA0""o""\x9F\x9D""po""\x97""a""\xA4\xAC";                          // Блокировать
- txt__block_pass2,                 // 64 "\x97\x97""o""\x99"" ""\xA3""apo""\xA0\xAF";                             // ввод пароля
- txt__save,                        // 65 "Coxpa""\xA2";                                                           // Сохран.
- txt__no,                          // 66 "He""\xA4"" ""\xA3""apo""\xA0\xAF"" ""\x9D";                             // Нет пароля и
- txt__SDmem,                       // 67 "SD  ""\xA3""a""\xA1\xAF\xA4\x9D";                                       // SD памяти
- txt__SDformat,                    // 68 "\x8B""op""\xA1""a""\xA4\x9D""po""\x97""a""\xA2\x9D""e";                 // Форматирование
- txt__SDinfo,                      // 69 "\x86\xA2\xA5""op""\xA1""a""\xA6\x9D\xAF"" o";                           // Информация о
- txt_n_user1,                      // 70 "B\x97""e\x99\x9D\xA4""e N";                                             // Введите №
- txt_n_user2,                      // 71 "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";                  // пользователя
- txt_n_user3,                      // 72 "\x89o\x97\xA4op\x9D\xA4""e"" N \xA3o\xA0\xAC\x9C.  ";                   // Повторите N
- txt_n_user_pass1,                 // 73 "\x8A""c""\xA4"".N ""\xA3""o""\xA0\xAC\x9C"".";                          // Уст.N польз.
- txt_n_user_pass2,                 // 74 "\x9D"" ""\xA3""apo""\xA0\xAC";                                          // и пароль
- txt_tx_pover,                     // 75 "TX Power mW";                                                           // "TX Power mW"
- txt_set_XBee1,                    // 76 "Hac""\xA4""po""\x9E\x9F\x9D";                                           // Настройки
- txt_set_XBee2,                    // 77 "XBee";                                                                  // XBee
- txt_set_XBee3,                    // 78 "\xA1""o""\xA9\xA2""oc""\xA4\x9D";                                       // мощности
- txt_set_lev1,                     // 79 "Mo""\xA9\xA2""oc""\xA4\xAC"" 1 mV";                                     // Мощность 1 mV
- txt_set_lev2,                     // 80 "Mo""\xA9\xA2""oc""\xA4\xAC"" 25 mV";                                    // Мощность 25 mV
- txt_set_lev3,                     // 81 "Mo""\xA9\xA2""oc""\xA4\xAC"" 100 mV";                                   // Мощность 100 mV
- txt_set_lev4,                     // 82 "Mo""\xA9\xA2""oc""\xA4\xAC"" 200 mV";                                   // Мощность 200 mV
- txt_set_lev5,                     // 83 "Mo""\xA9\xA2""oc""\xA4\xAC"" 300 mV";                                   // Мощность 300 mV
- txt_search_XBee,                  // 84 "\x89""o""\x9D""c""\x9F"" ""\x86\x8A"" XBee";                            // Поиск устройств XBee
- txt_infoSD1,                      // 85 "\x86\xA2\xA5""op""\xA1""a""\xA6\x9D\xAF"" ";                            // Информация 
- txt_infoSD2                       // 86 SD ""\xA3""a""\xA1\xAF\xA4\x9D";                                         // SD памяти
-
- 
-};
+//const char* const table_message[] PROGMEM =
+//{
+// txt_botton_otmena,                // 0 "O""\xA4\xA1""e""\xA2""a";                                               // "Отмена"
+// txt_botton_vvod,                  // 1 "B\x97o\x99 ";                                                           // "Ввод"
+// txt_botton_ret,                   // 2  "B""\xAB""x";                                                           // "Вых"
+// txt_perepolnenie,                 // 3 "\x89""EPE""\x89O\x88HEH\x86""E!"                                        // "Переполнение"
+// txt_empty,                        // 4 "\x80\x8A\x8B\x8B""EP \x89\x8A""CTO\x87!"                                // "БУФФЕР ПУСТОЙ"
+// txt_menu1,                        // 5 "MEH""\x94"" 1";                                                         // "МЕНЮ 1"
+// txt_menu2,                        // 6 "MEH""\x94"" 2";                                                         // "МЕНЮ 2"
+// txt_info_XBee_ALL,                // 7 "\x86\xA2\xA5op\xA1""a""\xA6\x9D\xAF XBee";                              // Информация XBee
+// txt_info_XBee_USB,                // 8 "o\xA4\xA3p""a""\x97\xA0""e""\xA2""a"" USB port";                        //
+// txt_info_XBee_MY,                 // 9 "Network Address MY";                                                    //
+// txt_info_XBee_CoordinatorAdr,     // 10 "Addr Coordinat";                                                       //
+// txt_info_XBee_Serial,             // 11 "Number SH,SL"                                                          //
+// txt_info_XBee_Network_Address,    // 12 "Network (MY) = ";//
+// txt_info_XBee_Operating_PAN_OP,   // 13 "PAN ID (OP)  = ";//
+// txt_info_XBee_Operating_ID,       // 14 "ID (ID)      = ";//
+// txt_info_XBee_Chanel_CH,          // 15 "Chanel (CH)";//
+// txt_info_XBee_Association,        // 16 "Association(AI)";//
+// txt_info_XBee_Baud_Rate,          // 17 "Baud Rate(BD)";//
+// txt_info_XBee_Voltage,            // 18 "Voltage (%V) =";//
+// txt_return,                       // 19 "B""\x91""XO""\x82";                                                     // ВЫХОД
+// txt_XBee_Set,                     // 20 "Hac""\xA4""po""\x9E\x9F""a XBee";                                       // Настройка XBee
+// txt_err_pass_user,                // 21 "O\xA8\x9D\x96ka \x97\x97o\x99""a" ;                                     // Ошибка ввода
+// txt_menu2_1,                      // 22 "\x86H\x8BO XBee";                                                       // Инфо XBee
+// txt_menu2_2,                      // 23 "Coord SH";                                                              //
+// txt_menu2_3,                      // 24 "Coord SL";                                                              // 
+// txt_menu2_4,                      // 25 "Network";                                                               //
+// txt_SetAddress,                   // 26 "Set Address";                                                           //
+// txt_temperature,                  // 27 "Te""\xA1\xA3""epa""\xA4""ypa C";                                        // Температура С
+// txt_view_device1,                 // 28 "B""\x97""ec""\xA4\x9D"" a""\x99""peca";                                 // Ввести адреса
+// txt_view_device2,                 // 29 "yc""\xA4""po""\x9E""c""\xA4\x97";                                       // устройств
+// txt_Set_device,                   // 30 "\x89""o""\x99\x9F\xA0\xAE\xA7\x9D\xA4\xAC"" ""\x86\x8A";                // Подключить ИУ
+// txt_null,                         // 31 "===========";                                                           // "==============="
+// txt_reset_count,                  // 32 "C""\x96""poc" ;                                                         // Сброс 
+// txt_reset_count1,                 // 33 "C""\x96""poc";                                                          // Сброс
+// txt_set_date1,                    // 34 "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC";                           // Установить
+// txt_set_date2,                    // 35 "\x82""a""\xA4""y ""\x9D"" ""\x97""pe""\xA1\xAF";                        // Дату и время 
+// txt_menu1_41,                     // 36 "Hac""\xA4""po""\x9E\x9F""a";                                            // Настройка
+// txt_menu1_42,                     // 37 "c""\x9D""c""\xA4""e""\xA1\xAB";                                         // системы
+// txt_menu4_11,                     // 38 "C\x96poc \x99""a""\xA2\xA2\xABx";                                       // Сброс данных
+// txt_menu4_12,                     // 39  "\x89""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAC";                 //  Пользователь
+// txt_menu4_21,                     // 40  "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC"" N";                      // Установить N
+// txt_menu4_22,                     // 41 "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";                  // пользователя
+// txt_menu4_31,                     // 42 "\x89""apo\xA0\xAC";                                                     // Пароль
+// txt_menu4_32,                     // 43 "Me""\xA2\xAE";                                                          // Меню 
+// txt_menu4_41,                     // 44 "\xA5""a""\x9E\xA0""o""\x97"" ""\x9D"" SD";                              // файлов и SD        
+// txt_menu4_42,                     // 45 "a""\x99\xA1\x9D\xA2\x9D""c""\xA4""pa""\xA4""opa";                       // администратора
+// txt_Bxod,                         // 46 "BXO""\x82";                                                             // ВХОД
+// txt_pass_adm,                     // 47 "B""\x97""e""\x99\x9D\xA4""e ""\xA3""apo""\xA0\xAC";                     // Введите пароль
+// txt_pass_adm1,                    // 48 "\x89""o""\x97\xA4""op  ""\xA3""apo""\xA0\xAF";                          // Повтор  пароля
+// txt_interval1,                    // 49 "\x8A""c""\xA4""a""\xA2""o""\x97\x9D\xA4\xAC";                           // Установить 
+// txt_interval2,                    // 50 "\x9D\xA2\xA4""ep""\x97""a""\xA0";                                       //  интервалы
+// txt_interval3,                    // 51 "\x86\xA2\xA4""ep""\x97""a""\xA0";                                       // Интервал
+// txt_intervalM1,                   // 52 "\xA1""o""\xA4""op 1";                                                   // мотор 1
+// txt_intervalM2,                   // 53 "\xA1""o""\xA4""op 2";                                                   // мотор 2
+// txt_time1,                        // 54 "time 1";                                                                // 
+// txt_time2,                        // 55 "time 2";                                                                // 
+// txt__reset_count3,                // 56 "c""\xA7""e""\xA4\xA7\x9D\x9F""o""\x97";                                 // счетчиков
+// txt__reset_user1,                 // 57 "C""\xA1""e""\xA2\x9D\xA4\xAC";                                          // Сменить
+// txt__reset_user2,                 // 58 "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";                  // пользователя
+// txt__blockKNa,                    // 59 "\x80\xA0""o""\x9F\x9D""po""\x97\x9F""a";                                // Блокировка
+// txt__blockKNb,                    // 60 "\x9F\xA2""o""\xA3""o""\x9F";                                            // кнопок
+// txt__resCount,                    // 61 "C""\x96""poc c""\xA7""e""\xA4\xA7\x9D\x9F""a";                          // Сброс счетчика
+// txt__SaveKN,                      // 62 "\x8A""CTAH.";                                                           // УСТАН.
+// txt__block_pass1,                 // 63 "\x80\xA0""o""\x9F\x9D""po""\x97""a""\xA4\xAC";                          // Блокировать
+// txt__block_pass2,                 // 64 "\x97\x97""o""\x99"" ""\xA3""apo""\xA0\xAF";                             // ввод пароля
+// txt__save,                        // 65 "Coxpa""\xA2";                                                           // Сохран.
+// txt__no,                          // 66 "He""\xA4"" ""\xA3""apo""\xA0\xAF"" ""\x9D";                             // Нет пароля и
+// txt__SDmem,                       // 67 "SD  ""\xA3""a""\xA1\xAF\xA4\x9D";                                       // SD памяти
+// txt__SDformat,                    // 68 "\x8B""op""\xA1""a""\xA4\x9D""po""\x97""a""\xA2\x9D""e";                 // Форматирование
+// txt__SDinfo,                      // 69 "\x86\xA2\xA5""op""\xA1""a""\xA6\x9D\xAF"" o";                           // Информация о
+// txt_n_user1,                      // 70 "B\x97""e\x99\x9D\xA4""e N";                                             // Введите №
+// txt_n_user2,                      // 71 "\xA3""o""\xA0\xAC\x9C""o""\x97""a""\xA4""e""\xA0\xAF";                  // пользователя
+// txt_n_user3,                      // 72 "\x89o\x97\xA4op\x9D\xA4""e"" N \xA3o\xA0\xAC\x9C.  ";                   // Повторите N
+// txt_n_user_pass1,                 // 73 "\x8A""c""\xA4"".N ""\xA3""o""\xA0\xAC\x9C"".";                          // Уст.N польз.
+// txt_n_user_pass2,                 // 74 "\x9D"" ""\xA3""apo""\xA0\xAC";                                          // и пароль
+// txt_tx_pover,                     // 75 "TX Power mW";                                                           // "TX Power mW"
+// txt_set_XBee1,                    // 76 "Hac""\xA4""po""\x9E\x9F\x9D";                                           // Настройки
+// txt_set_XBee2,                    // 77 "XBee";                                                                  // XBee
+// txt_set_XBee3,                    // 78 "\xA1""o""\xA9\xA2""oc""\xA4\x9D";                                       // мощности
+// txt_set_lev1,                     // 79 "Mo""\xA9\xA2""oc""\xA4\xAC"" 1 mV";                                     // Мощность 1 mV
+// txt_set_lev2,                     // 80 "Mo""\xA9\xA2""oc""\xA4\xAC"" 25 mV";                                    // Мощность 25 mV
+// txt_set_lev3,                     // 81 "Mo""\xA9\xA2""oc""\xA4\xAC"" 100 mV";                                   // Мощность 100 mV
+// txt_set_lev4,                     // 82 "Mo""\xA9\xA2""oc""\xA4\xAC"" 200 mV";                                   // Мощность 200 mV
+// txt_set_lev5,                     // 83 "Mo""\xA9\xA2""oc""\xA4\xAC"" 300 mV";                                   // Мощность 300 mV
+// txt_search_XBee,                  // 84 "\x89""o""\x9D""c""\x9F"" ""\x86\x8A"" XBee";                            // Поиск устройств XBee
+// txt_infoSD1,                      // 85 "\x86\xA2\xA5""op""\xA1""a""\xA6\x9D\xAF"" ";                            // Информация 
+// txt_infoSD2                       // 86 SD ""\xA3""a""\xA1\xAF\xA4\x9D";                                         // SD памяти
+//
+// 
+//};
 
 
 // ************ XBee******************
@@ -1434,7 +1434,6 @@ void drawGlavMenu()                                                        // О
   myGLCD.setColor(255, 255, 255);                                        // Цвет текста белый 
   myGLCD.setBackColor( 0, 0, 0);                                         // Цвет фона черный
   number_device = i2c_eeprom_read_byte(deviceaddress, adr_number_device);// 
-//  Serial.println(number_device);                                         //                                      
   String n_dev = "N"+String(number_device) ;                             // Вывести номер устройства в списке
   myGLCD.print(n_dev,LEFT, 3);                                           //
   myGLCD.print("LS-",62, 3);                                             // 
@@ -1574,15 +1573,13 @@ void drawGlavMenu()                                                        // О
   myGLCD.fillRoundRect (5, 248, 118, 293);
   myGLCD.setColor(255, 255, 255);
   myGLCD.drawRoundRect (5, 248, 118, 293);
-  strcpy_P(buffer, (char*)pgm_read_word(&(table_message[5])));
-  myGLCD.print(buffer, 16, 262);                                   // "ВЫХОД"
+  myGLCD.print("MEH""\x94"" 1", 16, 262);                                   //  
 
   myGLCD.setColor(0, 0, 255);
   myGLCD.fillRoundRect (121, 248, 234, 293);
   myGLCD.setColor(255, 255, 255);
   myGLCD.drawRoundRect (121, 248, 234, 293);
-  strcpy_P(buffer, (char*)pgm_read_word(&(table_message[6])));
-  myGLCD.print(buffer, 130, 262);                                 //"СБРОС"
+  myGLCD.print("MEH""\x94"" 2", 130, 262);                                 // 
   
   myGLCD.setColor(255, 255, 255);
 
@@ -1591,10 +1588,6 @@ void drawGlavMenu()                                                        // О
   payload[0] = 11;                                                // Команда "Запросить  состояние"
  //   XBeeWrite();                                                    // Запросить  состояние
 }
-
-
-
-
 void klav_Glav_Menu()
 { 
   int x,y;
@@ -1614,22 +1607,86 @@ void klav_Glav_Menu()
 		myGLCD.print(DS3231_clock.dateFormat("H:i:s", dt), 110, 299);
 		oldsec = dt.second;
     }
-/*
-    if(digitalRead(KN1) == false)
-    {
-    //  N_KN = 1;
-      if(!blockKN1)
-      {
-        waitForStart(5, 5+20, 94, 90+10);
-        vibroM();
-        myGLCD.setBackColor(0, 0, 0);                    // Цвет фона
-        myGLCD.setColor(0, 0, 0);                        // Цвет текста
-        myGLCD.printNumI(1, 208, 75);                      //1
-        payload[0] = 0x01;
-        XBeeWrite();
-      }
-    }
-	*/
+	klav_new = matrix(); // используем функцию опроса матричной клавиатуры
+	if (klav_new != klav_old)
+	{
+		klav_old = klav_new;
+		if (klav_new != 0)
+		{
+			vibroM();
+			payload[0] = klav_new;
+		//	XBeeWrite();
+
+
+
+			//switch (klav_new) {
+			//case 1:
+			//	Serial.println(klav_new); // 
+			//	break;
+			//case 2:
+			//	Serial.println(klav_new); // 
+			//	break;
+			//case 3:
+			//	Serial.println(klav_new);
+			//	break;
+			//case 4:
+			//	Serial.println(klav_new);
+			//	break;
+			//case 5:
+			//	Serial.println(klav_new);
+			//	break;
+			//case 6:
+			//	Serial.println(klav_new);
+			//	break;
+			//case 7:
+			//	//выполняется, когда var равно 1
+			//	break;
+			//case 8:
+			//	//выполняется когда  var равно 2
+			//	break;
+			//case 9:
+			//	//выполняется, когда var равно 1
+			//	break;
+			//case 10:
+			//	//выполняется когда  var равно 2
+			//	break;
+			//case 11:
+			//	//выполняется, когда var равно 1
+			//	break;
+			//case 12:
+			//	Serial.println(klav_new);
+			//default:
+			//	break;
+			//	// выполняется, если не выбрана ни одна альтернатива
+			//	// default необязателен
+			//}
+
+
+
+
+
+
+
+		}
+
+		//	Serial.println(klav_new); // то b равно значению из двойного массива
+	}
+
+   // if(digitalRead(KN1) == false)
+   // {
+   // //  N_KN = 1;
+   //   if(!blockKN1)
+   //   {
+   ////     waitForStart(5, 5+20, 94, 90+10);
+   //     vibroM();
+   //     myGLCD.setBackColor(0, 0, 0);                    // Цвет фона
+   //     myGLCD.setColor(0, 0, 0);                        // Цвет текста
+   //     myGLCD.printNumI(1, 208, 75);                      //1
+   //     payload[0] = 0x01;
+   // //    XBeeWrite();
+   //   }
+   // }
+	
 	/*
     if(digitalRead(KN2) == LOW)
     {
@@ -1906,24 +1963,23 @@ void test_power()
 		myGLCD.setColor(0, 255, 0);
 		myGLCD.setBackColor( 0, 0, 0);
 		int power = analogRead(A1);
-	//	Serial.println(power);
-		power60 = power * (3.0 / 1024.0 * 2);
+		power60 = power * (3.1 / 1024.0 * 2);
 
 		myGLCD.print(String (power60), 205, 40);
 		Serial.println(power60);
 
-
-		if (power60 > 3.8) myGLCD.print("\xB0", 221, 25);
-		else if (power60 <= 3.8 && power60 > 3.6) myGLCD.print("\xB1", 212, 25);
-		else if (power60 <= 3.6 && power60 > 3.4) myGLCD.print("\xB2", 212, 25);
-		else if (power60 <= 3.4 && power60 > 3.2) myGLCD.print("\xB3", 212, 25);
-
+		myGLCD.setFont(SmallSymbolFont);
+	
+		if (power60 > 3.8) myGLCD.print("\x20", 221, 25);
+		else if (power60 <= 3.8 && power60 > 3.6) myGLCD.print("\x21", 212, 25);
+		else if (power60 <= 3.6 && power60 > 3.4) myGLCD.print("\x22", 212, 25);
+		else if (power60 <= 3.4 && power60 > 3.2) myGLCD.print("\x23", 212, 25);
 		else if (power60 <= 3.2)
 		{
-		  myGLCD.setColor(255, 0, 0);
-		  myGLCD.print("\xB4", 212, 25);
+			myGLCD.setColor(255, 0, 0);
+			myGLCD.print("\x24", 212, 25);
 		}
-
+		myGLCD.setFont(SmallFont);
 
 		//myGLCD.printNumF(power60, 2, 200, 40);
 		//myGLCD.setColor(255, 255, 255);
@@ -4646,29 +4702,29 @@ void test_power()
 
 
 
-//
-//void waitForIt(int x1, int y1, int x2, int y2)
-//{
-//  myGLCD.setColor(255, 0, 0);
-//  myGLCD.drawRoundRect (x1, y1, x2, y2);
-//  while (myTouch.dataAvailable())  myTouch.read();
-//  myGLCD.setColor(255, 255, 255);
-//  myGLCD.drawRoundRect (x1, y1, x2, y2);
-//}
-//void waitForIt_inv()
-//{
-//  waitForIt_page(1, 32, 239, 64);
-//  waitForIt_page(1, 64, 239, 96);
-//  waitForIt_page(1, 96, 239, 128);
-//  waitForIt_page(1, 128, 239, 160);
-//  waitForIt_page(1, 160, 239, 192);
-//  waitForIt_page(1, 192, 239, 224);
-//}
-//void waitForIt_page(int x1, int y1, int x2, int y2)
-//{
-//  myGLCD.setColor(0, 0, 0);
-//  myGLCD.drawRoundRect (x1, y1, x2, y2);
-//}
+
+void waitForIt(int x1, int y1, int x2, int y2)
+{
+  myGLCD.setColor(255, 0, 0);
+  myGLCD.drawRoundRect (x1, y1, x2, y2);
+  while (myTouch.dataAvailable())  myTouch.read();
+  myGLCD.setColor(255, 255, 255);
+  myGLCD.drawRoundRect (x1, y1, x2, y2);
+}
+void waitForIt_inv()
+{
+  waitForIt_page(1, 32, 239, 64);
+  waitForIt_page(1, 64, 239, 96);
+  waitForIt_page(1, 96, 239, 128);
+  waitForIt_page(1, 128, 239, 160);
+  waitForIt_page(1, 160, 239, 192);
+  waitForIt_page(1, 192, 239, 224);
+}
+void waitForIt_page(int x1, int y1, int x2, int y2)
+{
+  myGLCD.setColor(0, 0, 0);
+  myGLCD.drawRoundRect (x1, y1, x2, y2);
+}
 //void waitForStart(int x1, int y1, int x2, int y2)
 //{
 //  myGLCD.setColor(255, 0, 0);
@@ -5099,131 +5155,131 @@ void test_power()
 //}
 //
 //
-//void XBeeWrite()
-//{
-//  int i10;
-//  zbTx = ZBTxRequest(addr64, payload, sizeof(payload));  
-//  xbee.send(zbTx); 
-//  if (xbee.readPacket(6000))                                               //  После отправки запроса TX, мы ожидаем ответ статуса
-//    {
-//    if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE)     // получил ответ! // Должен быть znet tx status       
-//      {
-//        xbee.getResponse().getZBTxStatusResponse(txStatus);
-//        if (txStatus.getDeliveryStatus() == SUCCESS)                // Получить статус доставки, пятый байт
-//          {
-//            Serial.println("Success.  time to celebrate!");     // Успешно, можно радоваться.
-//            myGLCD.setColor(VGA_LIME);
-//            myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
-//            myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
-//            myGLCD.setColor(255, 255, 255);
-//            myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
-//            myGLCD.setBackColor(0, 0, 0);
-//            delay(400); 
-//            myGLCD.setColor(0, 0, 0);
-//            myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
-//          }
-//        else 
-//          {
-//            Serial.println("The remote XBee did not receive our packet. is it powered on?");    // Управляемый XBee не ответил. Он включен?
-//          }
-//      }
-//    }
-//  else if (xbee.getResponse().isError())
-//    {
-//    Serial.print("Error reading packet.  Error code: ");  
-//    Serial.println(xbee.getResponse().getErrorCode());
-//    } 
-//  else 
-//    {
-//    // local XBee did not provide a timely TX Status Response -- should not happen
-//        Serial.println("XBee did not provide a timely TX Status Response");
-//    myGLCD.setColor(255 , 0, 0);
-//    myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
-//    myGLCD.setColor(255, 255, 255);
-//    myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
-//    myGLCD.setBackColor(0, 0, 0);
-//    delay(400); 
-//    myGLCD.setColor(0, 0, 0);
-//    myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
-//    myGLCD.setColor(255, 255, 255);
-//    delay(2000);
-//    XBeeRead();                                         // Получить ответ от ИУ с параметрами.
-//    switch(N_KN)                                        //generate query response based on function type
-//    {
-//    case 1:
-//      waitForEnd(5, 5+20, 94, 90+10);
-//      break;
-//    case 2:
-//      waitForEnd(5, 93+10, 94, 178);
-//      break;
-//    case 3:
-//      waitForEnd(97, 5+20, 186, 90+10);
-//      break;
-//    case 4:
-//      waitForEnd(97, 93+10, 186, 178);
-//      break;
-//    case 5:
-//      waitForEnd(5, 183, 60, 243);
-//      break;
-//    case 6:
-//      waitForEnd(63, 183, 118, 243);
-//      break;
-//    case 7:
-//      waitForEnd(121, 183, 176, 243);
-//      break;
-//    case 8:
-//      waitForEnd(179, 183, 234, 243);
-//      break;
-//    default:
-//      break;
-//    }
-//  }
-//} 
+void XBeeWrite()
+{
+  //int i10;
+  //zbTx = ZBTxRequest(addr64, payload, sizeof(payload));  
+  //xbee.send(zbTx); 
+  //if (xbee.readPacket(6000))                                               //  После отправки запроса TX, мы ожидаем ответ статуса
+  //  {
+  //  if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE)     // получил ответ! // Должен быть znet tx status       
+  //    {
+  //      xbee.getResponse().getZBTxStatusResponse(txStatus);
+  //      if (txStatus.getDeliveryStatus() == SUCCESS)                // Получить статус доставки, пятый байт
+  //        {
+  //          Serial.println("Success.  time to celebrate!");     // Успешно, можно радоваться.
+  //          myGLCD.setColor(VGA_LIME);
+  //          myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
+  //          myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
+  //          myGLCD.setColor(255, 255, 255);
+  //          myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
+  //          myGLCD.setBackColor(0, 0, 0);
+  //          delay(400); 
+  //          myGLCD.setColor(0, 0, 0);
+  //          myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
+  //        }
+  //      else 
+  //        {
+  //          Serial.println("The remote XBee did not receive our packet. is it powered on?");    // Управляемый XBee не ответил. Он включен?
+  //        }
+  //    }
+  //  }
+  //else if (xbee.getResponse().isError())
+  //  {
+  //  Serial.print("Error reading packet.  Error code: ");  
+  //  Serial.println(xbee.getResponse().getErrorCode());
+  //  } 
+  //else 
+  //  {
+  //  // local XBee did not provide a timely TX Status Response -- should not happen
+  //      Serial.println("XBee did not provide a timely TX Status Response");
+  //  myGLCD.setColor(255 , 0, 0);
+  //  myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
+  //  myGLCD.setColor(255, 255, 255);
+  //  myGLCD.drawRoundRect (194, 70+13+20, 234, 110+13+20);
+  //  myGLCD.setBackColor(0, 0, 0);
+  //  delay(400); 
+  //  myGLCD.setColor(0, 0, 0);
+  //  myGLCD.fillRoundRect (195, 71+13+20, 233, 109+13+20);
+  //  myGLCD.setColor(255, 255, 255);
+  //  delay(2000);
+  //  XBeeRead();                                         // Получить ответ от ИУ с параметрами.
+  //  //switch(N_KN)                                        //generate query response based on function type
+  //  //{
+  //  //case 1:
+  //  //  waitForEnd(5, 5+20, 94, 90+10);
+  //  //  break;
+  //  //case 2:
+  //  //  waitForEnd(5, 93+10, 94, 178);
+  //  //  break;
+  //  //case 3:
+  //  //  waitForEnd(97, 5+20, 186, 90+10);
+  //  //  break;
+  //  //case 4:
+  //  //  waitForEnd(97, 93+10, 186, 178);
+  //  //  break;
+  //  //case 5:
+  //  //  waitForEnd(5, 183, 60, 243);
+  //  //  break;
+  //  //case 6:
+  //  //  waitForEnd(63, 183, 118, 243);
+  //  //  break;
+  //  //case 7:
+  //  //  waitForEnd(121, 183, 176, 243);
+  //  //  break;
+  //  //case 8:
+  //  //  waitForEnd(179, 183, 234, 243);
+  //  //  break;
+  //  //default:
+  //  //  break;
+  //  //}
+  //}
+} 
 
-//
-//
-//void XBee_Setup()            //  
-// {
-//  myGLCD.clrScr();   // Очистить экран CENTER
-//  myGLCD.setColor(0, 0, 255);
-//  myGLCD.fillRoundRect (2, 2, 318, 25);
-//  myGLCD.setColor(255, 255, 255);
-//  myGLCD.drawRoundRect (2, 2, 318, 25);
-//  myGLCD.setColor(255, 255, 255);
-//  myGLCD.setBackColor(0, 0, 255);
-//  myGLCD.print("Setup XBee", CENTER, 5);
-//  myGLCD.print(txt_return, CENTER, 218);// Завершить просмотр 
-//  int x, y;
-//  while (true)
-//  {
-//  if (Serial2.available()) 
-//    {
-//      int inByte = Serial2.read();
-//      Serial.write(inByte);
-//    }
-//  // read from port 0, send to port 2:
-//  if (Serial.available())
-//    {
-//      int inByte = Serial.read();
-//      Serial2.write(inByte);
-//    }
-//  if (myTouch.dataAvailable())
-//    {
-//      myTouch.read();
-//      x=myTouch.getX();
-//      y=myTouch.getY();
-//
-//    if ((y>=2) && (y<=240))  // Upper row
-//    {
-//      if ((x>=2) && (x<=319))  // Выход
-//        {
-//          waitForIt(10, 10, 60, 60);
-//          return;
-//        }
-//      }
-//    }
-//  } 
-//} 
+
+
+void XBee_Setup()            //  
+ {
+  myGLCD.clrScr();   // Очистить экран CENTER
+  myGLCD.setColor(0, 0, 255);
+  myGLCD.fillRoundRect (2, 2, 318, 25);
+  myGLCD.setColor(255, 255, 255);
+  myGLCD.drawRoundRect (2, 2, 318, 25);
+  myGLCD.setColor(255, 255, 255);
+  myGLCD.setBackColor(0, 0, 255);
+  myGLCD.print("Setup XBee", CENTER, 5);
+  myGLCD.print(txt_return, CENTER, 218);// Завершить просмотр 
+  int x, y;
+  while (true)
+  {
+	  if (Serial1.available()) 
+		{
+		  int inByte = Serial1.read();
+		  Serial.write(inByte);
+		}
+	  // read from port 0, send to port 2:
+	  if (Serial.available())
+		{
+		  int inByte = Serial.read();
+		  Serial1.write(inByte);
+		}
+	  if (myTouch.dataAvailable())
+		{
+		  myTouch.read();
+		  x=myTouch.getX();
+		  y=myTouch.getY();
+
+		  if ((y>=2) && (y<=240))  // Upper row
+			{
+				if ((x>=2) && (x<=319))  // Выход
+				{
+					waitForIt(10, 10, 60, 60);
+					return;
+				}
+			}
+		}
+  } 
+} 
 
 //
 //void XBee_status()
@@ -7080,12 +7136,12 @@ void i2c_test()
 //  //char* strcpy(char* fileName_p, const char* fileName);
 //  //Serial.println(fileName_p);
 //}
-//void vibroM()                     // Включение вибродвигателя
-//{
-//  digitalWrite(VibMot, HIGH); 
-//  delay(200);
-//  digitalWrite(VibMot, LOW); 
-//}
+void vibroM()                     // Включение вибродвигателя
+{
+  digitalWrite(VibMot, HIGH); 
+  delay(200);
+  digitalWrite(VibMot, LOW); 
+}
 //
 ////---------- SD info--------------
 //
@@ -7362,13 +7418,23 @@ int matrix() // создаем функцию для чтения кнопок
 			if (digitalRead(PinIn[j - 1]) == LOW) // если один из указанных портов входа равен 0, то..
 			{
 				klav = value[i - 1][j - 1];
-				//Serial.println(value[i - 1][j - 1]); // то b равно значению из двойного массива
+			//	Serial.println(value[i - 1][j - 1]); // то b равно значению из двойного массива
 				delay(100);
 			}
 		}
 		digitalWrite(PinOut[i - 1], HIGH); // подаём обратно высокий уровень
 	}
 	return klav;
+}
+
+void read_klav()
+{
+	klav_new = matrix(); // используем функцию опроса матричной клавиатуры
+	if (klav_new != klav_old)
+	{
+		if (klav_new != 0)  Serial.println(klav_new); // то b равно значению из двойного массива
+		klav_old = klav_new;
+	}
 }
 
 
@@ -7548,8 +7614,6 @@ void setup()
 
   drawGlavMenu();
   Serial.println("System initialization OK!.");          // Информация о завершении настройки
-
-
 }
 
 
@@ -7566,15 +7630,6 @@ void loop()
 	////	delay(100);*/
 	////}
 
-	//klav_new = matrix(); // используем функцию опроса матричной клавиатуры
-	//if (klav_new != klav_old)
-	//{
-	//	if(klav_new != 0)  Serial.println(klav_new); // то b равно значению из двойного массива
-	//	klav_old = klav_new;
-	//}
-
-
-	//
 
 		//digitalWrite(KN3V, HIGH);
 		//delay(100);
