@@ -7610,7 +7610,9 @@ void setup()
 
 
   //}
-  
+
+  Serial.println("XBee_Setup");          // Информация о завершении настройки
+  XBee_Setup();
 
   drawGlavMenu();
   Serial.println("System initialization OK!.");          // Информация о завершении настройки
