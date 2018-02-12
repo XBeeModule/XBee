@@ -33,7 +33,7 @@
 #define __volatile__
 typedef int __SIZE_TYPE__;
 typedef int __builtin_va_list;
-#define __asm__
+#define _Pragma(x)
 #define __ASM
 #define __INLINE
 #define __GNUC__ 0
@@ -53,7 +53,7 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <SAMD21G18a.h>
 
 
-#include <Arduino.h>
+#include <arduino.h>
 #include <pins_arduino.h> 
 #include <variant.h> 
 #include <variant.cpp> 

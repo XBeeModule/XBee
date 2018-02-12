@@ -25,8 +25,6 @@ Email: pronavto@ntmp.ru
 //
 #define Serial SERIAL_PORT_USBVIRTUAL                              // Подключаем USB порт в качестве COM порта
 
-
-
 #define led_13 13  
 #define KN1V   A2      //pin 8
 #define KN2V   A3      //pin 9
@@ -44,7 +42,7 @@ int klav_old = 0;
 //int errorLed = 13;
 //int N_KN = 0;
 
-
+//##########################  Настройка уклавиатуры (кнопки) ############################################
 int PinOut[4]{ KN1G, KN2G, KN3G, KN4G }; // пины выходы
 
 int PinIn[3]{ KN1V, KN2V, KN3V }; // пины входа

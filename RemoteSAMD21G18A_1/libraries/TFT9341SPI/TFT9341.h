@@ -463,15 +463,15 @@ public:
    		//void writeRect(int16_t x, int16_t y, int16_t w, int16_t h, const uint8_t *pcolors);
       	
 
-/*						
+					
 		void	drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
 		void	fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
 		void	drawArc(int x, int y, int r, int startAngle, int endAngle, int thickness = 1);
 		void	drawPie(int x, int y, int r, int startAngle, int endAngle);
         void    fillPie(int x, int y, int r, int startAngle, int endAngle);		
 		void printNumF(double num, byte dec, int x, int y, char divider='.', int length=0, char filler=' ');				 
-		void drawBitmap(int x, int y, int sx, int sy, bitmapdatatype data, int scale=1);
-		void drawBitmap(int x, int y, int sx, int sy, bitmapdatatype data, int deg, int rox, int roy);
+	//	void drawBitmap(int x, int y, int sx, int sy, bitmapdatatype data, int scale=1);
+	//	void drawBitmap(int x, int y, int sx, int sy, bitmapdatatype data, int deg, int rox, int roy);
 		        
 	   	//void setContrast(char c);
 
@@ -479,7 +479,7 @@ public:
       	void setupScrollArea(uint16_t TFA, uint16_t BFA);  
    	  	void scrollAddress(uint16_t VSP);
 		void _convert_float(char *buf, double num, int width, byte prec);   	   		
-*/	
+	
 	protected:
 		int printProportionalChar(byte c, int x, int y);
 		int rotatePropChar(byte c, int x, int y, int offset, int deg);
