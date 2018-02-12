@@ -280,6 +280,7 @@ inline __attribute__((always_inline)) void write16_cont(uint16_t c) {
  
 UTFT::UTFT() {}
 
+
 void UTFT::InitLCD(uint8_t orientation) {
 		
 	PINMODE(LED,OUTPUT);
