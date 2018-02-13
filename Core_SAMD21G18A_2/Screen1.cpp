@@ -71,7 +71,7 @@ void Screen1::onButtonPressed(TFTMenu* menu, int pressedButton)
   if(pressedButton == 0)
     menu->switchToScreen("SCREEN1_0"); // переключаемся на SCREEN1_1 экран
   else if(pressedButton == 1)
-    menu->switchToScreen("SCREEN2"); // переключаемся на третий экран
+    menu->switchToScreen("SCREEN2_0"); // переключаемся на третий экран
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -9,6 +9,13 @@
 #include "Screen1_3.h"
 #include "Screen1_4.h"
 #include "Screen2.h"
+#include "Screen2_0.h"
+#include "Screen2_1.h"
+#include "Screen2_2.h"
+#include "Screen2_3.h"
+#include "Screen2_4.h"
+
+
 //#include "Screen3.h"
 
 // подключаем часики
@@ -46,6 +53,13 @@ void setup()
 
   // добавляем второй экран
   Screen.addScreen(Screen2::create());
+
+  //  экран МЕНЮ 2
+  Screen.addScreen(Screen2_0::create());
+  Screen.addScreen(Screen2_1::create());
+  Screen.addScreen(Screen2_2::create());
+  Screen.addScreen(Screen2_3::create());
+  Screen.addScreen(Screen2_4::create());
 
   // добавляем третий экран
   //Screen.addScreen(Screen3::create());
