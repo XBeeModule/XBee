@@ -77,7 +77,7 @@
            4 -
            5 - Выход
 
-		   4 - Настройка системы                     (klav_menu3())
+		4 - Настройка системы                     (klav_menu3())
 		  	- Вести пароль
 			1- Сброс счетчика                     (klav_Menu_Reset())  - Выбрать кнопки, на которых необходимо сбросить счетчики
 			2- Установить интервалы               (klav_menu5())
@@ -7229,7 +7229,7 @@ void setup()
 //	Serial1.begin(115200);                                             // Подключение к
 	Serial2.begin(9600);                                               // Подключение к
 	xbee.setSerial(Serial2);
-	//Serial3.begin(115200);                                 // Подключение к
+	//Serial3.begin(115200);                                           // Подключение к
 	Serial.println(" ");
 	Serial.println(" ***** Start system  *****");
 	Serial.println(" ");
