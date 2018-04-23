@@ -319,6 +319,8 @@ void Screen1::doSetup(TFTMenu* menu)
 {
 	screenButtons->setSymbolFont(Various_Symbols_32x32);
 	// тут настраиваемся, например, можем добавлять кнопки
+
+
 	screenButtons->addButton(5, 275, 190, 40, "НАСТРОЙКИ");
 	screenButtons->addButton(200, 275, 35, 40, "z", BUTTON_SYMBOL); // кнопка Часы 
 

@@ -16,18 +16,18 @@ Screen2::Screen2() : AbstractTFTScreen("Settings")
 void Screen2::doSetup(TFTMenu* menu)
 {
   // тут настраиваемся, например, можем добавлять кнопки
-  filesButton = screenButtons->addButton(5, 2, 210, 30, "Файлы");
-  sdScreenButton = screenButtons->addButton(5, 37, 210, 30, "SD");
-  systemScreenButton = screenButtons->addButton( 5, 72, 210, 30, "Система");
-  paramsScreenButton = screenButtons->addButton(5, 107, 210, 30, "Параметры");
-  backButton = screenButtons->addButton(5, 142, 210, 30, "ВЫХОД");
+ // filesButton = screenButtons->addButton(5, 5, 100, 40, "Файлы");
+  //sdScreenButton = screenButtons->addButton(5, 37, 210, 30, "SD");
+  //systemScreenButton = screenButtons->addButton( 5, 72, 210, 30, "Система");
+ // paramsScreenButton = screenButtons->addButton(5, 107, 210, 30, "Параметры");
+  backButton = screenButtons->addButton(5, 255, 235, 40, "ВЫХОД");
 
-
+  
   // добавляем разные подэкраны
   Screen.addScreen(SDScreen::create());
-  Screen.addScreen(SDInfoScreen::create());
-  Screen.addScreen(SDFormatScreen::create());
-
+  //Screen.addScreen(SDInfoScreen::create());
+  //Screen.addScreen(SDFormatScreen::create());
+/*
   listLogFilesScreen = ListFilesScreen::create(vtLogsListing);
   listEthalonsFilesScreen = ListFilesScreen::create(vtEthalonsListing);
   ethalonChartScreen = EthalonChartScreen::create();
@@ -50,7 +50,7 @@ void Screen2::doSetup(TFTMenu* menu)
   Screen.addScreen(PulsesDeltaScreen::create());
   Screen.addScreen(MotoresourceScreen::create());
   Screen.addScreen(MotoresourceMaxScreen::create());
-  
+  */
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void Screen2::doUpdate(TFTMenu* menu)
