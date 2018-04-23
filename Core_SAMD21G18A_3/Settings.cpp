@@ -77,9 +77,9 @@ void SettingsClass::update()
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void SettingsClass::updateInductiveSensors()
 {
-  inductiveSensorState1 = digitalRead(inductive_sensor1);
-  inductiveSensorState2 = digitalRead(inductive_sensor2);
-  inductiveSensorState3 = digitalRead(inductive_sensor3);
+  //inductiveSensorState1 = digitalRead(inductive_sensor1);
+  //inductiveSensorState2 = digitalRead(inductive_sensor2);
+  //inductiveSensorState3 = digitalRead(inductive_sensor3);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint32_t SettingsClass::getMotoresource(uint8_t channelNum)

@@ -14,8 +14,8 @@
 #include "Screen5.h"              // Вызов установки времени
 #include "Screen6.h"              // Вызов установки даты
 #include "InterruptScreen.h"      // экран с графиком прерывания
-#include "Buttons.h"              // наши железные кнопки
-#include "InfoDiodes.h"           // информационные диоды
+//#include "Buttons.h"              // наши железные кнопки
+//#include "InfoDiodes.h"           // информационные диоды
 #include "FileUtils.h"
 #include "Settings.h"
 #include "CoreCommandBuffer.h"
@@ -34,10 +34,9 @@ void setup()
   Serial.begin(SERIAL_SPEED);
   while(!Serial);
 
-  NVIC_SetPriorityGrouping(NVIC_PriorityGroup_1);
-  Serial.setInterruptPriority(2);
+ 
 
-  ConfigPin::setup();
+ // ConfigPin::setup();
   
   DBGLN(F("INIT settings..."));
   Settings.begin();
@@ -47,9 +46,9 @@ void setup()
   RealtimeClock.begin(1);           // запускаем их на шине I2C 1 (SDA1, SCL1);
  // RealtimeClock.setTime(0,1,11,1,7,2,2018);
 
-  DBGLN(F("INIT SD..."));
-  SDInit::InitSD();
-  DBGLN(F("SD inited."));
+  //DBGLN(F("INIT SD..."));
+  //SDInit::InitSD();
+  //DBGLN(F("SD inited."));
   
 
   DBGLN(F("Init screen..."));
@@ -61,9 +60,9 @@ void setup()
   DBGLN(F("Add screen2..."));
   // добавляем второй экран
   Screen.addScreen(Screen2::create());
-  DBGLN(F("Add screen3..."));
-  // добавляем третий экран. Переход в меню настройки
-  Screen.addScreen(Screen3::create());
+  //DBGLN(F("Add screen3..."));
+  //// добавляем третий экран. Переход в меню настройки
+  //Screen.addScreen(Screen3::create());
   DBGLN(F("Add screen4..."));
   // добавляем четвертый экран. Меню установки даты и времени
   Screen.addScreen(Screen4::create());
@@ -73,21 +72,21 @@ void setup()
   DBGLN(F("Add screen6..."));
   // добавляем 6 экран. Установка даты
   Screen.addScreen(Screen6::create());
-  DBGLN(F("Add interrupt screen..."));
-  // добавляем экран с графиком прерываний
-  Screen.addScreen(InterruptScreen::create());
+  //DBGLN(F("Add interrupt screen..."));
+  //// добавляем экран с графиком прерываний
+  //Screen.addScreen(InterruptScreen::create());
 
   // переключаемся на первый экран
   Screen.switchToScreen("Main");
 
-  // настраиваем информационные диоды
-  InfoDiodes.begin();
+  //// настраиваем информационные диоды
+  //InfoDiodes.begin();
 
-  // настраиваем железные кнопки
-  Buttons.begin();
+  //// настраиваем железные кнопки
+  //Buttons.begin();
 
-  // поднимаем наши прерывания
-  InterruptHandler.begin();
+  //// поднимаем наши прерывания
+  //InterruptHandler.begin();
 
   screenIdleTimer = millis();
   Screen.onAction(screenAction);
@@ -102,14 +101,14 @@ void setup()
 void loop() 
 {
 
-  Settings.update();
+ // Settings.update();
   
   // обновляем кнопки
-  Buttons.update();
+//  Buttons.update();
   Screen.update();
 
   // обновляем прерывания
-  InterruptHandler.update();
+ // InterruptHandler.update();
 
   // проверяем, какой экран активен. Если активен главный экран - сбрасываем таймер ожидания. Иначе - проверяем, не истекло ли время ничегонеделанья.
   AbstractTFTScreen* activeScreen = Screen.getActiveScreen();
@@ -136,18 +135,18 @@ bool nestedYield = false;
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void yield()
 {
-  
-  if(nestedYield)
-    return;
-    
- nestedYield = true;
- 
-   // обновляем прерывания
-   InterruptHandler.update();
-   
-   Buttons.update();
+ // 
+ // if(nestedYield)
+ //   return;
+ //   
+ //nestedYield = true;
+ //
+ //  // обновляем прерывания
+ //  InterruptHandler.update();
+ //  
+ //  Buttons.update();
 
- nestedYield = false;
+ //nestedYield = false;
  
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------

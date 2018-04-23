@@ -172,7 +172,7 @@ void UTFT_Buttons_Rus::drawButton(int buttonID)
 
 	if (buttons[buttonID].flags & BUTTON_BITMAP)
 	{
-		_UTFT->drawBitmap(buttons[buttonID].pos_x, buttons[buttonID].pos_y, buttons[buttonID].width, buttons[buttonID].height, buttons[buttonID].data);
+//		_UTFT->drawBitmap(buttons[buttonID].pos_x, buttons[buttonID].pos_y, buttons[buttonID].width, buttons[buttonID].height, buttons[buttonID].data);
 		if (!(buttons[buttonID].flags & BUTTON_NO_BORDER))
 		{
 			if ((buttons[buttonID].flags & BUTTON_DISABLED))

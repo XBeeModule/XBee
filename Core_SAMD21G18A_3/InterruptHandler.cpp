@@ -73,10 +73,10 @@ void InterruptHandlerClass::begin()
   list2.reserve(INTERRUPT_RESERVE_RECORDS);
   list3.reserve(INTERRUPT_RESERVE_RECORDS);
 
-  NVIC_SetPriorityGrouping(NVIC_PriorityGroup_1);
-  attachInterrupt(digitalPinToInterrupt(INTERRUPT1_PIN),Interrupt1Handler, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(INTERRUPT2_PIN),Interrupt2Handler, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(INTERRUPT3_PIN),Interrupt3Handler, CHANGE);
+  //NVIC_SetPriorityGrouping(NVIC_PriorityGroup_1);
+  //attachInterrupt(digitalPinToInterrupt(INTERRUPT1_PIN),Interrupt1Handler, CHANGE);
+  //attachInterrupt(digitalPinToInterrupt(INTERRUPT2_PIN),Interrupt2Handler, CHANGE);
+  //attachInterrupt(digitalPinToInterrupt(INTERRUPT3_PIN),Interrupt3Handler, CHANGE);
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
 void InterruptHandlerClass::normalizeList(InterruptTimeList& list)

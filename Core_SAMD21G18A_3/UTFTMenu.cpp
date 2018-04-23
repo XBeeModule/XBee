@@ -76,9 +76,9 @@ void TFTMenu::addScreen(AbstractTFTScreen* screen)
 void TFTMenu::setup()
 {
   tftMenuManager = this;
+  tftDC = new UTFT;
   
-  
-  tftDC = new UTFT(TFT_MODEL,TFT_RS_PIN,TFT_WR_PIN,TFT_CS_PIN,TFT_RST_PIN);
+ // tftDC = new UTFT(TFT_MODEL,TFT_RS_PIN,TFT_WR_PIN,TFT_CS_PIN,TFT_RST_PIN);
   tftTouch = new URTouch(TFT_TOUCH_CLK_PIN,TFT_TOUCH_CS_PIN,TFT_TOUCH_DIN_PIN,TFT_TOUCH_DOUT_PIN,TFT_TOUCH_IRQ_PIN);
 
   #if TFT_INIT_DELAY > 0
@@ -87,7 +87,9 @@ void TFTMenu::setup()
   
   tftDC->InitLCD(TFT_ORIENTATION);
   tftDC->setBackColor(TFT_BACK_COLOR);
-  tftDC->fillScr(TFT_BACK_COLOR);
+ // tftDC->fillScr(TFT_BACK_COLOR);
+  tftDC->clrScr();
+  delay(100);
   tftDC->setFont(TFT_FONT);
 
   tftTouch->InitTouch(TFT_ORIENTATION);

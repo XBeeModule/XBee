@@ -2,104 +2,104 @@
 #include "Screen1.h"
 #include "DS3231.h"
 #include "ConfigPin.h"
-#include "ADCSampler.h"
+//#include "ADCSampler.h"
 #include "CONFIG.h"
 #include "InterruptHandler.h"
 #include "InterruptScreen.h"
 #include "Settings.h"
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-ADCSampler sampler;
+//ADCSampler sampler;
 Screen1* mainScreen = NULL;        
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void ADC_Handler()
-{
-  sampler.handleInterrupt();
-}
+//void ADC_Handler()
+//{
+//  sampler.handleInterrupt();
+//}
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void loopADC()
-{
-  static bool dataHigh_old = false;
-  
-  if (sampler.available()) 
-  {
-    int bufferLength = 0;
-    uint16_t* cBuf = sampler.getFilledBuffer(&bufferLength);    // Получить буфер с данными
-
-
-    static uint16_t countOfPoints = 0;    
-    static uint16_t* serie1 = NULL;
-    static uint16_t* serie2 = NULL;
-    static uint16_t* serie3 = NULL;
-    
-    uint16_t currentCountOfPoints = bufferLength/6;
-
-    if(currentCountOfPoints != countOfPoints)
-    {
-      countOfPoints = currentCountOfPoints;
-      
-      delete [] serie1;
-      delete [] serie2;
-      delete [] serie3;
-
-      serie1 = new uint16_t[countOfPoints];
-      serie2 = new uint16_t[countOfPoints];
-      serie3 = new uint16_t[countOfPoints];
-
-    }
-
-    /*
-    uint16_t countOfPoints = bufferLength/6;
-    uint16_t* serie1 = new uint16_t[countOfPoints];
-    uint16_t* serie2 = new uint16_t[countOfPoints];
-    uint16_t* serie3 = new uint16_t[countOfPoints];
-    */
-    uint16_t serieWriteIterator = 0;
-
-    uint32_t raw200V = 0;
-    uint32_t raw5V = 0;
-    uint32_t raw3V3 = 0;
-    
-    for (int i = 0; i < bufferLength; i = i + 6, serieWriteIterator++)                // получить результат измерения поканально, с интервалом 3
-    {
-   // if (sampler.dataHigh == true) break; // sampler.dataHigh == false;      // Если поступил сигнал превышения порога - прекратить вывод !! Не работает
-      serie1[serieWriteIterator] = cBuf[i];          // Данные 1 графика
-      serie2[serieWriteIterator] = cBuf[i+1];        // Данные 2 графика
-      serie3[serieWriteIterator] = cBuf[i+2];        // Данные 3 графика
-
-      raw200V += cBuf[i+3];        // Данные Измерение =200В
-      raw3V3 += cBuf[i+4];         // Данные Измерение 3V3 
-      raw5V += cBuf[i+5];          // Данные Измерение +5V 
-      
-	  } // for
-
-    raw200V /= countOfPoints;
-    raw3V3 /= countOfPoints;
-    raw5V /= countOfPoints;
-
-    Settings.set3V3RawVoltage(raw3V3);
-    Settings.set5VRawVoltage(raw5V);
-    Settings.set200VRawVoltage(raw200V);
-      
-    sampler.readBufferDone();                                  // все данные переданы в ком
-
-    if(mainScreen && mainScreen->isActive())
-    {
-      mainScreen->requestToDrawChart(serie1, serie2, serie3, countOfPoints);      
-    }
-    /*
-    else
-    {
-      delete [] serie1;
-      delete [] serie2;
-      delete [] serie3;
-    }
-    */
-  }
-    if (dataHigh_old != sampler.dataHigh)
-    {
-      dataHigh_old = sampler.dataHigh;
-    }
-}
+//void loopADC()
+//{
+//  static bool dataHigh_old = false;
+//  
+//  if (sampler.available()) 
+//  {
+//    int bufferLength = 0;
+//    uint16_t* cBuf = sampler.getFilledBuffer(&bufferLength);    // Получить буфер с данными
+//
+//
+//    static uint16_t countOfPoints = 0;    
+//    static uint16_t* serie1 = NULL;
+//    static uint16_t* serie2 = NULL;
+//    static uint16_t* serie3 = NULL;
+//    
+//    uint16_t currentCountOfPoints = bufferLength/6;
+//
+//    if(currentCountOfPoints != countOfPoints)
+//    {
+//      countOfPoints = currentCountOfPoints;
+//      
+//      delete [] serie1;
+//      delete [] serie2;
+//      delete [] serie3;
+//
+//      serie1 = new uint16_t[countOfPoints];
+//      serie2 = new uint16_t[countOfPoints];
+//      serie3 = new uint16_t[countOfPoints];
+//
+//    }
+//
+//    /*
+//    uint16_t countOfPoints = bufferLength/6;
+//    uint16_t* serie1 = new uint16_t[countOfPoints];
+//    uint16_t* serie2 = new uint16_t[countOfPoints];
+//    uint16_t* serie3 = new uint16_t[countOfPoints];
+//    */
+//    uint16_t serieWriteIterator = 0;
+//
+//    uint32_t raw200V = 0;
+//    uint32_t raw5V = 0;
+//    uint32_t raw3V3 = 0;
+//    
+//    for (int i = 0; i < bufferLength; i = i + 6, serieWriteIterator++)                // получить результат измерения поканально, с интервалом 3
+//    {
+//   // if (sampler.dataHigh == true) break; // sampler.dataHigh == false;      // Если поступил сигнал превышения порога - прекратить вывод !! Не работает
+//      serie1[serieWriteIterator] = cBuf[i];          // Данные 1 графика
+//      serie2[serieWriteIterator] = cBuf[i+1];        // Данные 2 графика
+//      serie3[serieWriteIterator] = cBuf[i+2];        // Данные 3 графика
+//
+//      raw200V += cBuf[i+3];        // Данные Измерение =200В
+//      raw3V3 += cBuf[i+4];         // Данные Измерение 3V3 
+//      raw5V += cBuf[i+5];          // Данные Измерение +5V 
+//      
+//	  } // for
+//
+//    raw200V /= countOfPoints;
+//    raw3V3 /= countOfPoints;
+//    raw5V /= countOfPoints;
+//
+//    Settings.set3V3RawVoltage(raw3V3);
+//    Settings.set5VRawVoltage(raw5V);
+//    Settings.set200VRawVoltage(raw200V);
+//      
+//    sampler.readBufferDone();                                  // все данные переданы в ком
+//
+//    if(mainScreen && mainScreen->isActive())
+//    {
+//      mainScreen->requestToDrawChart(serie1, serie2, serie3, countOfPoints);      
+//    }
+//    /*
+//    else
+//    {
+//      delete [] serie1;
+//      delete [] serie2;
+//      delete [] serie3;
+//    }
+//    */
+//  }
+//    if (dataHigh_old != sampler.dataHigh)
+//    {
+//      dataHigh_old = sampler.dataHigh;
+//    }
+//}
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Screen1::Screen1() : AbstractTFTScreen("Main")
 {
@@ -111,9 +111,9 @@ Screen1::Screen1() : AbstractTFTScreen("Main")
   canDrawChart = false;
   inDrawingChart = false;
   last3V3Voltage = last5Vvoltage = last200Vvoltage = -1;
-  canLoopADC = false;
+ // canLoopADC = false;
 
-  inductiveSensorState1 = inductiveSensorState2 = inductiveSensorState3 = 0xFF;
+ // inductiveSensorState1 = inductiveSensorState2 = inductiveSensorState3 = 0xFF;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void Screen1::drawInductiveSensors(TFTMenu* menu)
@@ -299,7 +299,7 @@ void Screen1::onDeactivate()
   inductiveSensorState1 = inductiveSensorState2 = inductiveSensorState3 = 0xFF;
   
   // прекращаем отрисовку графика
-  chart.stopDraw();
+//  chart.stopDraw();
 
   inDrawingChart = false;
   canDrawChart = false;
@@ -319,23 +319,23 @@ void Screen1::doSetup(TFTMenu* menu)
 {
 	screenButtons->setSymbolFont(Various_Symbols_32x32);
 	// тут настраиваемся, например, можем добавлять кнопки
-	screenButtons->addButton(5, 140, 165, 30, "НАСТРОЙКИ");
-	screenButtons->addButton(179, 130, 35, 40, "z", BUTTON_SYMBOL); // кнопка Часы 
+	screenButtons->addButton(5, 275, 190, 40, "НАСТРОЙКИ");
+	screenButtons->addButton(200, 275, 35, 40, "z", BUTTON_SYMBOL); // кнопка Часы 
 
 	// ТУТ НАСТРАИВАЕМ НАШ ГРАФИК
 	// устанавливаем ему начальные точки отсчёта координат
 
-	chart.setCoords(5, 120);
+//	chart.setCoords(5, 120);
   // говорим, какое у нас кол-во точек по X и по Y
-  chart.setPoints(CHART_POINTS_COUNT,100);
+//  chart.setPoints(CHART_POINTS_COUNT,100);
 	// добавляем наши тестовые графики, количеством 1
 
-	serie1 = chart.addSerie({ 255,0,0 });     // первый график - красного цвета
-	serie2 = chart.addSerie({ 0,0,255 });     // второй график - голубого цвета
-	serie3 = chart.addSerie({ 255,255,0 });   // третий график - желтого цвета
+	//serie1 = chart.addSerie({ 255,0,0 });     // первый график - красного цвета
+	//serie2 = chart.addSerie({ 0,0,255 });     // второй график - голубого цвета
+	//serie3 = chart.addSerie({ 255,255,0 });   // третий график - желтого цвета
 
-  unsigned int samplingRate = 2500;   // Частота вызова (стробирования) АЦП 50мс
-  sampler.begin(samplingRate);  
+ // unsigned int samplingRate = 2500;   // Частота вызова (стробирования) АЦП 50мс
+  //sampler.begin(samplingRate);  
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void Screen1::drawTime(TFTMenu* menu)
@@ -357,9 +357,9 @@ void Screen1::drawTime(TFTMenu* menu)
       dc->print(strDate, 5, 1);
       dc->print(strTime, 90, 1);
   
-      String str = "RAM: ";
+ /*     String str = "RAM: ";
       str += getFreeMemory();
-      Screen.print(str.c_str(), 10,123);
+      Screen.print(str.c_str(), 10,123);*/
       
     }
 }
@@ -369,11 +369,11 @@ void Screen1::doUpdate(TFTMenu* menu)
 	
   drawTime(menu);
   drawVoltage(menu);
-  drawInductiveSensors(menu);
-  drawChart();
+ // drawInductiveSensors(menu);
+  //drawChart();
 
-  if(canLoopADC)
-    loopADC();
+ /* if(canLoopADC)
+    loopADC();*/
 	// тут обновляем внутреннее состояние
 }
 
@@ -444,24 +444,24 @@ uint16_t Screen1::getSynchroPoint(uint16_t* points, uint16_t pointsCount)
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void Screen1::requestToDrawChart(uint16_t* _points1,   uint16_t* _points2,  uint16_t* _points3, uint16_t pointsCount)
 {
-  if(inDrawingChart)
-  {
-    chart.stopDraw();
-  }
+  //if(inDrawingChart)
+  //{
+  //  chart.stopDraw();
+  //}
 
-  canDrawChart = true;
-  inDrawingChart = false;
-  
-  points1 = _points1;
-  points2 = _points2;
-  points3 = _points3;
+  //canDrawChart = true;
+  //inDrawingChart = false;
+  //
+  //points1 = _points1;
+  //points2 = _points2;
+  //points3 = _points3;
 
-  int shift = getSynchroPoint(points1,pointsCount);
-  int totalPoints = min(CHART_POINTS_COUNT, (pointsCount - shift));
+  //int shift = getSynchroPoint(points1,pointsCount);
+  //int totalPoints = min(CHART_POINTS_COUNT, (pointsCount - shift));
 
-  serie1->setPoints(&(points1[shift]), totalPoints);
-  serie2->setPoints(&(points2[shift]), totalPoints);
-  serie3->setPoints(&(points3[shift]), totalPoints);
+  //serie1->setPoints(&(points1[shift]), totalPoints);
+  //serie2->setPoints(&(points2[shift]), totalPoints);
+  //serie3->setPoints(&(points3[shift]), totalPoints);
     
     
 }
@@ -534,17 +534,17 @@ void Screen1::onButtonPressed(TFTMenu* menu, int pressedButton)
   }
 	else if (pressedButton == 1)
 	{
-		menu->switchToScreen("SCREEN4"); // переключаемся на третий экран
+		menu->switchToScreen("SCREEN4"); // переключаемся на четвертый экран
 	}
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 int Screen1::getFreeMemory()
 {
 	struct mallinfo mi = mallinfo();
-	char* heapend = _sbrk(0);
-	register char* stack_ptr asm("sp");
+	//char* heapend = _sbrk(0);
+	//register char* stack_ptr asm("sp");
 
-	return (stack_ptr - heapend + mi.fordblks);
+	//return (stack_ptr - heapend + mi.fordblks);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
