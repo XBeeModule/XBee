@@ -17,6 +17,8 @@
 #include "SPI.h"
 #define bitmapdatatype unsigned int*
 
+#define SAMD21G18A
+
 //pinout defs
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
     #define CS 48

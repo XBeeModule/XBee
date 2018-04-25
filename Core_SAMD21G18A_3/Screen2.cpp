@@ -16,17 +16,19 @@ Screen2::Screen2() : AbstractTFTScreen("Settings")
 void Screen2::doSetup(TFTMenu* menu)
 {
   // тут настраиваемся, например, можем добавлять кнопки
- // filesButton = screenButtons->addButton(5, 5, 100, 40, "Файлы");
-  //sdScreenButton = screenButtons->addButton(5, 37, 210, 30, "SD");
-  //systemScreenButton = screenButtons->addButton( 5, 72, 210, 30, "Система");
- // paramsScreenButton = screenButtons->addButton(5, 107, 210, 30, "Параметры");
+  filesButton = screenButtons->addButton(5, 5, 235, 40, "Файлы");
+  sdScreenButton = screenButtons->addButton(5, 50, 235, 40, "SD");
+  systemScreenButton = screenButtons->addButton( 5, 95, 235, 40, "Система");
+  paramsScreenButton = screenButtons->addButton(5, 140, 235, 40, "Параметры");
+  paramsScreenButton = screenButtons->addButton(5, 185, 235, 40, "Параметры");
+ // paramsScreenButton = screenButtons->addButton(5, 140, 235, 40, "Параметры");
   backButton = screenButtons->addButton(5, 255, 235, 40, "ВЫХОД");
 
   
   // добавляем разные подэкраны
   Screen.addScreen(SDScreen::create());
-  //Screen.addScreen(SDInfoScreen::create());
-  //Screen.addScreen(SDFormatScreen::create());
+ // Screen.addScreen(SDInfoScreen::create());
+ // Screen.addScreen(SDFormatScreen::create());
 /*
   listLogFilesScreen = ListFilesScreen::create(vtLogsListing);
   listEthalonsFilesScreen = ListFilesScreen::create(vtEthalonsListing);
