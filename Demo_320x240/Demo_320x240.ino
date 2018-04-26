@@ -10,32 +10,24 @@
 // This program requires the UTFT library.
 //
 
-#include <UTFT.h>
+#include <TFT9341.h>
 #include <SPI.h>
 
 // Declare which fonts we will be using
 extern uint8_t SmallFont[];
-const int ledPin = 11;
 
-int count = 0;
-#define Serial SERIAL_PORT_USBVIRTUAL
+
 //TFT9341m0 Tft;   
 
 
 void setup()
 {
-
-	Serial.begin(9600);
-	delay(2000);
-	Serial.println("ILI9341 Test!");
-	pinMode(ledPin, OUTPUT);
-	digitalWrite(ledPin, LOW);
-	randomSeed(analogRead(0));
+  randomSeed(analogRead(0));
   
-	// Setup the LCD
-	//delay(1000);
-	Tft.InitLCD(0);
-	Tft.setFont(SmallFont);
+// Setup the LCD
+  //delay(1000);
+  Tft.InitLCD(3);
+  Tft.setFont(SmallFont);
 }
 
 void loop()
@@ -313,25 +305,23 @@ void loop()
 
   //delay(2000);
 
-  //Tft.fillScr(0, 0, 255);
-  //
-  //Tft.setColor(255, 0, 0);
-  //Tft.fillRoundRect(80, 70, 239, 169);
-  //delay(20);
-  //Tft.setColor(255, 255, 255);
-  //Tft.setBackColor(255, 0, 0);
-  //Tft.print("That's it!", CENTER, 93);
-  //Tft.print("Restarting in a", CENTER, 119);
-  //Tft.print("few seconds...", CENTER, 132);
-  //
-  //Tft.setColor(0, 255, 0);
-  //Tft.setBackColor(0, 0, 255);
-  //Tft.print("Runtime: (msecs)", CENTER, 210);
-  //Tft.printNumI(millis(), CENTER, 225);
-  Serial.println(count);
-  count++;
-  if (count > 65564) count = 0;
-  delay (1000);
+  Tft.fillScr(0, 0, 255);
+  
+  Tft.setColor(255, 0, 0);
+  Tft.fillRoundRect(80, 70, 239, 169);
+  
+  Tft.setColor(255, 255, 255);
+  Tft.setBackColor(255, 0, 0);
+  Tft.print("That's it!", CENTER, 93);
+  Tft.print("Restarting in a", CENTER, 119);
+  Tft.print("few seconds...", CENTER, 132);
+  
+  Tft.setColor(0, 255, 0);
+  Tft.setBackColor(0, 0, 255);
+  Tft.print("Runtime: (msecs)", CENTER, 210);
+  Tft.printNumI(millis(), CENTER, 225);
+  
+  delay (10000);
 }
 
 
