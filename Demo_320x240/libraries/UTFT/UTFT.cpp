@@ -12,7 +12,7 @@
 #include <pins_arduino.h>
 #include <SPI.h>
 
-#if defined(__SAMD21G18A__)
+//#if defined(__SAMD21G18A__)
 	/*
 	 * DMA
 	 *  
@@ -138,23 +138,13 @@ __attribute__((always_inline))	void spi_transfer(void *txdata, void *rxdata,  si
 		spi_xfr(txdata,rxdata,n);
 	}
 	
-#elif defined(__AVR__)
 
-__attribute__((always_inline))	void spi_write(void *data,  size_t n) {	
-		byte c;
-		uint16_t i = 0;	
-		while(n--)			
-			SPI.transfer(*((byte*)data+i));
-			i++;
-	}	
-	
-#endif
 
 /*
  * Pin setup
  *
  */
-#if defined(__SAMD21G18A__)
+//#if defined(__SAMD21G18A__)
 	
 	#define PINMODE(x,y) pinMode(x,y) 
 	#define SPI_TRANSFER(x) SPI.transfer(x)
@@ -187,29 +177,6 @@ __attribute__((always_inline))	void spi_write(void *data,  size_t n) {
 	//#define TFT_BL_ON  *setLEDPin = (1ul << g_APinDescription[LED].ulPin)
 	
 
-#elif defined(__AVR__)
-	
-	#include <digitalWriteFast.h>
-	
-	#define TFT_BL_OFF digitalWriteFast(LED,LOW) 
-	#define TFT_BL_ON  digitalWriteFast(LED,HIGH)
-
-	#define TFT_RST_OFF digitalWriteFast(RESET, HIGH) 
-	#define TFT_RST_ON  digitalWriteFast(RESET,LOW) 
-
-
-	#define TFT_CS_LOW digitalWriteFast(CS,LOW)
-	#define TFT_CS_HIGH digitalWriteFast(CS,HIGH) 
-
-	#define TFT_DC_LOW  digitalWriteFast(DC,LOW) 
-	#define TFT_DC_HIGH digitalWriteFast(DC,HIGH) 
-	
-	#define PINMODE(x,y) pinModeFast(x,y)
-	
-	#define SPI_TRANSFER(x) SPI.transfer(x)
-	
-	
-#endif
 
   
 static const uint8_t PROGMEM init_cmd[] = {
@@ -247,7 +214,6 @@ inline __attribute__((always_inline)) void wr_comm_first(uint8_t c) {
 		TFT_DC_LOW;
 		//spi_write(&ch,1);
 		SPI.transfer(c);
-		delayMicroseconds(50);
 } 
  
 /*
@@ -259,8 +225,6 @@ inline __attribute__((always_inline)) void wr_comm_last(uint8_t c) {
 		TFT_DC_LOW;
 		//spi_write(&ch,1);
 		SPI.transfer(c);
-		delayMicroseconds(50);
-		//delay(5);
 		TFT_DC_HIGH;
 }
 
@@ -272,7 +236,6 @@ inline __attribute__((always_inline)) void write8_cont(uint8_t c) {
 		//char ch = c;  
 		//spi_write(&ch,1);
 		SPI.transfer(c);
-		delayMicroseconds(50);
 }
 
 inline __attribute__((always_inline)) void write16_cont(uint16_t c) {

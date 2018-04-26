@@ -18,37 +18,21 @@
 #define bitmapdatatype unsigned int*
 
 //pinout defs
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-    #define CS 48
-    #define RESET 33
-    #define DC 47
-    #define LED 46
-#elif defined(__SAMD21G18A__)
+
+#if defined(__SAMD21E18A__) || defined(__SAMD21G18A__) || defined(__SAMD21J18A__)
     #define CS 9
     #define RESET 7
     #define DC 8
     #define LED 11
-#else  //elif defined(__ATmega328__)
-
-    #define RESET  10
-    #define CS     8
-    #define DC     9
-    #define LED    7
-/*
-    #define CS 4
-    #define RESET 5
-    #define DC 6
-    #define LED 7
-*/
-#endif
-
-
-#if defined(__AVR__)
-	#define SPI_MODE_FAST
-#elif defined(__arm__)     
     #define SPI_MODE_DMA
 #endif
 
+/*
+
+#elif defined(__arm__)     
+    #define SPI_MODE_DMA
+#endif
+*/
 
 #define UTFT_VERSION 300
 #define VERSION9341 100
