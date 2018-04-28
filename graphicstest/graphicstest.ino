@@ -40,78 +40,124 @@ void setup() {
 	digitalWrite(ledPin, LOW);
 	tft.begin();
 
-	// read diagnostics (optional but can help debug problems)
-	uint8_t x = tft.readcommand8(ILI9341_RDMODE);
-	Serial.print("Display Power Mode: 0x"); Serial.println(x, HEX);
-	x = tft.readcommand8(ILI9341_RDMADCTL);
-	Serial.print("MADCTL Mode: 0x"); Serial.println(x, HEX);
-	x = tft.readcommand8(ILI9341_RDPIXFMT);
-	Serial.print("Pixel Format: 0x"); Serial.println(x, HEX);
-	x = tft.readcommand8(ILI9341_RDIMGFMT);
-	Serial.print("Image Format: 0x"); Serial.println(x, HEX);
-	x = tft.readcommand8(ILI9341_RDSELFDIAG);
-	Serial.print("Self Diagnostic: 0x"); Serial.println(x, HEX);
+	//// read diagnostics (optional but can help debug problems)
+	//uint8_t x = tft.readcommand8(ILI9341_RDMODE);
+	//Serial.print("Display Power Mode: 0x"); Serial.println(x, HEX);
+	//x = tft.readcommand8(ILI9341_RDMADCTL);
+	//Serial.print("MADCTL Mode: 0x"); Serial.println(x, HEX);
+	//x = tft.readcommand8(ILI9341_RDPIXFMT);
+	//Serial.print("Pixel Format: 0x"); Serial.println(x, HEX);
+	//x = tft.readcommand8(ILI9341_RDIMGFMT);
+	//Serial.print("Image Format: 0x"); Serial.println(x, HEX);
+	//x = tft.readcommand8(ILI9341_RDSELFDIAG);
+	//Serial.print("Self Diagnostic: 0x"); Serial.println(x, HEX);
 
-	Serial.println(F("Benchmark                Time (microseconds)"));
+	//Serial.println(F("Benchmark                Time (microseconds)"));
 
-	Serial.print(F("Screen fill              "));
-	Serial.println(testFillScreen());
-	delay(500);
+	//Serial.print(F("Screen fill              "));
+	//Serial.println(testFillScreen());
+	//delay(500);
 
-	Serial.print(F("Text                     "));
-	Serial.println(testText());
-	delay(3000);
+	//Serial.print(F("Text                     "));
+	//Serial.println(testText());
+	//delay(3000);
 
-	Serial.print(F("Lines                    "));
-	Serial.println(testLines(VGA_CYAN));
-	delay(500);
+	//Serial.print(F("Lines                    "));
+	//Serial.println(testLines(VGA_CYAN));
+	//delay(500);
 
-	Serial.print(F("Horiz/Vert Lines         "));
-	Serial.println(testFastLines(VGA_RED, VGA_BLUE));
-	delay(500);
+	//Serial.print(F("Horiz/Vert Lines         "));
+	//Serial.println(testFastLines(VGA_RED, VGA_BLUE));
+	//delay(500);
 
-	Serial.print(F("Rectangles (outline)     "));
-	Serial.println(testRects(VGA_GREEN));
-	delay(500);
+	//Serial.print(F("Rectangles (outline)     "));
+	//Serial.println(testRects(VGA_GREEN));
+	//delay(500);
 
-	Serial.print(F("Rectangles (filled)      "));
-	Serial.println(testFilledRects(VGA_YELLOW, VGA_MAGENTA));
-	delay(500);
+	//Serial.print(F("Rectangles (filled)      "));
+	//Serial.println(testFilledRects(VGA_YELLOW, VGA_MAGENTA));
+	//delay(500);
 
-	Serial.print(F("Circles (filled)         "));
-	Serial.println(testFilledCircles(10, VGA_MAGENTA));
+	//Serial.print(F("Circles (filled)         "));
+	//Serial.println(testFilledCircles(10, VGA_MAGENTA));
 
-	Serial.print(F("Circles (outline)        "));
-	Serial.println(testCircles(10, VGA_WHITE));
-	delay(500);
+	//Serial.print(F("Circles (outline)        "));
+	//Serial.println(testCircles(10, VGA_WHITE));
+	//delay(500);
 
-	Serial.print(F("Triangles (outline)      "));
-	Serial.println(testTriangles());
-	delay(500);
+	//Serial.print(F("Triangles (outline)      "));
+	//Serial.println(testTriangles());
+	//delay(500);
 
-	Serial.print(F("Triangles (filled)       "));
-	Serial.println(testFilledTriangles());
-	delay(500);
+	//Serial.print(F("Triangles (filled)       "));
+	//Serial.println(testFilledTriangles());
+	//delay(500);
 
-	Serial.print(F("Rounded rects (outline)  "));
-	Serial.println(testRoundRects());
-	delay(500);
+	//Serial.print(F("Rounded rects (outline)  "));
+	//Serial.println(testRoundRects());
+	//delay(500);
 
-	Serial.print(F("Rounded rects (filled)   "));
-	Serial.println(testFilledRoundRects());
-	delay(500);
+	//Serial.print(F("Rounded rects (filled)   "));
+	//Serial.println(testFilledRoundRects());
+	//delay(500);
 
-	Serial.println(F("Done!"));
+	//Serial.println(F("Done!"));
 
 }
 
 
-void loop(void) {
-	for (uint8_t rotation = 0; rotation < 4; rotation++) {
-		tft.setRotation(rotation);
-		testText();
-		delay(1000);
+void loop(void) 
+{
+	int buf[318];
+	int x, x2;
+	int y, y2;
+	int r;
+	// Draw sin-, cos- and tan-lines  
+	tft.color565(0, 255, 255);
+//	tft.println("Sin");
+	for (int i = 1; i<318; i++)
+	{
+		tft.drawPixel(i, 119 + (sin(((i*1.13)*3.14) / 180) * 95), tft.color565(0, 255, 0));
 	}
+
+	delay(1000);
+
+	tft.color565(255, 0, 0);
+	//tft.println("Cos");
+	for (int i = 1; i<318; i++)
+	{
+		tft.drawPixel(i, 119 + (cos(((i*1.13)*3.14) / 180) * 95), tft.color565(0, 0, 255));
+	}
+
+	delay(1000);
+	
+	// Draw a moving sinewave
+	x = 1;
+	for (int i = 1; i<(318 * 20); i++)
+	{
+		x++;
+		if (x == 319)
+			x = 1;
+		if (i>319)
+		{
+			if ((x == 159) || (buf[x - 1] == 119))
+				tft.color565(0, 0, 255);
+			else
+				//tft.color565(0, 0, 0);
+			tft.drawPixel(x, buf[x - 1], tft.color565(0, 0, 0));
+		}
+		//tft.color565(0, 255, 255);
+		y = 119 + (sin(((i*1.1)*3.14) / 180)*(90 - (i / 100)));
+		tft.drawPixel(x, y, tft.color565(0, 255, 255));
+		buf[x - 1] = y;
+	}
+	
+	//for (uint8_t rotation = 0; rotation < 4; rotation++)
+	//{
+	//	tft.setRotation(rotation);
+	//	testText();
+	//	delay(1000);
+	//}
 }
 
 unsigned long testFillScreen() {

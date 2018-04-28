@@ -262,3 +262,7 @@ __pycache__/
 /Core_SAMD21G18A_3/Core_SAMD21G18A_3.sln
 /Core_SAMD21G18A_3/Core_SAMD21G18A_3.vcxproj
 /Core_SAMD21G18A_3/Core_SAMD21G18A_3.vcxproj.filters
+/Demo_320x240/__vm
+/Demo_320x240/Demo_320x240.sln
+/Demo_320x240/Demo_320x240.vcxproj
+/Demo_320x240/Demo_320x240.vcxproj.filters
