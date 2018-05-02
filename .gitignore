@@ -262,7 +262,14 @@ __pycache__/
 /Core_SAMD21G18A_3/Core_SAMD21G18A_3.sln
 /Core_SAMD21G18A_3/Core_SAMD21G18A_3.vcxproj
 /Core_SAMD21G18A_3/Core_SAMD21G18A_3.vcxproj.filters
+<<<<<<< HEAD
 /graphicstestMod/__vm
 /graphicstestMod/graphicstestMod.sln
 /graphicstestMod/graphicstestMod.vcxproj
 /graphicstestMod/graphicstestMod.vcxproj.filters
+=======
+/Demo_320x240/__vm
+/Demo_320x240/Demo_320x240.sln
+/Demo_320x240/Demo_320x240.vcxproj
+/Demo_320x240/Demo_320x240.vcxproj.filters
+>>>>>>> e59c088ca2402a3ed6c001ee5d238fd24069b1f7
