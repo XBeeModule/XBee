@@ -27,9 +27,9 @@ void Screen2::doSetup(TFTMenu* menu)
   
   // добавляем разные подэкраны
   Screen.addScreen(SDScreen::create());
- // Screen.addScreen(SDInfoScreen::create());
- // Screen.addScreen(SDFormatScreen::create());
-/*
+  //Screen.addScreen(SDInfoScreen::create());
+  //Screen.addScreen(SDFormatScreen::create());
+
   listLogFilesScreen = ListFilesScreen::create(vtLogsListing);
   listEthalonsFilesScreen = ListFilesScreen::create(vtEthalonsListing);
   ethalonChartScreen = EthalonChartScreen::create();
@@ -52,7 +52,7 @@ void Screen2::doSetup(TFTMenu* menu)
   Screen.addScreen(PulsesDeltaScreen::create());
   Screen.addScreen(MotoresourceScreen::create());
   Screen.addScreen(MotoresourceMaxScreen::create());
-  */
+  
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void Screen2::doUpdate(TFTMenu* menu)

@@ -92,7 +92,7 @@ void setup() {
 	Serial.print(F("Triangles (filled)       "));
 	Serial.println(testFilledTriangles());
 	delay(500);
-
+	
 	Serial.print(F("Rounded rects (outline)  "));
 	Serial.println(testRoundRects());
 	delay(500);
@@ -100,18 +100,20 @@ void setup() {
 	Serial.print(F("Rounded rects (filled)   "));
 	Serial.println(testFilledRoundRects());
 	delay(500);
-
+	
 	Serial.println(F("Done!"));
 
 }
 
 
-void loop(void) {
+void loop(void) 
+{
 	for (uint8_t rotation = 0; rotation < 4; rotation++) {
 		tft.setRotation(rotation);
 		testText();
 		delay(1000);
 	}
+	Serial.println(F("Done!testText"));
 }
 
 unsigned long testFillScreen() {
