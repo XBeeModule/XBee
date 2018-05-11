@@ -15,7 +15,7 @@
 
 #include "Arduino.h"
 #include "SPI.h"
-#define bitmapdatatype unsigned int*
+
 
 //pinout defs
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
@@ -24,10 +24,10 @@
     #define DC 47
     #define LED 46
 #elif defined(__SAMD21G18A__)
-	#define CS 9
-	#define RESET 7
-	#define DC 8
-	#define LED 11
+   #define CS 9
+    #define RESET 7
+    #define DC 8
+    #define LED 11
 #else  //elif defined(__ATmega328__)
 
     #define RESET  10

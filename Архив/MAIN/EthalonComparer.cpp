@@ -5,12 +5,15 @@
 #include "Settings.h"
 #include "FileUtils.h"
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-EthalonCompareResult EthalonComparer::Compare(InterruptTimeList& list, uint8_t channelNumber)
+EthalonCompareResult EthalonComparer::Compare(InterruptTimeList& list, uint8_t channelNumber, EthalonCompareNumber& compareNumber, InterruptTimeList& ethalonData)
 {
     DBGLN("");
     DBG(F("Compare pulses #"));
     DBG(channelNumber);
     DBGLN(F(" with ethalon..."));
+
+    compareNumber = ecnNoEthalon;
+    ethalonData.clear();
     
     if(list.size() < 2)
     {
@@ -53,11 +56,53 @@ EthalonCompareResult EthalonComparer::Compare(InterruptTimeList& list, uint8_t c
 
   #ifndef IGNORE_ROD_POSITION  
     if(rodPos == rpUp) // штанга в верхней позиции, значит, она поднималась
+    {
       fileName += ETHALON_UP_POSTFIX;
+      switch(channelNumber)
+      {
+        case 0:
+          compareNumber = ecnE1up;
+        break;
+        case 1:
+          compareNumber = ecnE2up;
+        break;
+        case 2:
+          compareNumber = ecnE3up;
+        break;
+      }
+    }
     else
+    {
       fileName += ETHALON_DOWN_POSTFIX;
+      switch(channelNumber)
+      {
+        case 0:
+          compareNumber = ecnE1down;
+        break;
+        case 1:
+          compareNumber = ecnE2down;
+        break;
+        case 2:
+          compareNumber = ecnE3down;
+        break;
+      }
+    }
   #else
+  {
     fileName += ETHALON_UP_POSTFIX;
+      switch(channelNumber)
+      {
+        case 0:
+          compareNumber = ecnE1up;
+        break;
+        case 1:
+          compareNumber = ecnE2up;
+        break;
+        case 2:
+          compareNumber = ecnE3up;
+        break;
+      }    
+  }
   #endif
   
   fileName += ETHALON_FILE_EXT;
@@ -65,10 +110,11 @@ EthalonCompareResult EthalonComparer::Compare(InterruptTimeList& list, uint8_t c
   if(!SD.exists(fileName.c_str()))
   {
     DBGLN(F("COMPARE_RESULT_NoEthalonFound 1"));
+
+    compareNumber = ecnNoEthalon;
     return COMPARE_RESULT_NoEthalonFound; // не найдено эталона для канала
   }
    
-  InterruptTimeList ethalon;
   SdFile file;
   file.open(fileName.c_str(),FILE_READ);
   
@@ -81,13 +127,15 @@ EthalonCompareResult EthalonComparer::Compare(InterruptTimeList& list, uint8_t c
       if(readResult == -1 || size_t(readResult) < sizeof(curRec))
         break;
   
-        ethalon.push_back(curRec);
+        ethalonData.push_back(curRec);
     }
     file.close();
   }
   else
   {
     DBGLN(F("COMPARE_RESULT_NoEthalonFound 2"));
+
+    compareNumber = ecnNoEthalon;
     return COMPARE_RESULT_NoEthalonFound; // не найдено эталона для канала
   }
   
@@ -96,13 +144,13 @@ EthalonCompareResult EthalonComparer::Compare(InterruptTimeList& list, uint8_t c
 
 
   DBG(F("Ethalon pulses: "));
-  DBGLN(ethalon.size());
+  DBGLN(ethalonData.size());
 
   DBG(F("Catched pulses: "));
   DBGLN(list.size());
 
   // для начала вычисляем, сколько импульсов сравнивать
-  size_t toCompare = min(ethalon.size(),list.size());
+  size_t toCompare = min(ethalonData.size(),list.size());
 
   DBG(F("Pulses to compare: "));
   DBGLN(toCompare);
@@ -110,7 +158,7 @@ EthalonCompareResult EthalonComparer::Compare(InterruptTimeList& list, uint8_t c
   // потом проходим по каждому импульсу
   for(size_t i=1;i<toCompare;i++)
   {
-    uint32_t ethalonPulseDuration = ethalon[i] - ethalon[i-1];
+    uint32_t ethalonPulseDuration = ethalonData[i] - ethalonData[i-1];
     uint32_t passedPulseDuration = list[i] - list[i-1];
 
     DBG("#");

@@ -39,16 +39,10 @@
     <ClInclude Include="CoreButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CoreCommandBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Drawing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DS3231.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EthalonComparer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FileUtils.h">
@@ -102,6 +96,9 @@
     <ClInclude Include="UTFT_Buttons_Rus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EthalonComparer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ADCSampler.cpp">
@@ -119,16 +116,10 @@
     <ClCompile Include="CoreButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CoreCommandBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Drawing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DS3231.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EthalonComparer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FileUtils.cpp">
@@ -183,6 +174,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Various_Symbols_32x32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EthalonComparer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

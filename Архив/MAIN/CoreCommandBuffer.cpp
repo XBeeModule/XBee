@@ -17,12 +17,18 @@ const char LS_COMMAND[] PROGMEM = "LS"; // отдать список файло�
 const char FILE_COMMAND[] PROGMEM = "FILE"; // отдать содержимое файла
 const char FILESIZE_COMMAND[] PROGMEM = "FILESIZE"; // отдать размер файла
 const char DELFILE_COMMAND[] PROGMEM = "DELFILE"; // удалить файл
+const char UPLOADFILE_COMMAND[] PROGMEM = "UPL"; // загрузить файл
 const char MOTORESOURCE_CURRENT_COMMAND[] PROGMEM = "RES_CUR"; // получить текущий моторесурс по каналам
 const char MOTORESOURCE_MAX_COMMAND[] PROGMEM = "RES_MAX"; // получить максимальный моторесурс по каналам
 const char PULSES_COMMAND[] PROGMEM = "PULSES"; // получить импульсы по каналам
 const char DELTA_COMMAND[] PROGMEM = "DELTA"; // получить дельты по каналам
 const char INDUCTIVE_COMMAND[] PROGMEM = "IND"; // получить состояние индуктивных датчиков
 const char VOLTAGE_COMMAND[] PROGMEM = "VDATA"; // получить вольтаж на входах
+const char UUID_COMMAND[] PROGMEM = "UUID"; // получить уникальный идентификатор контроллера
+const char TBORDERMAX_COMMAND[] PROGMEM = "TBORDERMAX"; // верхний порог токового трансформатора
+const char TBORDERMIN_COMMAND[] PROGMEM = "TBORDERMIN"; // нижний порог токового трансформатора
+const char TBORDERS_COMMAND[] PROGMEM = "TBORDERS"; // пороги токового трансформатора
+const char RDELAY_COMMAND[] PROGMEM = "RDELAY"; // время задержки после срабатывания реле до начала импульсов
 //--------------------------------------------------------------------------------------------------------------------------------------
 CoreCommandBuffer Commands(&Serial);
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -40,8 +46,11 @@ bool CoreCommandBuffer::hasCommand()
     while(pStream->available())
     {
       ch = (char) pStream->read();
+
+      if(ch == '\r')
+        continue;
             
-      if(ch == '\r' || ch == '\n')
+      if(ch == '\n')
       {
         return strBuff->length() > 0; // вдруг лишние управляющие символы придут в начале строки?
       } // if
@@ -209,7 +218,20 @@ void CommandHandlerClass::processCommand(const String& command,Stream* pStream)
               // недостаточно параметров
               commandHandled = printBackSETResult(false,commandName,pStream);
             }
-        } // DELFILE_COMMAND               
+        } // DELFILE_COMMAND
+        else
+        if(!strcmp_P(commandName,UPLOADFILE_COMMAND))
+        {
+            if(cParser.argsCount() > 2)
+            {
+              commandHandled = setUPLOADFILE(cParser, pStream);
+            }
+            else
+            {
+              // недостаточно параметров
+              commandHandled = printBackSETResult(false,commandName,pStream);
+            }
+        } // UPLOADFILE_COMMAND                  
         else
         if(!strcmp_P(commandName, PULSES_COMMAND))
         {
@@ -223,6 +245,58 @@ void CommandHandlerClass::processCommand(const String& command,Stream* pStream)
               commandHandled = printBackSETResult(false,commandName,pStream);
             }
         } // PULSES_COMMAND               
+        else
+        if(!strcmp_P(commandName, RDELAY_COMMAND))
+        {
+            if(cParser.argsCount() > 2)
+            {
+              commandHandled = setRDELAY(cParser, pStream);
+            }
+            else
+            {
+              // недостаточно параметров
+              commandHandled = printBackSETResult(false,commandName,pStream);
+            }
+        } // RDELAY_COMMAND               
+        else
+        if(!strcmp_P(commandName, TBORDERMAX_COMMAND))
+        {
+            if(cParser.argsCount() > 1)
+            {
+              commandHandled = setTBORDERMAX(cParser, pStream);
+            }
+            else
+            {
+              // недостаточно параметров
+              commandHandled = printBackSETResult(false,commandName,pStream);
+            }
+        } // TBORDERMAX_COMMAND               
+        else
+        if(!strcmp_P(commandName, TBORDERMIN_COMMAND))
+        {
+            if(cParser.argsCount() > 1)
+            {
+              commandHandled = setTBORDERMIN(cParser, pStream);
+            }
+            else
+            {
+              // недостаточно параметров
+              commandHandled = printBackSETResult(false,commandName,pStream);
+            }
+        } // TBORDERMIN_COMMAND           
+        else
+        if(!strcmp_P(commandName, TBORDERS_COMMAND))
+        {
+            if(cParser.argsCount() > 2)
+            {
+              commandHandled = setTBORDERS(cParser, pStream);
+            }
+            else
+            {
+              // недостаточно параметров
+              commandHandled = printBackSETResult(false,commandName,pStream);
+            }
+        } // TBORDERS_COMMAND           
         else
         if(!strcmp_P(commandName, DELTA_COMMAND))
         {
@@ -297,6 +371,30 @@ void CommandHandlerClass::processCommand(const String& command,Stream* pStream)
           
         } // PULSES_COMMAND       
         else
+        if(!strcmp_P(commandName, RDELAY_COMMAND))
+        {
+            commandHandled = getRDELAY(commandName,cParser,pStream);                    
+          
+        } // RDELAY_COMMAND       
+        else
+        if(!strcmp_P(commandName, TBORDERMAX_COMMAND))
+        {
+            commandHandled = getTBORDERMAX(commandName,cParser,pStream);                    
+          
+        } // TBORDERMAX_COMMAND       
+        else
+        if(!strcmp_P(commandName, TBORDERMIN_COMMAND))
+        {
+            commandHandled = getTBORDERMIN(commandName,cParser,pStream);                    
+          
+        } // TBORDERMIN_COMMAND       
+        else
+        if(!strcmp_P(commandName, TBORDERS_COMMAND))
+        {
+            commandHandled = getTBORDERS(commandName,cParser,pStream);                    
+          
+        } // TBORDERS_COMMAND       
+        else
         if(!strcmp_P(commandName, INDUCTIVE_COMMAND))
         {
             commandHandled = getINDUCTIVE(commandName,cParser,pStream);                    
@@ -314,6 +412,12 @@ void CommandHandlerClass::processCommand(const String& command,Stream* pStream)
             commandHandled = getDELTA(commandName,cParser,pStream);                    
           
         } // DELTA_COMMAND       
+        else
+        if(!strcmp_P(commandName, UUID_COMMAND))
+        {
+            commandHandled = getUUID(commandName,cParser,pStream);                    
+          
+        } // UUID_COMMAND       
         else
         if(!strcmp_P(commandName, MOTORESOURCE_CURRENT_COMMAND))
         {
@@ -364,6 +468,104 @@ void CommandHandlerClass::onUnknownCommand(const String& command, Stream* outStr
 {
     outStream->print(CORE_COMMAND_ANSWER_ERROR);
     outStream->println(F("UNKNOWN_COMMAND"));  
+}
+//--------------------------------------------------------------------------------------------------------------------------------------
+bool CommandHandlerClass::setUPLOADFILE(CommandParser& parser, Stream* pStream)
+{
+/*
+  for(size_t i=0;i<parser.argsCount();i++)
+    pStream->println(parser.getArg(i));
+*/  
+  // в первом параметре - длина данных
+  int dataLen = atoi(parser.getArg(1));
+
+  // во втором и последующих - имя файла вместе с путём
+  String filePath;
+  for(size_t i=2;i<parser.argsCount();i++)
+  {
+    if(filePath.length())
+      filePath += "/";
+
+     filePath += parser.getArg(i);
+  }
+
+  uint16_t reading_timeout = 5000;
+  bool wantBreak = false;
+  
+ if(SDInit::sdInitResult)
+ {
+    String dirOnly;
+    int idx = filePath.lastIndexOf("/");
+    if(idx != -1)
+      dirOnly = filePath.substring(0,idx);
+
+    if(dirOnly.length())
+    {
+      SD.mkdir(dirOnly.c_str());
+    }
+
+    SdFile f;
+    f.open(filePath.c_str(),FILE_WRITE | O_TRUNC);
+
+     uint32_t startReadingTime = millis();
+       
+     for(int i=0;i<dataLen;i++)
+      {
+        while(!pStream->available())
+        {
+          if(millis() - startReadingTime > reading_timeout)
+          {
+            wantBreak = true;
+            break;
+          }
+        }
+        if(wantBreak)
+          break;
+          
+        startReadingTime = millis();        
+        uint8_t curByte = pStream->read();
+        
+        if(f.isOpen())
+          f.write(curByte);
+      }
+            
+      if(f.isOpen())
+        f.close(); 
+ } // if(SDInit::sdInitResult)
+ else
+ {
+  // не удалось инициализировать SD - просто пропускаем данные файла
+      uint32_t startReadingTime = millis();
+      
+      for(int i=0;i<dataLen;i++)
+      {
+        while(!pStream->available())
+        {
+          if(millis() - startReadingTime > reading_timeout)
+          {
+            wantBreak = true;
+            break;
+          }
+        }
+
+        if(wantBreak)
+          break;
+          
+        startReadingTime = millis(); 
+        pStream->read();        
+      }  
+ }
+
+  if(wantBreak)
+    pStream->print(CORE_COMMAND_ANSWER_ERROR);
+  else
+    pStream->print(CORE_COMMAND_ANSWER_OK);
+    
+  pStream->print(parser.getArg(0));
+  pStream->print(CORE_COMMAND_PARAM_DELIMITER);
+  pStream->println(CORE_COMMAND_DONE);
+
+  return true;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
 bool CommandHandlerClass::setDELFILE(CommandParser& parser, Stream* pStream)
@@ -504,6 +706,169 @@ bool CommandHandlerClass::getINDUCTIVE(const char* commandPassed, const CommandP
   pStream->print(CORE_COMMAND_PARAM_DELIMITER);
 
   pStream->println(Settings.getInductiveSensorState(2));
+
+  return true;
+}
+//--------------------------------------------------------------------------------------------------------------------------------------
+bool CommandHandlerClass::getUUID(const char* commandPassed, const CommandParser& parser, Stream* pStream)
+{
+  if(parser.argsCount() < 2)
+    return false;  
+
+  pStream->print(CORE_COMMAND_ANSWER_OK);
+
+  pStream->print(commandPassed);
+  pStream->print(CORE_COMMAND_PARAM_DELIMITER);
+  
+  pStream->println(Settings.getUUID(parser.getArg(1)));
+
+  return true;
+}
+//--------------------------------------------------------------------------------------------------------------------------------------
+bool CommandHandlerClass::getRDELAY(const char* commandPassed, const CommandParser& parser, Stream* pStream)
+{
+  if(parser.argsCount() < 1)
+    return false;  
+
+
+  pStream->print(CORE_COMMAND_ANSWER_OK);
+
+  pStream->print(commandPassed);
+  pStream->print(CORE_COMMAND_PARAM_DELIMITER);
+  
+  pStream->print(Settings.getRelayDelay()/1000);
+  pStream->print(CORE_COMMAND_PARAM_DELIMITER);
+  pStream->println(Settings.getACSDelay());
+
+
+  return true;
+}
+//--------------------------------------------------------------------------------------------------------------------------------------
+bool CommandHandlerClass::setRDELAY(CommandParser& parser, Stream* pStream)
+{
+  if(parser.argsCount() < 3)
+    return false;
+  
+  uint32_t curBorder = atoi(parser.getArg(1))*1000;
+  uint16_t curAcsDelay = atoi(parser.getArg(2));
+
+  Settings.setRelayDelay(curBorder);
+  Settings.setACSDelay(curAcsDelay);
+  
+  pStream->print(CORE_COMMAND_ANSWER_OK);
+
+  pStream->print(parser.getArg(0));
+  pStream->print(CORE_COMMAND_PARAM_DELIMITER);
+  pStream->println(CORE_COMMAND_DONE);
+
+  return true;
+}
+//--------------------------------------------------------------------------------------------------------------------------------------
+bool CommandHandlerClass::getTBORDERMAX(const char* commandPassed, const CommandParser& parser, Stream* pStream)
+{
+  if(parser.argsCount() < 1)
+    return false;  
+
+
+  pStream->print(CORE_COMMAND_ANSWER_OK);
+
+  pStream->print(commandPassed);
+  pStream->print(CORE_COMMAND_PARAM_DELIMITER);
+  
+  pStream->println(Settings.getTransformerHighBorder());
+
+  return true;
+}
+//--------------------------------------------------------------------------------------------------------------------------------------
+bool CommandHandlerClass::setTBORDERMAX(CommandParser& parser, Stream* pStream)
+{
+  if(parser.argsCount() < 2)
+    return false;
+  
+  uint32_t curBorder = atoi(parser.getArg(1));
+
+  Settings.setTransformerHighBorder(curBorder);
+  
+  pStream->print(CORE_COMMAND_ANSWER_OK);
+
+  pStream->print(parser.getArg(0));
+  pStream->print(CORE_COMMAND_PARAM_DELIMITER);
+  pStream->println(CORE_COMMAND_DONE);
+
+  return true;
+}
+//--------------------------------------------------------------------------------------------------------------------------------------
+bool CommandHandlerClass::getTBORDERMIN(const char* commandPassed, const CommandParser& parser, Stream* pStream)
+{
+  if(parser.argsCount() < 1)
+    return false;  
+
+
+  pStream->print(CORE_COMMAND_ANSWER_OK);
+
+  pStream->print(commandPassed);
+  pStream->print(CORE_COMMAND_PARAM_DELIMITER);
+  
+  pStream->println(Settings.getTransformerLowBorder());
+
+  return true;
+}
+//--------------------------------------------------------------------------------------------------------------------------------------
+bool CommandHandlerClass::setTBORDERMIN(CommandParser& parser, Stream* pStream)
+{
+  if(parser.argsCount() < 2)
+    return false;
+  
+  uint32_t curBorder = atoi(parser.getArg(1));
+
+  Settings.setTransformerLowBorder(curBorder);
+  
+  pStream->print(CORE_COMMAND_ANSWER_OK);
+
+  pStream->print(parser.getArg(0));
+  pStream->print(CORE_COMMAND_PARAM_DELIMITER);
+  pStream->println(CORE_COMMAND_DONE);
+
+  return true;
+}
+//--------------------------------------------------------------------------------------------------------------------------------------
+bool CommandHandlerClass::getTBORDERS(const char* commandPassed, const CommandParser& parser, Stream* pStream)
+{
+  if(parser.argsCount() < 1)
+    return false;  
+
+
+  pStream->print(CORE_COMMAND_ANSWER_OK);
+
+  pStream->print(commandPassed);
+  pStream->print(CORE_COMMAND_PARAM_DELIMITER);
+  
+  pStream->print(Settings.getTransformerLowBorder());
+  pStream->print(CORE_COMMAND_PARAM_DELIMITER);
+
+  pStream->println(Settings.getTransformerHighBorder());
+
+  return true;
+}
+//--------------------------------------------------------------------------------------------------------------------------------------
+bool CommandHandlerClass::setTBORDERS(CommandParser& parser, Stream* pStream)
+{
+
+  if(parser.argsCount() < 3)
+    return false;
+  
+  uint32_t lowBorder = atoi(parser.getArg(1));
+  uint32_t highBorder = atoi(parser.getArg(2));
+
+  Settings.setTransformerLowBorder(lowBorder);
+  Settings.setTransformerHighBorder(highBorder);
+  
+  pStream->print(CORE_COMMAND_ANSWER_OK);
+
+  pStream->print(parser.getArg(0));
+  pStream->print(CORE_COMMAND_PARAM_DELIMITER);
+  pStream->println(CORE_COMMAND_DONE);
+
 
   return true;
 }

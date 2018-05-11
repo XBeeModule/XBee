@@ -110,9 +110,9 @@ UTFT::UTFT(byte model, int RS, int WR, int CS, int RST, int SER)
 	display_transfer_mode =	dtm[model];
 	display_model =			model;
    
-  //  pinMode(A0,OUTPUT);
+    pinMode(A0,OUTPUT);
 	
- //   digitalWrite(A0,HIGH);
+    digitalWrite(A0,HIGH);
 
 	
 
