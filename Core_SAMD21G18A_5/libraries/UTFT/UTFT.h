@@ -15,7 +15,7 @@
 
 #include "Arduino.h"
 #include "SPI.h"
-
+#define bitmapdatatype unsigned int*
 
 //pinout defs
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
@@ -480,16 +480,23 @@ public:
    	  	void scrollAddress(uint16_t VSP);
 		void _convert_float(char *buf, double num, int width, byte prec);   	   		
 */	
+        bool getCharPtr(byte c, propFont& font);
+		byte fch, fcl, bch, bcl;
+		byte orient;
+		long disp_x_size, disp_y_size;
+		_current_font	cfont;
+		void printChar(byte c, int x, int y);
+
 	protected:
 		int printProportionalChar(byte c, int x, int y);
 		int rotatePropChar(byte c, int x, int y, int offset, int deg);
 		
    private:
-    bool getCharPtr(byte c, propFont& font);
-    byte fch, fcl, bch, bcl;
-    byte orient;
-    long disp_x_size, disp_y_size;
-    _current_font	cfont;
+    //bool getCharPtr(byte c, propFont& font);
+    //byte fch, fcl, bch, bcl;
+    //byte orient;
+    //long disp_x_size, disp_y_size;
+    //_current_font	cfont;
     boolean _transparent;
     uint8_t rotation;
     uint16_t scanline[SCANLINES*2];
@@ -506,7 +513,7 @@ public:
     void drawVLine_noCS(int x, int y, int l, uint16_t color = NULL);
     void drawPixel_noCS(int x, int y, uint16_t color = NULL);
     void setPixel(uint16_t color);
-    void printChar(byte c, int x, int y);
+   // void printChar(byte c, int x, int y);
       
     static uint16_t color565(uint8_t r, uint8_t g, uint8_t b) {
         return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
