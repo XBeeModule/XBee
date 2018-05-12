@@ -18,17 +18,29 @@
 // calibration sketch anyway. If you are using a display with any other
 // resolution you MUST calibrate it as these settings WILL NOT work.
 
-/*
-#define CAL_X 0x00378F66UL
-#define CAL_Y 0x03C34155UL
-#define CAL_S 0x000EF13FUL
-*/
+//
+//
+//#define CAL_X 0x00378E00UL
+//#define CAL_Y 0x03C34155UL
+//#define CAL_S 0x000EF13FUL
+
 //7.0"
 //#define CAL_X 0x00170F93UL
 //#define CAL_Y 0x005D8F04UL
 //#define CAL_S 0x8031F1DFUL
 
 // 2,0"
-#define CAL_X 0x005B0EE7UL
-#define CAL_Y 0x03BC41CFUL
-#define CAL_S 0x000AE0DBUL
+//#define CAL_X 0x005B0EE7UL
+//#define CAL_Y 0x03BC41CFUL
+//#define CAL_S 0x000AE0DBUL
+
+
+// 2.4"
+//#define CAL_X 0x03F481AEUL        // ЧИСЛО 0x0398C  разделить на 4
+//#define CAL_Y 0x03E801C2UL        // touch_x_right    ,touch_x_left
+//#define CAL_S 0x000EF13FUL        // ориентация 00XXXXXXUL размер X XX0EFXXXUL размер Y - XXXXX13FUL,   
+
+// 2.4"
+#define CAL_X 0x00378E00UL
+#define CAL_Y 0x03C34155UL
+#define CAL_S 0x000EF13FUL

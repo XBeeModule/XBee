@@ -73,7 +73,7 @@ public:
 
   // возвращает true, если штанга в верхнем положении, false - если штанга в нижнем положении
   static RodPosition getRodPosition(uint8_t channelNumber);
-  static void setI2CPriority(uint8_t priority);
+  //static void setI2CPriority(uint8_t priority);
 
  
 private:
