@@ -32,7 +32,7 @@
 void setup() 
 {
 	Serial.begin(115200);
-	while (!Serial);                                                    // Wait for Serial monitor to open
+//	while (!Serial);                                                    // Wait for Serial monitor to open
 	delay(1500);
     Serial.println("*** Setup system ***");
 	//delay(500);
