@@ -1,166 +1,475 @@
+
+
+#include "Wire.h"
+#include <URTouchCD.h>
+#include <URTouch.h>
 #include <Arduino.h>
-#include "CONFIG.h"
-
-#include <TFT9341.h>
+#include <UTFT.h>
 #include <SPI.h>
-
-// Declare which fonts we will be using
-extern uint8_t SmallFont[];
-//#include "UTFTMenu.h"
-#include "DS3231.h"               // РїРѕРґРєР»СЋС‡Р°РµРј С‡Р°СЃС‹
+#include "UTFTMenu.h"
+#include "CONFIG.h"
 #include "ConfigPin.h"
-//#include "AT24CX.h"
-//#include "InterruptHandler.h"
-//#include "DelayedEvents.h"
+#include "DelayedEvents.h"
+//#include "printf.h"
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// РїРѕРґРєР»СЋС‡Р°РµРј РЅР°С€Рё СЌРєСЂР°РЅС‹
-#include "Screen1.h"              // Р“Р»Р°РІРЅС‹Р№ СЌРєСЂР°РЅ
-//#include "Screen2.h"              // Р’С‹Р·РѕРІ РјРµРЅСЋ РЅР°СЃС‚СЂРѕРµРє
-//#include "Screen3.h"              //
-//#include "Screen4.h"              // Р’С‹Р·РѕРІ РјРµРЅСЋ СѓСЃС‚Р°РЅРѕРІРєРё РІСЂРµРјРµРЅРё Рё РґР°С‚С‹
-//#include "Screen5.h"              // Р’С‹Р·РѕРІ СѓСЃС‚Р°РЅРѕРІРєРё РІСЂРµРјРµРЅРё
-//#include "Screen6.h"              // Р’С‹Р·РѕРІ СѓСЃС‚Р°РЅРѕРІРєРё РґР°С‚С‹
-//#include "InterruptScreen.h"      // СЌРєСЂР°РЅ СЃ РіСЂР°С„РёРєРѕРј РїСЂРµСЂС‹РІР°РЅРёСЏ
-//#include "Buttons.h"              // РЅР°С€Рё Р¶РµР»РµР·РЅС‹Рµ РєРЅРѕРїРєРё
-//#include "Feedback.h"             // РѕР±СЂР°С‚РЅР°СЏ СЃРІСЏР·СЊ (РґРёРѕРґС‹ Рё РїСЂРѕС‡РµРµ)
-//#include "FileUtils.h"
+// подключаем наши экраны
+#include "Screen1.h"              // Главный экран
+#include "Screen2.h"              // Вызов меню настроек
+#include "Screen3.h"              //
+#include "Screen4.h"              // Вызов меню установки времени и даты
+#include "Screen5.h"              // Вызов установки времени
+#include "Screen6.h"              // Вызов установки даты
+#include "InterruptScreen.h"      // экран с графиком прерывания
+#include "Buttons.h"              // наши железные кнопки
+//#include "InfoDiodes.h"           // информационные диоды
+#include "FileUtils.h"
 #include "Settings.h"
-//#include "CoreCommandBuffer.h"
+#include "CoreCommandBuffer.h"
+
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint32_t screenIdleTimer = 0;
 bool setupDone = false;
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void screenAction(AbstractTFTScreen* screen)
 {
-   // РєР°РєРѕРµ-С‚Рѕ РґРµР№СЃС‚РІРёРµ РЅР° СЌРєСЂР°РЅРµ РїСЂРѕРёР·РѕС€Р»Рѕ.
-   // С‚СѓС‚ РїСЂРѕСЃС‚Рѕ СЃР±СЂР°СЃС‹РІР°РµРј С‚Р°Р№РјРµСЂ РЅРёС‡РµРіРѕРЅРµРґРµР»Р°РЅСЊСЏ.
-   screenIdleTimer = millis();
+	// какое-то действие на экране произошло.
+	// тут просто сбрасываем таймер ничегонеделанья.
+	screenIdleTimer = millis();
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void setup() 
+
+
+
+// Declare which fonts we will be using
+//extern uint8_t SmallFont[];
+const int ledPin =  11;
+
+//UTFT Tft;
+//#define Serial SERIAL_PORT_USBVIRTUAL
+
+void setup()
 {
-  Serial.begin(SERIAL_SPEED);
-  while(!Serial);
+	//Serial.begin(115200);
+	Serial.begin(SERIAL_SPEED);
+	//while (!Serial);
+	pinMode(ledPin, OUTPUT);
+	digitalWrite(ledPin, LOW);
+	//delay(1000);
+	//Serial.println("ILI9341 Test!");
 
-  //NVIC_SetPriorityGrouping(NVIC_PriorityGroup_1);
-  //Serial.setInterruptPriority(2);
+	DBGLN(F("INIT settings..."));
+	Settings.begin();
+	DBGLN(F("Settings inited."));
 
-  ConfigPin::setup();
-  
-  DBGLN(F("INIT settings..."));
-  Settings.begin();
-  DBGLN(F("Settings inited."));
-  
-  DBGLN(F("Init RTC..."));
-  RealtimeClock.begin(1);           // Р·Р°РїСѓСЃРєР°РµРј РёС… РЅР° С€РёРЅРµ I2C 1 (SDA1, SCL1);
- // RealtimeClock.setTime(0,1,11,1,7,2,2018);
+	DBGLN(F("Init RTC..."));
+	//RealtimeClock.begin(1);           // запускаем их на шине I2C 1 (SDA1, SCL1);
+	// RealtimeClock.setTime(0,1,11,1,7,2,2018);
 
- /* DBGLN(F("INIT SD..."));
-  SDInit::InitSD();
-  DBGLN(F("SD inited."));*/
-  
+	//DBGLN(F("INIT SD..."));
+	//SDInit::InitSD();
+	//DBGLN(F("SD inited."));
 
-  DBGLN(F("Init screen..."));
-  Screen.setup();
 
-  DBGLN(F("Add screen1...")); 
+	DBGLN(F("Init screen..."));
+	Screen.setup();
 
-  Screen.addScreen(Screen1::create());           // РїРµСЂРІС‹Р№ СЌРєСЂР°РЅ РїРѕРєР°Р¶РµС‚СЃСЏ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
-  //DBGLN(F("Add screen2..."));
-  //// РґРѕР±Р°РІР»СЏРµРј РІС‚РѕСЂРѕР№ СЌРєСЂР°РЅ
-  //Screen.addScreen(Screen2::create());
-  //DBGLN(F("Add screen3..."));
-  //// РґРѕР±Р°РІР»СЏРµРј С‚СЂРµС‚РёР№ СЌРєСЂР°РЅ. РџРµСЂРµС…РѕРґ РІ РјРµРЅСЋ РЅР°СЃС‚СЂРѕР№РєРё
-  //Screen.addScreen(Screen3::create());
-  //DBGLN(F("Add screen4..."));
-  //// РґРѕР±Р°РІР»СЏРµРј С‡РµС‚РІРµСЂС‚С‹Р№ СЌРєСЂР°РЅ. РњРµРЅСЋ СѓСЃС‚Р°РЅРѕРІРєРё РґР°С‚С‹ Рё РІСЂРµРјРµРЅРё
-  //Screen.addScreen(Screen4::create());
-  //DBGLN(F("Add screen5..."));
-  //// РґРѕР±Р°РІР»СЏРµРј 5 СЌРєСЂР°РЅ. РЈСЃС‚Р°РЅРѕРІРєР° РІСЂРµРјРµРЅРё
-  //Screen.addScreen(Screen5::create());
-  //DBGLN(F("Add screen6..."));
-  //// РґРѕР±Р°РІР»СЏРµРј 6 СЌРєСЂР°РЅ. РЈСЃС‚Р°РЅРѕРІРєР° РґР°С‚С‹
-  //Screen.addScreen(Screen6::create());
-  //DBGLN(F("Add interrupt screen..."));
-  //// РґРѕР±Р°РІР»СЏРµРј СЌРєСЂР°РЅ СЃ РіСЂР°С„РёРєРѕРј РїСЂРµСЂС‹РІР°РЅРёР№
-  //Screen.addScreen(InterruptScreen::create());
+	DBGLN(F("Add screen1..."));
 
-  // РїРµСЂРµРєР»СЋС‡Р°РµРјСЃСЏ РЅР° РїРµСЂРІС‹Р№ СЌРєСЂР°РЅ
-  Screen.switchToScreen("Main");
+	Screen.addScreen(Screen1::create());           // первый экран покажется по умолчанию
+	DBGLN(F("Add screen2..."));
+	// добавляем второй экран
+	//Screen.addScreen(Screen2::create());
+	DBGLN(F("Add screen3..."));
+	//// добавляем третий экран. Переход в меню настройки
+	//Screen.addScreen(Screen3::create());
+	DBGLN(F("Add screen4..."));
+	// добавляем четвертый экран. Меню установки даты и времени
+	Screen.addScreen(Screen4::create());
+	DBGLN(F("Add screen5..."));
+	// добавляем 5 экран. Установка времени
+	Screen.addScreen(Screen5::create());
+	DBGLN(F("Add screen6..."));
+	// добавляем 6 экран. Установка даты
+	 Screen.addScreen(Screen6::create());
+	//DBGLN(F("Add interrupt screen..."));
+	//// добавляем экран с графиком прерываний
+	//Screen.addScreen(InterruptScreen::create());
 
-  // РЅР°СЃС‚СЂР°РёРІР°РµРј РѕР±СЂР°С‚РЅСѓСЋ СЃРІСЏР·СЊ (РёРЅС„РѕСЂРјР°С†РёРѕРЅРЅС‹Рµ РґРёРѕРґС‹ Рё РїСЂ.)
- // Feedback.begin();
+	// переключаемся на первый экран
+	Screen.switchToScreen("Main");
 
-  // РЅР°СЃС‚СЂР°РёРІР°РµРј Р¶РµР»РµР·РЅС‹Рµ РєРЅРѕРїРєРё
- // Buttons.begin();
+	//// настраиваем информационные диоды
+	//InfoDiodes.begin();
 
-  // РїРѕРґРЅРёРјР°РµРј РЅР°С€Рё РїСЂРµСЂС‹РІР°РЅРёСЏ
- /* InterruptHandler.begin();
+	//// настраиваем железные кнопки
+	Buttons.begin();
 
-  screenIdleTimer = millis();
-  Screen.onAction(screenAction);*/
+	//// поднимаем наши прерывания
+	InterruptHandler.begin();
 
-  DBGLN(F("Inited."));
+	screenIdleTimer = millis();
+	Screen.onAction(screenAction);
 
-  Serial.print(F("UROV "));
-  Serial.println(SOFTWARE_VERSION);
+	DBGLN(F("Inited."));
 
-  setupDone = true;
+	Serial.print(F("XBee "));
+	Serial.println(SOFTWARE_VERSION);
 
+	setupDone = true;
 }
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void loop() 
+
+void loop()
 {
+//	CoreDelayedEvent.update();
+	Settings.update();
 
- // CoreDelayedEvent.update();
-  Settings.update();
-  
-  // РѕР±РЅРѕРІР»СЏРµРј РєРЅРѕРїРєРё
-//  Buttons.update();
-  Screen.update();
+	// обновляем кнопки
+	Buttons.update();
+	Screen.update();
 
-  // РѕР±РЅРѕРІР»СЏРµРј РїСЂРµСЂС‹РІР°РЅРёСЏ
- // InterruptHandler.update();
+	// обновляем прерывания
+	//InterruptHandler.update();
 
-  // РїСЂРѕРІРµСЂСЏРµРј, РєР°РєРѕР№ СЌРєСЂР°РЅ Р°РєС‚РёРІРµРЅ. Р•СЃР»Рё Р°РєС‚РёРІРµРЅ РіР»Р°РІРЅС‹Р№ СЌРєСЂР°РЅ - СЃР±СЂР°СЃС‹РІР°РµРј С‚Р°Р№РјРµСЂ РѕР¶РёРґР°РЅРёСЏ. РРЅР°С‡Рµ - РїСЂРѕРІРµСЂСЏРµРј, РЅРµ РёСЃС‚РµРєР»Рѕ Р»Рё РІСЂРµРјСЏ РЅРёС‡РµРіРѕРЅРµРґРµР»Р°РЅСЊСЏ.
-  AbstractTFTScreen* activeScreen = Screen.getActiveScreen();
-  if(activeScreen == mainScreen)
-  {
-    screenIdleTimer = millis();
-  }
-  else
-  {
-      if(millis() - screenIdleTimer > RESET_TO_MAIN_SCREEN_DELAY)
-      {
-        screenIdleTimer = millis();
-        Screen.switchToScreen(mainScreen);
-      }
-  } // else
+	// проверяем, какой экран активен. Если активен главный экран - сбрасываем таймер ожидания. Иначе - проверяем, не истекло ли время ничегонеделанья.
+	AbstractTFTScreen* activeScreen = Screen.getActiveScreen();
+	if (activeScreen == mainScreen)
+	{
+		screenIdleTimer = millis();
+	}
+	else
+	{
+		if (millis() - screenIdleTimer > RESET_TO_MAIN_SCREEN_DELAY)
+		{
+			screenIdleTimer = millis();
+			Screen.switchToScreen(mainScreen);
+		}
+	} // else
 
 
-  // РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РІС…РѕРґСЏС‰РёРµ РєРѕРјР°РЅРґС‹
- // CommandHandler.handleCommands();
-
+	  // обрабатываем входящие команды
+	//CommandHandler.handleCommands();
+	
+	
+	
+	
+	
+	//test_TFT();
+ // delay (1000);
 }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 bool nestedYield = false;
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void yield()
 {
-  
-  if(nestedYield || !setupDone)
-    return;
-    
- nestedYield = true;
- 
-   // РѕР±РЅРѕРІР»СЏРµРј РїСЂРµСЂС‹РІР°РЅРёСЏ
-   //InterruptHandler.update();
 
-   //CoreDelayedEvent.update();
-   //Buttons.update();
+	if (nestedYield || !setupDone)
+		return;
 
- nestedYield = false;
- 
+	nestedYield = true;
+
+	// обновляем прерывания
+	//InterruptHandler.update();
+
+	//CoreDelayedEvent.update();
+	//Buttons.update();
+
+	nestedYield = false;
+
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+//void test_TFT()
+//{
+//	int buf[318];
+//	int x, x2;
+//	int y, y2;
+//	int r;
+//
+//	// Clear the screen and draw the frame
+//	Tft.clrScr();
+//
+//	Tft.setColor(255, 0, 0);
+//	Tft.fillRect(0, 0, 319, 13);
+//	Tft.setColor(64, 64, 64);
+//	Tft.fillRect(0, 226, 319, 239);
+//	Tft.setColor(255, 255, 255);
+//	Tft.setBackColor(255, 0, 0);
+//	Tft.print("* Universal Color TFT Display Library *", CENTER, 1);
+//	Tft.setBackColor(64, 64, 64);
+//	Tft.setColor(255, 255, 0);
+//	Tft.print("<http://electronics.henningkarlsen.com>", CENTER, 227);
+//
+//	Tft.setColor(0, 0, 255);
+//	Tft.drawRect(0, 14, 319, 225);
+//
+//	// Draw crosshairs
+//	Tft.setColor(0, 0, 255);
+//	Tft.setBackColor(0, 0, 0);
+//	Tft.drawLine(159, 15, 159, 224);
+//	Tft.drawLine(1, 119, 318, 119);
+//	for (int i = 9; i < 310; i += 10)
+//		Tft.drawLine(i, 117, i, 121);
+//	for (int i = 19; i < 220; i += 10)
+//		Tft.drawLine(157, i, 161, i);
+//
+//	// Draw sin-, cos- and tan-lines
+//	Tft.setColor(0, 255, 255);
+//	Tft.print("Sin", 5, 15);
+//	for (int i = 1; i < 318; i++)
+//	{
+//		Tft.drawPixel(i, 119 + (sin(((i * 1.13) * 3.14) / 180) * 95));
+//	}
+//
+//	Tft.setColor(255, 0, 0);
+//	Tft.print("Cos", 5, 27);
+//	for (int i = 1; i < 318; i++)
+//	{
+//		Tft.drawPixel(i, 119 + (cos(((i * 1.13) * 3.14) / 180) * 95));
+//	}
+//
+//	Tft.setColor(255, 255, 0);
+//	Tft.print("Tan", 5, 39);
+//	for (int i = 1; i < 318; i++)
+//	{
+//		Tft.drawPixel(i, 119 + (tan(((i * 1.13) * 3.14) / 180)));
+//	}
+//
+//	//delay(2000);
+//
+//	Tft.setColor(0, 0, 0);
+//	Tft.fillRect(1, 15, 318, 224);
+//	Tft.setColor(0, 0, 255);
+//	Tft.setBackColor(0, 0, 0);
+//	Tft.drawLine(159, 15, 159, 224);
+//	Tft.drawLine(1, 119, 318, 119);
+//
+//	// Draw a moving sinewave
+//	x = 1;
+//	for (int i = 1; i < (318 * 20); i++)
+//	{
+//		x++;
+//		if (x == 319)
+//			x = 1;
+//		if (i > 319)
+//		{
+//			if ((x == 159) || (buf[x - 1] == 119))
+//				Tft.setColor(0, 0, 255);
+//			else
+//				Tft.setColor(0, 0, 0);
+//			Tft.drawPixel(x, buf[x - 1]);
+//		}
+//		Tft.setColor(0, 255, 255);
+//		y = 119 + (sin(((i * 1.1) * 3.14) / 180) * (90 - (i / 100)));
+//		Tft.drawPixel(x, y);
+//		buf[x - 1] = y;
+//	}
+//
+//	//delay(2000);
+//
+//	Tft.setColor(0, 0, 0);
+//	Tft.fillRect(1, 15, 318, 224);
+//
+//	// Draw some filled rectangles
+//	for (int i = 1; i < 6; i++)
+//	{
+//		switch (i)
+//		{
+//		case 1:
+//			Tft.setColor(255, 0, 255);
+//			break;
+//		case 2:
+//			Tft.setColor(255, 0, 0);
+//			break;
+//		case 3:
+//			Tft.setColor(0, 255, 0);
+//			break;
+//		case 4:
+//			Tft.setColor(0, 0, 255);
+//			break;
+//		case 5:
+//			Tft.setColor(255, 255, 0);
+//			break;
+//		}
+//		Tft.fillRect(70 + (i * 20), 30 + (i * 20), 130 + (i * 20), 90 + (i * 20));
+//	}
+//
+//	//delay(2000);
+//
+//	Tft.setColor(0, 0, 0);
+//	Tft.fillRect(1, 15, 318, 224);
+//
+//	// Draw some filled, rounded rectangles
+//	for (int i = 1; i < 6; i++)
+//	{
+//		switch (i)
+//		{
+//		case 1:
+//			Tft.setColor(255, 0, 255);
+//			break;
+//		case 2:
+//			Tft.setColor(255, 0, 0);
+//			break;
+//		case 3:
+//			Tft.setColor(0, 255, 0);
+//			break;
+//		case 4:
+//			Tft.setColor(0, 0, 255);
+//			break;
+//		case 5:
+//			Tft.setColor(255, 255, 0);
+//			break;
+//		}
+//		Tft.fillRoundRect(190 - (i * 20), 30 + (i * 20), 250 - (i * 20), 90 + (i * 20));
+//	}
+//
+//	//delay(2000);
+//
+//	Tft.setColor(0, 0, 0);
+//	Tft.fillRect(1, 15, 318, 224);
+//
+//	// Draw some filled circles
+//	for (int i = 1; i < 6; i++)
+//	{
+//		switch (i)
+//		{
+//		case 1:
+//			Tft.setColor(255, 0, 255);
+//			break;
+//		case 2:
+//			Tft.setColor(255, 0, 0);
+//			break;
+//		case 3:
+//			Tft.setColor(0, 255, 0);
+//			break;
+//		case 4:
+//			Tft.setColor(0, 0, 255);
+//			break;
+//		case 5:
+//			Tft.setColor(255, 255, 0);
+//			break;
+//		}
+//		Tft.fillCircle(100 + (i * 20), 60 + (i * 20), 30);
+//	}
+//
+//	//delay(2000);
+//
+//	Tft.setColor(0, 0, 0);
+//	Tft.fillRect(1, 15, 318, 224);
+//
+//	// Draw some lines in a pattern
+//	Tft.setColor(255, 0, 0);
+//	for (int i = 15; i < 224; i += 5)
+//	{
+//		Tft.drawLine(1, i, (i * 1.44) - 10, 224);
+//	}
+//	Tft.setColor(255, 0, 0);
+//	for (int i = 224; i > 15; i -= 5)
+//	{
+//		Tft.drawLine(318, i, (i * 1.44) - 11, 15);
+//	}
+//	Tft.setColor(0, 255, 255);
+//	for (int i = 224; i > 15; i -= 5)
+//	{
+//		Tft.drawLine(1, i, 331 - (i * 1.44), 15);
+//	}
+//	Tft.setColor(0, 255, 255);
+//	for (int i = 15; i < 224; i += 5)
+//	{
+//		Tft.drawLine(318, i, 330 - (i * 1.44), 224);
+//	}
+//
+//	//delay(2000);
+//
+//	Tft.setColor(0, 0, 0);
+//	Tft.fillRect(1, 15, 318, 224);
+//
+//	// Draw some random circles
+//	for (int i = 0; i < 100; i++)
+//	{
+//		Tft.setColor(random(255), random(255), random(255));
+//		x = 32 + random(256);
+//		y = 45 + random(146);
+//		r = random(30);
+//		Tft.drawCircle(x, y, r);
+//	}
+//
+//	//delay(2000);
+//
+//	Tft.setColor(0, 0, 0);
+//	Tft.fillRect(1, 15, 318, 224);
+//
+//	// Draw some random rectangles
+//	for (int i = 0; i < 100; i++)
+//	{
+//		Tft.setColor(random(255), random(255), random(255));
+//		x = 2 + random(316);
+//		y = 16 + random(207);
+//		x2 = 2 + random(316);
+//		y2 = 16 + random(207);
+//		Tft.drawRect(x, y, x2, y2);
+//	}
+//
+//	//delay(2000);
+//
+//	Tft.setColor(0, 0, 0);
+//	Tft.fillRect(1, 15, 318, 224);
+//
+//	// Draw some random rounded rectangles
+//	for (int i = 0; i < 100; i++)
+//	{
+//		Tft.setColor(random(255), random(255), random(255));
+//		x = 2 + random(316);
+//		y = 16 + random(207);
+//		x2 = 2 + random(316);
+//		y2 = 16 + random(207);
+//		Tft.drawRoundRect(x, y, x2, y2);
+//	}
+//
+//	//delay(2000);
+//
+//	Tft.setColor(0, 0, 0);
+//	Tft.fillRect(1, 15, 318, 224);
+//
+//	for (int i = 0; i < 100; i++)
+//	{
+//		Tft.setColor(random(255), random(255), random(255));
+//		x = 2 + random(316);
+//		y = 16 + random(209);
+//		x2 = 2 + random(316);
+//		y2 = 16 + random(209);
+//		Tft.drawLine(x, y, x2, y2);
+//	}
+//
+//	//delay(2000);
+//
+//	Tft.setColor(0, 0, 0);
+//	Tft.fillRect(1, 15, 318, 224);
+//
+//	for (int i = 0; i < 10000; i++)
+//	{
+//		Tft.setColor(random(255), random(255), random(255));
+//		Tft.drawPixel(2 + random(316), 16 + random(209));
+//	}
+//
+//	//delay(2000);
+//
+//	Tft.fillScr(0, 0, 255);
+//
+//	Tft.setColor(255, 0, 0);
+//	Tft.fillRoundRect(80, 70, 239, 169);
+//
+//	Tft.setColor(255, 255, 255);
+//	Tft.setBackColor(255, 0, 0);
+//	Tft.print("That's it!", CENTER, 93);
+//	Tft.print("Restarting in a", CENTER, 119);
+//	Tft.print("few seconds...", CENTER, 132);
+//
+//	Tft.setColor(0, 255, 0);
+//	Tft.setBackColor(0, 0, 255);
+//	Tft.print("Runtime: (msecs)", CENTER, 210);
+//	Tft.printNumI(millis(), CENTER, 225);
+//
+//}

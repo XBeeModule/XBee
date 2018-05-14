@@ -54,6 +54,7 @@ class CommandHandlerClass
   bool getFILE(const char* commandPassed, const CommandParser& parser, Stream* pStream);
   bool getFILESIZE(const char* commandPassed, const CommandParser& parser, Stream* pStream);
   bool setDELFILE(CommandParser& parser, Stream* pStream);
+  bool setUPLOADFILE(CommandParser& parser, Stream* pStream);
   bool getLS(const char* commandPassed, const CommandParser& parser, Stream* pStream);
   
   bool getPIN(const char* commandPassed, const CommandParser& parser, Stream* pStream);
@@ -82,6 +83,19 @@ class CommandHandlerClass
   bool getINDUCTIVE(const char* commandPassed, const CommandParser& parser, Stream* pStream);
   bool getVOLTAGE(const char* commandPassed, const CommandParser& parser, Stream* pStream);
 
+  bool getUUID(const char* commandPassed, const CommandParser& parser, Stream* pStream);
+
+  bool setTBORDERMAX(CommandParser& parser, Stream* pStream);
+  bool getTBORDERMAX(const char* commandPassed, const CommandParser& parser, Stream* pStream);
+
+  bool setTBORDERMIN(CommandParser& parser, Stream* pStream);
+  bool getTBORDERMIN(const char* commandPassed, const CommandParser& parser, Stream* pStream);
+
+  bool setTBORDERS(CommandParser& parser, Stream* pStream);
+  bool getTBORDERS(const char* commandPassed, const CommandParser& parser, Stream* pStream);
+
+  bool setRDELAY(CommandParser& parser, Stream* pStream);
+  bool getRDELAY(const char* commandPassed, const CommandParser& parser, Stream* pStream);
 
   bool printBackSETResult(bool isOK, const char* command, Stream* pStream);
     

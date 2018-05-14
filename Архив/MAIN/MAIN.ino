@@ -5,6 +5,7 @@
 #include "ConfigPin.h"
 #include "AT24CX.h"
 #include "InterruptHandler.h"
+#include "DelayedEvents.h"
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // подключаем наши экраны
 #include "Screen1.h"              // Главный экран
@@ -15,12 +16,13 @@
 #include "Screen6.h"              // Вызов установки даты
 #include "InterruptScreen.h"      // экран с графиком прерывания
 #include "Buttons.h"              // наши железные кнопки
-#include "InfoDiodes.h"           // информационные диоды
+#include "Feedback.h"             // обратная связь (диоды и прочее)
 #include "FileUtils.h"
 #include "Settings.h"
 #include "CoreCommandBuffer.h"
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint32_t screenIdleTimer = 0;
+bool setupDone = false;
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void screenAction(AbstractTFTScreen* screen)
 {
@@ -80,8 +82,8 @@ void setup()
   // переключаемся на первый экран
   Screen.switchToScreen("Main");
 
-  // настраиваем информационные диоды
-  InfoDiodes.begin();
+  // настраиваем обратную связь (информационные диоды и пр.)
+  Feedback.begin();
 
   // настраиваем железные кнопки
   Buttons.begin();
@@ -97,11 +99,14 @@ void setup()
   Serial.print(F("UROV "));
   Serial.println(SOFTWARE_VERSION);
 
+  setupDone = true;
+
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void loop() 
 {
 
+  CoreDelayedEvent.update();
   Settings.update();
   
   // обновляем кнопки
@@ -137,14 +142,15 @@ bool nestedYield = false;
 void yield()
 {
   
-  if(nestedYield)
+  if(nestedYield || !setupDone)
     return;
     
  nestedYield = true;
  
    // обновляем прерывания
    InterruptHandler.update();
-   
+
+   CoreDelayedEvent.update();
    Buttons.update();
 
  nestedYield = false;

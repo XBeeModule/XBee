@@ -28,6 +28,7 @@ void screenAction(AbstractTFTScreen* screen)
    // тут просто сбрасываем таймер ничегонеделанья.
    screenIdleTimer = millis();
 }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void setup() 
 {
@@ -65,13 +66,13 @@ void setup()
   //Screen.addScreen(Screen3::create());
   DBGLN(F("Add screen4..."));
   // добавляем четвертый экран. Меню установки даты и времени
-  Screen.addScreen(Screen4::create());
+ // Screen.addScreen(Screen4::create());
   DBGLN(F("Add screen5..."));
   // добавляем 5 экран. Установка времени
-  Screen.addScreen(Screen5::create());
+ // Screen.addScreen(Screen5::create());
   DBGLN(F("Add screen6..."));
   // добавляем 6 экран. Установка даты
-  Screen.addScreen(Screen6::create());
+ // Screen.addScreen(Screen6::create());
   //DBGLN(F("Add interrupt screen..."));
   //// добавляем экран с графиком прерываний
   //Screen.addScreen(InterruptScreen::create());

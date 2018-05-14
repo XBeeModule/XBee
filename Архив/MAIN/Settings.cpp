@@ -2,6 +2,7 @@
 #include "Settings.h"
 #include "CONFIG.h"
 #include "ConfigPin.h"
+#include "ADCSampler.h"
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 SettingsClass Settings;
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -15,6 +16,52 @@ SettingsClass::SettingsClass()
   voltage3V3.voltage = voltage5V.voltage = voltage200V.voltage = 0;
 
   inductiveSensorState1 = inductiveSensorState2 = inductiveSensorState3 = HIGH;
+
+  relayDelay = RELAY_WANT_DATA_AFTER;
+  acsDelay = ACS_SIGNAL_DELAY;
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+String SettingsClass::getUUID(const char* passedUUID)
+{
+    String savedUUID;
+    uint16_t addr = UUID_STORE_ADDRESS;
+    uint8_t header1 = eeprom->read(addr); addr++;
+    uint8_t header2 = eeprom->read(addr); addr++;
+    uint8_t header3 = eeprom->read(addr); addr++;
+
+    if(!(header1 == RECORD_HEADER1 && header2 == RECORD_HEADER2 && header3 == RECORD_HEADER3))
+    {
+      savedUUID = passedUUID;
+
+      addr = UUID_STORE_ADDRESS;
+      eeprom->write(addr,RECORD_HEADER1); addr++;
+      eeprom->write(addr,RECORD_HEADER2); addr++;
+      eeprom->write(addr,RECORD_HEADER3); addr++;
+
+      uint8_t written = 0;
+      for(size_t i=0;i<savedUUID.length();i++)
+      {
+        eeprom->write(addr,savedUUID[i]); 
+        addr++;
+        written++;
+      }
+
+      for(int i=written;i<32;i++)
+      {
+         eeprom->write(addr,'\0'); 
+         addr++;
+      }
+
+      return savedUUID;
+    }
+
+    // есть сохранённый GUID, читаем его
+    for(int i=0;i<32;i++)
+    {
+      savedUUID += (char) eeprom->read(addr); addr++;
+    }
+
+    return savedUUID;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t SettingsClass::getInductiveSensorState(uint8_t channelNum)
@@ -37,6 +84,19 @@ uint8_t SettingsClass::getInductiveSensorState(uint8_t channelNum)
 void SettingsClass::begin()
 {
   eeprom = new AT24C64();
+
+  uint8_t* writePtr = (uint8_t*)&relayDelay;
+  eeprom->read(RELAY_DELAY_STORE_ADDRESS,writePtr,sizeof(uint32_t));
+  
+  if(relayDelay == 0xFFFFFFFF)
+    relayDelay = RELAY_WANT_DATA_AFTER;
+
+  writePtr = (uint8_t*)&acsDelay;
+  eeprom->read(ACS_DELAY_STORE_ADDRESS,writePtr,sizeof(uint16_t));
+  
+  if(acsDelay == 0xFFFF)
+    acsDelay = ACS_SIGNAL_DELAY;    
+  
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void SettingsClass::set3V3RawVoltage(uint16_t raw)
@@ -80,6 +140,70 @@ void SettingsClass::updateInductiveSensors()
   inductiveSensorState1 = digitalRead(inductive_sensor1);
   inductiveSensorState2 = digitalRead(inductive_sensor2);
   inductiveSensorState3 = digitalRead(inductive_sensor3);
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+uint32_t SettingsClass::getRelayDelay()
+{
+  return relayDelay;  
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void SettingsClass::setRelayDelay(uint32_t val)
+{
+  relayDelay = val;
+  uint8_t* writePtr = (uint8_t*)&val;
+  eeprom->write(RELAY_DELAY_STORE_ADDRESS,writePtr,sizeof(uint32_t)); 
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+uint16_t SettingsClass::getACSDelay()
+{
+  return acsDelay;  
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void SettingsClass::setACSDelay(uint16_t val)
+{
+  acsDelay = val;
+  uint8_t* writePtr = (uint8_t*)&val;
+  eeprom->write(ACS_DELAY_STORE_ADDRESS,writePtr,sizeof(uint16_t)); 
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+uint32_t SettingsClass::getTransformerLowBorder()
+{
+  uint32_t result = 0;
+  uint8_t* writePtr = (uint8_t*)&result;
+  eeprom->read(TRANSFORMER_LOW_BORDER_STORE_ADDRESS,writePtr,sizeof(uint32_t));
+  
+  if(result == 0xFFFFFFFF)
+    result = TRANSFORMER_LOW_DEFAULT_BORDER;
+
+  return result;
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+uint32_t SettingsClass::getTransformerHighBorder()
+{
+  uint32_t result = 0;
+  uint8_t* writePtr = (uint8_t*)&result;
+  eeprom->read(TRANSFORMER_HIGH_BORDER_STORE_ADDRESS,writePtr,sizeof(uint32_t));
+  
+  if(result == 0xFFFFFFFF)
+    result = TRANSFORMER_HIGH_DEFAULT_BORDER;
+
+  return result;
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void SettingsClass::setTransformerLowBorder(uint32_t val)
+{
+  uint8_t* writePtr = (uint8_t*)&val;
+  eeprom->write(TRANSFORMER_LOW_BORDER_STORE_ADDRESS,writePtr,sizeof(uint32_t)); 
+
+   adcSampler.setLowBorder(val);
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void SettingsClass::setTransformerHighBorder(uint32_t val)
+{
+  uint8_t* writePtr = (uint8_t*)&val;
+  eeprom->write(TRANSFORMER_HIGH_BORDER_STORE_ADDRESS,writePtr,sizeof(uint32_t));
+
+   adcSampler.setHighBorder(val);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint32_t SettingsClass::getMotoresource(uint8_t channelNum)
