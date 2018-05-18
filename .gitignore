@@ -342,3 +342,5 @@ __pycache__/
 /Core_SAMD21G18A_2/Core_SAMD21G18A_2.vcxproj
 /Core_SAMD21G18A_2/Core_SAMD21G18A_2.vcxproj.filters
 /MAIN_trakker_temperature
+/Test_TFT_24
+/UTouch_ButtonTestSAMD21G18A

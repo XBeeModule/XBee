@@ -546,10 +546,10 @@ void Screen1::onButtonPressed(TFTMenu* menu, int pressedButton)
 int Screen1::getFreeMemory()
 {
 	struct mallinfo mi = mallinfo();
-	char* heapend = _sbrk(0);
-	register char* stack_ptr asm("sp");
+	//char* heapend = _sbrk(0);
+	//register char* stack_ptr asm("sp");
 
-	return (stack_ptr - heapend + mi.fordblks);
+	//return (stack_ptr - heapend + mi.fordblks);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
