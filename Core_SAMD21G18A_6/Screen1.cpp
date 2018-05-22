@@ -536,7 +536,7 @@ void Screen1::onButtonPressed(TFTMenu* menu, int pressedButton)
 	if (pressedButton == 0)
 	{
 		menu->switchToScreen("Settings"); // переключаемся на экран работы с SD
-  }
+    }
 	else if (pressedButton == 1)
 	{
 		menu->switchToScreen("SCREEN4"); // переключаемся на третий экран
