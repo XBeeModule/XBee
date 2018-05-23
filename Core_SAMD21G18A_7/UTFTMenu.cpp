@@ -20,24 +20,26 @@ void AbstractTFTScreen::setup(TFTMenu* menu)
   screenButtons->setButtonColors(TFT_BUTTON_COLORS);
 
   doSetup(menu);
-  
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void AbstractTFTScreen::update(TFTMenu* menu)
 {
-  if(isActive())
-  {
-  int pressedButton = screenButtons->checkButtons();
-  
-  if(pressedButton != -1)
-  {
-    menu->notifyAction(this);
-    onButtonPressed(menu, pressedButton);
-  }
 
-    if(isActive())
-      doUpdate(menu);
-  }
+  //if(isActive())
+  //{
+  //int pressedButton = screenButtons->checkButtons();
+  //
+  //if(pressedButton != -1)
+  //{
+  //  menu->notifyAction(this);
+  //  onButtonPressed(menu, pressedButton);
+  //}
+
+  //  if(isActive())
+  //    doUpdate(menu);
+  //}
+
+  doUpdate(menu);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void AbstractTFTScreen::draw(TFTMenu* menu)
@@ -89,7 +91,7 @@ void TFTMenu::setup()
   tftDC->setBackColor(TFT_BACK_COLOR);
   tftDC->clrScr();
   delay(100);
-  
+ 
   
   //tftDC->fillScr(255,255,0);
   tftDC->setFont(TFT_FONT);
@@ -98,7 +100,8 @@ void TFTMenu::setup()
   tftTouch->setPrecision(TOUCH_PRECISION);
   
   rusPrint.init(tftDC);
-
+  tftDC->print("Test", 20, 20);
+ // tftDC->print("Проба", 20, 40);
   // добавляем экран мессадж-бокса
   addScreen(MessageBoxScreen::create());
 
